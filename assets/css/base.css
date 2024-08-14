@@ -1,0 +1,83 @@
+:root {
+  --color-brand-primary-100: #104a45;
+  --color-brand-primary-200: #155d57;
+  --color-brand-primary-300: #1d8279;
+  --color-brand-primary-350: #219389;
+  --color-brand-primary-400: #25a89c;
+  --color-brand-primary-500: #2abbae;
+  --color-brand-primary-600: #54c8be;
+  --color-brand-primary-700: #7fd6ce;
+  --color-brand-primary-800: #a9e3de;
+  --color-brand-primary-900: #d4f1ee;
+  --color-brand-primary-950: #f0fcfa;
+
+  --color-brand-danger-100: #1E0705;
+  --color-brand-danger-200: #380D0A;
+  --color-brand-danger-300: #5B1510;
+  --color-brand-danger-400: #8F2119;
+  --color-brand-danger-500: #C42D22;
+  --color-brand-danger-600: #DA362B;
+  --color-brand-danger-700: #E3675F;
+  --color-brand-danger-800: #F7D2CF;
+  --color-brand-danger-900: #FAE6E5;
+
+  --color-brand-neutral-100: #000000;
+  --color-brand-neutral-200: #1E2229;
+  --color-brand-neutral-300: #3D4452;
+  --color-brand-neutral-400: #5B667B;
+  --color-brand-neutral-500: #7E89A0;
+  --color-brand-neutral-600: #D0D4DC;
+  --color-brand-neutral-700: #E2E4E9;
+  --color-brand-neutral-800: #EDEFF2;
+  --color-brand-neutral-850: #F6F6F6;
+  --color-brand-neutral-900: #ffffff;
+
+  --color-brand-warn-100: #220F02;
+  --color-brand-warn-200: #3F1C04;
+  --color-brand-warn-300: #652E06;
+  --color-brand-warn-400: #9F480A;
+  --color-brand-warn-500: #D8630D;
+  --color-brand-warn-600: #F17013;
+  --color-brand-warn-700: #F4924B;
+  --color-brand-warn-800: #FCDFCA;
+  --color-brand-warn-900: #FDEDE2;
+
+  --color-brand-info-100: #070F1D;
+  --color-brand-info-200: #0D1C35;
+  --color-brand-info-300: #152E56;
+  --color-brand-info-400: #214887;
+  --color-brand-info-500: #004d80;
+  --color-brand-info-525: #24628F;
+  --color-brand-info-550: #6691f0;
+  --color-brand-info-600: #3670CE;
+  --color-brand-info-650: #5145E7;
+  --color-brand-info-700: #6793DA;
+  --color-brand-info-750: #378fe9;
+  --color-brand-info-800: #D2DFF4;
+  --color-brand-info-900: #E6EDF9;
+}
+
+*,
+*::after,
+*::before {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 62.5%;
+}
+
+body {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: none;
+}
