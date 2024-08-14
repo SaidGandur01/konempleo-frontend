@@ -63,21 +63,39 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  text-decoration: none;
+  outline: none;
+  font-family: 'Work Sans', sans-serif;
 }
 
 html {
+  scroll-behavior: smooth;
   font-size: 62.5%;
 }
 
 body {
+  scroll-behavior: smooth;
   font-size: 1.4rem;
   line-height: 1;
 }
 
 a {
   text-decoration: none;
+  cursor: pointer;
 }
 
 a:hover {
   text-decoration: none;
+}
+
+a:link {
+  text-decoration: inherit;
+  color: inherit;
+  cursor: auto;
+}
+
+a:visited {
+  text-decoration: inherit;
+  color: inherit;
+  cursor: auto;
 }

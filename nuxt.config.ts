@@ -20,5 +20,15 @@ export default defineNuxtConfig({
   css: ['@/assets/css/base.css', '@fortawesome/fontawesome-svg-core/styles.css'],
   compatibilityDate: "2024-04-03",
   devtools: { enabled: false },
-  modules: ["@nuxt/eslint"],
+  modules: ["@nuxt/eslint", '@nuxtjs/google-fonts'],
+  googleFonts: {
+    families: {
+      Roboto: {
+        wght: [100, 200, 300, 400, 500, 600, 700, 800, 900]
+      },
+      'Work+Sans': {
+        wght: [100, 200, 300, 400, 500, 600, 700, 800, 900]
+      }
+    }
+  },
 });
