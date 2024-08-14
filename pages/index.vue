@@ -1,6 +1,17 @@
 <template>
-  <h1>sTest</h1>
+  <div class="container"/>
 </template>
-<style lang="scss" scoped>
-$said: '#fff';
-</style>
+<script lang="ts" setup>
+import { useUserStore } from '~/store/user.store';
+
+const useStore = useUserStore()
+
+onMounted(() => {
+  const isAuthenticated = useStore.isUserAuthenticated()
+  
+  if (!isAuthenticated) {
+    navigateTo('/login')
+  }
+  navigateTo("/home");
+})
+</script>

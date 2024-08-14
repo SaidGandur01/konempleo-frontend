@@ -17,18 +17,21 @@ export default defineNuxtConfig({
       title: "Meta K",
     },
   },
-  css: ['@/assets/css/base.css', '@fortawesome/fontawesome-svg-core/styles.css'],
+  css: [
+    "@/assets/css/base.css",
+    "@fortawesome/fontawesome-svg-core/styles.css",
+  ],
   compatibilityDate: "2024-04-03",
   devtools: { enabled: false },
-  modules: ["@nuxt/eslint", '@nuxtjs/google-fonts'],
+  modules: ["@nuxt/eslint", "@nuxtjs/google-fonts", "@pinia/nuxt"],
   googleFonts: {
     families: {
       Roboto: {
-        wght: [100, 200, 300, 400, 500, 600, 700, 800, 900]
+        wght: [100, 200, 300, 400, 500, 600, 700, 800, 900],
       },
-      'Work+Sans': {
-        wght: [100, 200, 300, 400, 500, 600, 700, 800, 900]
-      }
-    }
+      "Work+Sans": {
+        wght: [100, 200, 300, 400, 500, 600, 700, 800, 900],
+      },
+    },
   },
 });

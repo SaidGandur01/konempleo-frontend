@@ -19,8 +19,10 @@
     "@fortawesome/free-regular-svg-icons": "^6.6.0",
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
     "@fortawesome/vue-fontawesome": "^3.0.8",
+    "@pinia/nuxt": "^0.5.3",
     "nuxt": "^3.12.4",
-    "vue": "latest"
+    "pinia": "^2.2.1",
+    "vue": "^3.3.7"
   },
   "devDependencies": {
     "@nuxt/eslint": "^0.5.0",
