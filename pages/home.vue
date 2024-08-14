@@ -1,12 +1,5 @@
 <template>
-  <NuxtLayout :name="currentLayout">
-    <div v-if="!isLoading" class="home-page">
-      <h1>Home page</h1>
-    </div>
-    <div v-else class="home-page spinner">
-      <CoreSpinner />
-    </div>
-  </NuxtLayout>
+  <NuxtLayout :name="currentLayout" />
 </template>
 <script lang="ts" setup>
 import { useUserStore } from "~/store/user.store";
@@ -16,19 +9,13 @@ definePageMeta({
   middleware: ["protected"],
 });
 
-const userStore = useUserStore()
-const isLoading = ref<boolean>(true);
+const userStore = useUserStore();
 const currentLayout = ref<TLayouts>("company");
 
 onMounted(() => {
-  setTimeout(() => {
-  
-    const isAdminUser = userStore.isAdmin();
-    currentLayout.value = isAdminUser ? 'admin' : 'company'
-    isLoading.value = false
-  }, 2500);
-})
-
+  const isAdminUser = userStore.isAdmin();
+  currentLayout.value = isAdminUser ? "admin" : "company";
+});
 </script>
 <style lang="scss" scoped>
 .spinner {
@@ -37,4 +24,3 @@ onMounted(() => {
   height: 100vh;
 }
 </style>
-

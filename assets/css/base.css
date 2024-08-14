@@ -1,4 +1,11 @@
 :root {
+  --background-color: #0D1116;
+  --background-input-field: #363744;
+
+  --color-gray-600: #FAFAFA;
+
+  --color-text-900: #ffffff;
+
   --color-brand-primary-100: #104a45;
   --color-brand-primary-200: #155d57;
   --color-brand-primary-300: #1d8279;
@@ -65,7 +72,7 @@
   box-sizing: border-box;
   text-decoration: none;
   outline: none;
-  font-family: 'Work Sans', sans-serif;
+  font-family: 'Source Sans Pro', sans-serif;
 }
 
 html {
@@ -78,6 +85,7 @@ body {
   font-size: 1.4rem;
   line-height: 1;
   min-height: 100vh;
+  color: var(--color-text-900);
 }
 
 a {

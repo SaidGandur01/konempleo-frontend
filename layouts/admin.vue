@@ -1,10 +1,19 @@
 <template>
   <div class="admin-content">
-    <slot />
+    <div v-if="!isLoading" class="home-page">
+      <h1>Admin home page</h1>
+    </div>
+    <div v-else class="home-page spinner">
+      <CoreSpinner />
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
-// definePageMeta({
-//   middleware: ["protected", "verify-user-role"],
-// });
+const isLoading = ref<boolean>(true);
+
+onMounted(() => {
+  setTimeout(() => {
+    isLoading.value = false
+  }, 2500);
+})
 </script>

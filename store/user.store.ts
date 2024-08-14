@@ -7,7 +7,7 @@ interface IState {
 
 const defaultState: IState = {
   user: {
-    isAuthenticated: true,
+    isAuthenticated: false,
     isAdmin: false,
   },
 };
