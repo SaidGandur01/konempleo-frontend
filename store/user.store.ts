@@ -7,23 +7,29 @@ interface IState {
 
 const defaultState: IState = {
   user: {
-    isAuthenticated: false,
-    isAdmin: false
+    isAuthenticated: true,
+    isAdmin: false,
   },
 };
 
-export const useUserStore = defineStore('user-store', {
+export const useUserStore = defineStore("user-store", {
   state: () => Object.assign({}, defaultState),
   actions: {
+    setUserType(isAdmin = false): void {
+      this.$state.user.isAdmin = isAdmin;
+    },
+    setUserAuthentication(isUserAuthenticated = false): void {
+      this.$state.user.isAuthenticated = isUserAuthenticated;
+    },
     isUserAuthenticated(): boolean {
       return this.$state.user.isAuthenticated;
     },
     isAdmin(): boolean {
-      return this.$state.user.isAdmin
+      return this.$state.user.isAdmin;
     },
-    reset() {
+    reset(): void {
       navigateTo("/login");
       Object.assign(this, defaultState);
-    }
-  }
+    },
+  },
 });

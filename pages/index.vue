@@ -1,17 +1,12 @@
 <template>
-  <div class="container"/>
+  <div class="container" />
 </template>
 <script lang="ts" setup>
-import { useUserStore } from '~/store/user.store';
-
-const useStore = useUserStore()
+definePageMeta({
+  middleware: ["protected"],
+});
 
 onMounted(() => {
-  const isAuthenticated = useStore.isUserAuthenticated()
-  
-  if (!isAuthenticated) {
-    navigateTo('/login')
-  }
   navigateTo("/home");
-})
+});
 </script>
