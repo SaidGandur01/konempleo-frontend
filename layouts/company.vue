@@ -26,7 +26,7 @@ definePageMeta({
 onMounted(() => {
   // // setTimeout(() => {
   //   console.log('entramos a company')
-  navigateTo("/home/position");
+  // navigateTo("/home");
   isLoading.value = false;
   // }, 2500);
 });

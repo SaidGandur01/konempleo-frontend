@@ -8,6 +8,7 @@
 </template>
 <script lang="ts" setup>
 import { useUserStore } from "~/store/user.store";
+import { EUser } from "~/utils/enum";
 import type { TLayouts } from "~/utils/types";
 
 definePageMeta({
@@ -19,7 +20,8 @@ const currentLayout = ref<TLayouts>();
 
 onBeforeMount(() => {
   const isAdminUser = userStore.isAdmin();
-  currentLayout.value = isAdminUser ? "admin" : "company";
+  currentLayout.value = isAdminUser ? EUser.ADMIN : EUser.COMPANY;
+  navigateTo(currentLayout.value === EUser.ADMIN ? '/home' : '/home/position')
 });
 </script>
 <style lang="scss" scoped>
