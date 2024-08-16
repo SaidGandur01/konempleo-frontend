@@ -2,8 +2,9 @@
   --background-color: #0D1116;
   --background-input-field: #363744;
 
-  --color-gray-600: #FAFAFA;
+  --color-gray-600: #2d2525;
 
+  --color-text-100: #000000;
   --color-text-900: #ffffff;
 
   --color-brand-primary-100: #104a45;
@@ -85,7 +86,7 @@ body {
   font-size: 1.4rem;
   line-height: 1;
   min-height: 100vh;
-  color: var(--color-text-900);
+  color: var(--color-text-100);
 }
 
 a {

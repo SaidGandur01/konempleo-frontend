@@ -1,7 +1,7 @@
 <template>
   <div class="login-page">
     <div class="logo">
-      <img :src="logo" alt="k-logo" />
+      <img :src="logo" alt="k-logo" >
     </div>
     <div class="form-section">
       <h2>Inicio de sesión</h2>
@@ -116,6 +116,7 @@ const handleOnLogin = async (): Promise<void> => {
     form: form.value,
     formData: formData.toString(),
   });
+  navigateTo('/home')
   // const headers = {
   //   accept: "application/json",
   //   "Content-Type": "application/x-www-form-urlencoded",
@@ -143,6 +144,7 @@ const handleOnLogin = async (): Promise<void> => {
   align-items: center;
   padding: 3rem 0 0 0;
   min-height: 100vh;
+  color: var(--color-text-900);
 
   .logo {
     text-align: center;

@@ -1,31 +1,29 @@
 import { defineStore } from "pinia";
+import { EUser } from "~/utils/enum";
 import type { IUser } from "~/utils/interfaces";
 
-interface IState {
-  user: IUser;
-}
-
-const defaultState: IState = {
-  user: {
-    isAuthenticated: false,
-    isAdmin: false,
-  },
+const defaultState: IUser = {
+  isAuthenticated: true,
+  role: EUser.ADMIN
 };
 
 export const useUserStore = defineStore("user-store", {
   state: () => Object.assign({}, defaultState),
   actions: {
-    setUserType(isAdmin = false): void {
-      this.$state.user.isAdmin = isAdmin;
+    setUserRole(role: EUser): void {
+      this.role = role;
     },
-    setUserAuthentication(isUserAuthenticated = false): void {
-      this.$state.user.isAuthenticated = isUserAuthenticated;
+    getUserRole(): EUser {
+      return this.role;
+    },
+    setUserAuthentication(isUserAuthenticated: boolean): void {
+      this.isAuthenticated = isUserAuthenticated;
     },
     isUserAuthenticated(): boolean {
-      return this.$state.user.isAuthenticated;
+      return this.isAuthenticated;
     },
     isAdmin(): boolean {
-      return this.$state.user.isAdmin;
+      return this.role === EUser.ADMIN;
     },
     reset(): void {
       navigateTo("/login");

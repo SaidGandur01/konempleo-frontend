@@ -11,9 +11,15 @@
 <script lang="ts" setup>
 const isLoading = ref<boolean>(true);
 
+definePageMeta({
+  middleware: ["protected"],
+  roles: ['admin']
+});
+
 onMounted(() => {
-  setTimeout(() => {
+  // setTimeout(() => {
+  console.log('entramos a admin')
     isLoading.value = false
-  }, 2500);
+  // }, 2500);
 })
 </script>

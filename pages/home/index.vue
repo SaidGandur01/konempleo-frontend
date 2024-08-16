@@ -5,16 +5,17 @@
 import { useUserStore } from "~/store/user.store";
 import type { TLayouts } from "~/utils/types";
 
-definePageMeta({
-  middleware: ["protected"],
-});
-
 const userStore = useUserStore();
 const currentLayout = ref<TLayouts>("company");
 
 onMounted(() => {
   const isAdminUser = userStore.isAdmin();
   currentLayout.value = isAdminUser ? "admin" : "company";
+
+  definePageMeta({
+    middleware: ["protected"],
+    roles: [isAdminUser ? "admin" : "company"]
+  });
 });
 </script>
 <style lang="scss" scoped>
