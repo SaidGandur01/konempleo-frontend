@@ -85,7 +85,7 @@ $submit-color: #004d80;
   }
   .core-button {
     width: 100%;
-    border-radius: 15px;
+    border-radius: 0.5rem;
     font-size: 1.6rem;
     font-weight: 400;
     min-width: 150px;

@@ -36,7 +36,13 @@ onMounted(() => {
   min-height: 100vh;
   display: flex;
 
+  .slide-wrapper {
+    width: 20%;
+  }
+
   .content {
+    display: flex;
+    flex: 1;
     background-color: green;
   }
 }

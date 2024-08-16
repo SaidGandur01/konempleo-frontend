@@ -35,6 +35,9 @@ export default defineNuxtConfig({
       "Source+Sans+Pro": {
         wght: [100, 200, 300, 400, 500, 600, 700, 800, 900],
       },
+      "Avenir": {
+        wght: [100, 200, 300, 400, 500, 600, 700, 800, 900],
+      }
     },
   },
 });
