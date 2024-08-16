@@ -61,7 +61,7 @@
 .slide-panel {
   display: flex;
   flex-direction: column;
-  background-color: #262730;
+  background-color: var(--background-color-secondary);
   font-family: "Avenir", sans-serif;
   height: 100%;
   padding: 10rem 2rem 2rem 2rem;

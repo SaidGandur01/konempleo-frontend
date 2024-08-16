@@ -43,7 +43,6 @@ onMounted(() => {
   .content {
     display: flex;
     flex: 1;
-    background-color: green;
   }
 }
 </style>

@@ -78,7 +78,7 @@ $submit-color: #004d80;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  width: min-content;
+  width: fit-content;
 
   &--full-width {
     width: 100% !important;
@@ -103,7 +103,7 @@ $submit-color: #004d80;
 
     &[disabled] {
       cursor: not-allowed;
-      background-color: var(--color-brand-neutral-600);
+      background-color: var(--color-brand-neutral-300);
     }
 
     &--sm {

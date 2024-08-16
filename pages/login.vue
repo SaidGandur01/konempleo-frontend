@@ -1,7 +1,7 @@
 <template>
   <div class="login-page">
     <div class="logo">
-      <img :src="logo" alt="k-logo" >
+      <img :src="logo" alt="logo" >
     </div>
     <div class="form-section">
       <h2>Inicio de sesión</h2>
@@ -138,7 +138,7 @@ const handleOnLogin = async (): Promise<void> => {
 </script>
 <style lang="scss" scoped>
 .login-page {
-  background-color: var(--background-color);
+  background-color: var(--background-color-primary);
   display: flex;
   flex-direction: column;
   align-items: center;
