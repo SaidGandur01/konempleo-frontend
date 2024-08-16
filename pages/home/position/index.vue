@@ -32,23 +32,15 @@ import logo from "~/public/images/logo.png";
 
 type TSelectedTab = "position" | "skill";
 
-
-
-
+const currentTabSelected = ref<TSelectedTab>("position");
+const onHandleTabSelection = (tab: TSelectedTab): void => {
+  currentTabSelected.value = tab;
+};
 
 definePageMeta({
   middleware: ["protected"],
   roles: ["company"],
 });
-
-const currentTabSelected = ref<TSelectedTab>("position");
-
-const onHandleTabSelection = (tab: TSelectedTab): void => {
-  currentTabSelected.value = tab;
-};
-
-
-
 
 </script>
 <style lang="scss" scoped>

@@ -12,8 +12,13 @@ export const useUserStore = defineStore("user-store", {
   actions: {
     setUserRole(role: EUser): void {
       this.role = role;
+      // if(role === EUser.ADMIN) {
+      //   navigateTo('/home')
+      // } else {
+      //   navigateTo('/home/position')
+      // }
     },
-    getUserRole(): EUser {
+    getUserRole(): EUser | null {
       return this.role;
     },
     setUserAuthentication(isUserAuthenticated: boolean): void {

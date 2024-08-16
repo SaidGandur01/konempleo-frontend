@@ -51,11 +51,20 @@
         label="Cerrar sesión"
         :disabled="false"
         :full-width="true"
+        @click="onHandleLogout"
       />
     </div>
   </div>
 </template>
 <script lang="ts" setup>
+import { useUserStore } from '~/store/user.store';
+
+const userStore = useUserStore()
+
+const onHandleLogout = (): void => {
+  userStore.reset();
+  navigateTo("/login");
+};
 </script>
 <style lang="scss" scoped>
 .slide-panel {

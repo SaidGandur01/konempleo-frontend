@@ -51,7 +51,9 @@
   </div>
 </template>
 <script lang="ts" setup>
+import { useUserStore } from "~/store/user.store";
 import logo from "~/public/images/logo.png";
+import { EUser } from "~/utils/enum";
 
 interface ILoginForm {
   email: string;
@@ -65,6 +67,8 @@ const form = ref<ILoginForm>({
 const emailError = ref<string>("");
 const passwordError = ref<string>("");
 const disableButton = ref<boolean>(true);
+// const isLoading = ref<boolean>(false);
+const userStore = useUserStore();
 
 const handleOnInput = (keyField: string, value: string): void => {
   form.value = {
@@ -116,6 +120,17 @@ const handleOnLogin = async (): Promise<void> => {
     form: form.value,
     formData: formData.toString(),
   });
+
+  // const currentUserRole = EUser.ADMIN;
+  // isLoading.value = true
+  // setTimeout(() => {
+  //   isLoading.value = false
+    // userStore.setUserRole(EUser.COMPANY)
+  //   if (currentUserRole === EUser.COMPANY) {
+  //     navigateTo('/home/position')
+  //   } else {
+  //   }
+  // }, 2500);
   navigateTo('/home')
   // const headers = {
   //   accept: "application/json",

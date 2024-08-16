@@ -9,7 +9,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
   }
 
   const requiredRoles = to.meta.roles;
-  console.log({requiredRoles})
+
   if (requiredRoles && !requiredRoles.includes(userStore.getUserRole())) {
     return navigateTo('/home');
   }

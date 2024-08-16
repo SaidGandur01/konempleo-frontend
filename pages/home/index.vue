@@ -30,6 +30,7 @@ onBeforeMount(() => {
     display: grid;
     place-content: center;
     height: 100vh;
+    
   }
 }
 </style>
