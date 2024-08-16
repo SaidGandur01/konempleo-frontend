@@ -4,7 +4,7 @@ import type { IUser } from "~/utils/interfaces";
 
 const defaultState: IUser = {
   isAuthenticated: true,
-  role: EUser.ADMIN
+  role: EUser.COMPANY
 };
 
 export const useUserStore = defineStore("user-store", {

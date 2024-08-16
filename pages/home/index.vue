@@ -1,27 +1,33 @@
 <template>
-  <NuxtLayout :name="currentLayout" />
+  <div v-if="currentLayout">
+    <NuxtLayout :name="currentLayout" />
+  </div>
+  <div v-else class="page-container spinner">
+    <CoreSpinner />
+  </div>
 </template>
 <script lang="ts" setup>
 import { useUserStore } from "~/store/user.store";
 import type { TLayouts } from "~/utils/types";
 
-const userStore = useUserStore();
-const currentLayout = ref<TLayouts>("company");
+definePageMeta({
+  middleware: ["protected"],
+});
 
-onMounted(() => {
+const userStore = useUserStore();
+const currentLayout = ref<TLayouts>();
+
+onBeforeMount(() => {
   const isAdminUser = userStore.isAdmin();
   currentLayout.value = isAdminUser ? "admin" : "company";
-
-  definePageMeta({
-    middleware: ["protected"],
-    roles: [isAdminUser ? "admin" : "company"]
-  });
 });
 </script>
 <style lang="scss" scoped>
-.spinner {
-  display: grid;
-  place-content: center;
-  height: 100vh;
+.page-container {
+  .spinner {
+    display: grid;
+    place-content: center;
+    height: 100vh;
+  }
 }
 </style>

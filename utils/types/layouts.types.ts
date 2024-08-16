@@ -1,1 +1,1 @@
-export type TLayouts = "company" | "admin";
+export type TLayouts = "company" | "admin" | "";

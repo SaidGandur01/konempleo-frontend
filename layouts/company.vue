@@ -14,18 +14,20 @@
   </div>
 </template>
 <script lang="ts" setup>
-const isLoading = ref<boolean>(false);
+import { EUser } from '~/utils/enum';
+
+const isLoading = ref<boolean>(true);
 
 definePageMeta({
   middleware: ["protected"],
-  roles: ['company']
+  roles: [EUser.COMPANY]
 });
 
 onMounted(() => {
   // // setTimeout(() => {
   //   console.log('entramos a company')
-  // navigateTo("/home/position");
-  // isLoading.value = false;
+  navigateTo("/home/position");
+  isLoading.value = false;
   // }, 2500);
 });
 </script>

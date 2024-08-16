@@ -1,21 +1,16 @@
 import { useUserStore } from "~/store/user.store";
 
-// middleware/roleCheck.js
 export default defineNuxtRouteMiddleware(async (to) => {
   const userStore = useUserStore();
+  const isUserAuthenticated = userStore.isUserAuthenticated();
 
-  // Assuming some method exists to sync or fetch auth status, which might be server-side or from a cookie
-  // await userStore.syncAuthStatus();
-
-  if (!userStore.isUserAuthenticated()) {
-    return navigateTo('/login');
+  if (!isUserAuthenticated) {
+    return navigateTo("/login");
   }
 
-  const isAdminUser = userStore.isAdmin();
-  console.log({isAdminUser})
   const requiredRoles = to.meta.roles;
-  
-  if (requiredRoles && !requiredRoles.includes(isAdminUser ? 'admin' : 'company')) {
-    return navigateTo('/unauthorized');
+  console.log({requiredRoles})
+  if (requiredRoles && !requiredRoles.includes(userStore.getUserRole())) {
+    return navigateTo('/home');
   }
 });
