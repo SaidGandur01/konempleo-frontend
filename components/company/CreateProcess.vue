@@ -80,6 +80,19 @@
         }}</span>
       </div>
     </div>
+    <div class="form-grop">
+      <div class="form-field">
+        <CoreDropdown
+          :list-options="shiftListData"
+          label="Horario"
+          placeholder="Seleccione un opción"
+          @select="(data) => handleOnInput('shift', data)"
+        />
+        <span v-if="form.shift.length < 1" class="error-message">{{
+          shiftError
+        }}</span>
+      </div>
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
@@ -87,6 +100,7 @@ import { educationListData } from "~/data/education/education";
 import { genderListData } from "~/data/gender/gender";
 import { locationListData } from "~/data/locations/locations";
 import { positionListData } from "~/data/positions/positions";
+import { shiftListData } from "~/data/shift/shifts";
 
 interface ICreateProcessForm {
   process_name: string;
@@ -95,6 +109,7 @@ interface ICreateProcessForm {
   education: string;
   gender: string;
   max_positions: number;
+  shift: string;
 }
 const form = ref<ICreateProcessForm>({
   process_name: "",
@@ -103,6 +118,7 @@ const form = ref<ICreateProcessForm>({
   education: "",
   gender: "",
   max_positions: 1,
+  shift: '',
 });
 const processNameError = ref<string>("");
 const locationError = ref<string>("");
@@ -110,6 +126,7 @@ const positionError = ref<string>("");
 const educationError = ref<string>("");
 const genderError = ref<string>("");
 const maxPositionsError = ref<string>("");
+const shiftError = ref<string>("");
 
 const handleOnInput = (keyField: string, value: string): void => {
   console.log({
