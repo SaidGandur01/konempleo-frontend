@@ -20,6 +20,9 @@ export default defineNuxtConfig({
   css: [
     "@/assets/css/base.css",
     "@fortawesome/fontawesome-svg-core/styles.css",
+    'filepond/dist/filepond.min.css',
+    'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css'
+
   ],
   compatibilityDate: "2024-04-03",
   devtools: { enabled: false },

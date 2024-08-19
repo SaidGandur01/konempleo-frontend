@@ -20,11 +20,15 @@
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
     "@fortawesome/vue-fontawesome": "^3.0.8",
     "@pinia/nuxt": "^0.5.3",
+    "click-outside-vue3": "^4.0.1",
+    "filepond": "^4.31.2",
+    "filepond-plugin-file-validate-type": "^1.2.9",
+    "filepond-plugin-image-preview": "^4.6.12",
     "nuxt": "^3.12.4",
     "pinia": "^2.2.1",
     "vue": "^3.3.7",
-    "click-outside-vue3": "^4.0.1",
-    "vue-3-slider-component": "^1.0.0"
+    "vue-3-slider-component": "^1.0.0",
+    "vue-filepond": "^7.0.4"
   },
   "devDependencies": {
     "@nuxt/eslint": "^0.5.0",

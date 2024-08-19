@@ -109,7 +109,7 @@ const onEmitValue = (item?: IListOptions): void => {
   }
 
   .content {
-    z-index: 1001;
+    z-index: 1002;
     width: 100%;
     position: absolute;
     top: 100%;

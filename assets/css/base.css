@@ -128,3 +128,57 @@ a:visited {
   font-weight: 500;
   letter-spacing: 1px;
 }
+.filepond--wrapper {
+  overflow: hidden !important;
+  border-radius: 1rem !important;
+}
+.filepond--drop-label {
+  font-size: 2rem !important;
+  color: var(--color-text-900) !important;
+  background-color: var(--background-color-secondary) !important;
+  justify-content: flex-start !important;
+  padding: 3rem !important;
+  border-radius: 1rem;
+}
+.filepond--drop-label label {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: baseline !important;
+  width: 100% !important;
+}
+.filepond--panel-bottom {
+  background-color: var(--background-color-secondary) !important;
+}
+.filepond--panel-center,
+.filepond--panel-top {
+  background-color: var(--background-color-secondary) !important;
+}
+.filepond--label-columns {
+  display: flex !important; 
+  justify-content: space-between !important; 
+  align-items: center !important; 
+  width: 100% !important;
+  padding-left: 6rem !important;
+}
+.filepond--label-columns .label-column-one {
+  display: flex;
+  flex-direction: column;
+  align-items: baseline;
+}
+.filepond--label-action {
+  text-decoration: none !important;
+  background: transparent !important;
+  padding: 1.2rem 1rem 1rem !important;
+  border-radius: 1rem !important;
+  border: 1px solid #6e718b !important;
+  transition: all 0.3s ease !important;
+}
+.filepond--label-action:hover {
+  background-color: #575a6f !important;
+}
+.filepond--file {
+  font-size: 2rem !important;
+}
+.filepond--file-info {
+  padding-left: 3rem !important;
+}
