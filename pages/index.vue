@@ -3,10 +3,6 @@
 </template>
 <script lang="ts" setup>
 definePageMeta({
-  middleware: ["protected"],
-});
-
-onMounted(() => {
-  navigateTo("/home");
+  middleware: ["protected", "admin-guard", "company-guard"],
 });
 </script>

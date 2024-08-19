@@ -1,16 +1,10 @@
 import { useUserStore } from "~/store/user.store";
 
-export default defineNuxtRouteMiddleware(async (to) => {
+export default defineNuxtRouteMiddleware(async () => {
   const userStore = useUserStore();
   const isUserAuthenticated = userStore.isUserAuthenticated();
 
   if (!isUserAuthenticated) {
     return navigateTo("/login");
-  }
-
-  const requiredRoles = to.meta.roles;
-
-  if (requiredRoles && !requiredRoles.includes(userStore.getUserRole())) {
-    return navigateTo('/home');
   }
 });

@@ -7,13 +7,9 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { EUser } from '~/utils/enum';
-
 definePageMeta({
-  middleware: ["protected"],
-  roles: [EUser.ADMIN]
+  middleware: ["protected", "admin-guard"]
 });
-
 </script>
 <style lang="scss" scoped>
 .admin-content {

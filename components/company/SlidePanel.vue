@@ -5,7 +5,7 @@
     </div>
     <ul>
       <li>
-        <NuxtLink to="/home/position" class="item-field">
+        <NuxtLink to="/company/position" class="item-field">
           <font-awesome-icon
             class="icon"
             :icon="['fas', 'users']"
@@ -15,7 +15,7 @@
         </NuxtLink>
       </li>
       <li>
-        <NuxtLink to="/home/processes" class="item-field">
+        <NuxtLink to="/company/processes" class="item-field">
           <font-awesome-icon
             class="icon"
             :icon="['fas', 'chalkboard-user']"
@@ -25,7 +25,7 @@
         </NuxtLink>
       </li>
       <li>
-        <NuxtLink to="/home/load-cvs" class="item-field">
+        <NuxtLink to="/company/load-cvs" class="item-field">
           <font-awesome-icon
             class="icon"
             :icon="['far', 'file']"
@@ -35,7 +35,7 @@
         </NuxtLink>
       </li>
       <li>
-        <NuxtLink to="/home/deep-talent" class="item-field">
+        <NuxtLink to="/company/deep-talent" class="item-field">
           <font-awesome-icon
             class="icon"
             :icon="['fas', 'chart-column']"

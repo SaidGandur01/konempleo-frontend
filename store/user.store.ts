@@ -12,11 +12,11 @@ export const useUserStore = defineStore("user-store", {
   actions: {
     setUserRole(role: EUser): void {
       this.role = role;
-      // if(role === EUser.ADMIN) {
-      //   navigateTo('/home')
-      // } else {
-      //   navigateTo('/home/position')
-      // }
+      if(role === EUser.ADMIN) {
+        navigateTo('/admin')
+      } else {
+        navigateTo('/company/position')
+      }
     },
     getUserRole(): EUser | null {
       return this.role;

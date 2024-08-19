@@ -1,8 +1,11 @@
 <template>
-  <NuxtLayout name="company">
+  <div class="company-content">
+    <div class="slide-wrapper">
+      <CompanySlidePanel />
+    </div>
     <div class="positions-container">
       <div class="logo-wrapper">
-        <img :src="logo" alt="logo" >
+        <img :src="logo" alt="logo" />
       </div>
       <div class="tabs-container">
         <div
@@ -21,11 +24,11 @@
         </div>
       </div>
       <div class="form-container">
-        <CompanyCreatePosition v-if="currentTabSelected === 'position'"/>
+        <CompanyCreatePosition v-if="currentTabSelected === 'position'" />
         <CompanyAddSkills v-else />
       </div>
     </div>
-  </NuxtLayout>
+  </div>
 </template>
 <script lang="ts" setup>
 import logo from "~/public/images/logo.png";
@@ -38,56 +41,62 @@ const onHandleTabSelection = (tab: TSelectedTab): void => {
 };
 
 definePageMeta({
-  middleware: ["protected"],
-  roles: ["company"],
+  middleware: ["protected", "company-guard"],
 });
-
 </script>
 <style lang="scss" scoped>
-.positions-container {
-  width: 100%;
-  padding: 5rem;
+.company-content {
+  min-height: 100vh;
   display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  flex-direction: column;
-  gap: 2rem;
-  background-color: var(--background-color-primary);
 
-  .logo-wrapper {
-    text-align: center;
-
-    img {
-      width: 50%;
-    }
+  .slide-wrapper {
+    width: 20%;
   }
-
-  .tabs-container {
+  .positions-container {
+    flex: 1;
+    padding: 5rem;
     display: flex;
+    justify-content: flex-start;
     align-items: center;
-    width: 100%;
-    border-radius: 10px;
-    padding: 1rem;
-    background-color: var(--background-color-secondary);
-    gap: 1rem;
-
-    .selected {
-      border-radius: 6px;
-      background-color: #ff4b4b;
-      font-weight: 700;
-      transition: all 0.2s ease;
-    }
-
-    .tab {
-      cursor: pointer;
-      padding: 1rem;
+    flex-direction: column;
+    gap: 2rem;
+    background-color: var(--background-color-primary);
+  
+    .logo-wrapper {
       text-align: center;
-      width: 50%;
+  
+      img {
+        width: 50%;
+      }
     }
-  }
-
-  .form-container {
-    width: 100%;
+  
+    .tabs-container {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      border-radius: 10px;
+      padding: 1rem;
+      background-color: var(--background-color-secondary);
+      gap: 1rem;
+  
+      .selected {
+        border-radius: 6px;
+        background-color: #ff4b4b;
+        font-weight: 700;
+        transition: all 0.2s ease;
+      }
+  
+      .tab {
+        cursor: pointer;
+        padding: 1rem;
+        text-align: center;
+        width: 50%;
+      }
+    }
+  
+    .form-container {
+      width: 100%;
+    }
   }
 }
 </style>

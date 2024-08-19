@@ -121,17 +121,7 @@ const handleOnLogin = async (): Promise<void> => {
     formData: formData.toString(),
   });
 
-  // const currentUserRole = EUser.ADMIN;
-  // isLoading.value = true
-  // setTimeout(() => {
-  //   isLoading.value = false
-    // userStore.setUserRole(EUser.COMPANY)
-  //   if (currentUserRole === EUser.COMPANY) {
-  //     navigateTo('/home/position')
-  //   } else {
-  //   }
-  // }, 2500);
-  navigateTo('/home')
+  userStore.setUserRole(EUser.COMPANY)
   // const headers = {
   //   accept: "application/json",
   //   "Content-Type": "application/x-www-form-urlencoded",
