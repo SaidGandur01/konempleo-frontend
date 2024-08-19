@@ -5,7 +5,7 @@
     </div>
     <div class="processes-container">
       <div class="logo-wrapper">
-        <img :src="logo" alt="logo" />
+        <img :src="logo" alt="logo" >
       </div>
       <div class="form-container">
         <CompanyCreateProcess />

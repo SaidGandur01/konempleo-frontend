@@ -121,6 +121,7 @@ const isActive = (path: string): boolean => {
 
       &.active-item {
         background-color: #FF4B4B;
+        border-radius: 1rem;
       }
     }
   }
