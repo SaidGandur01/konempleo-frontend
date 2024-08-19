@@ -80,7 +80,7 @@
         }}</span>
       </div>
     </div>
-    <div class="form-grop">
+    <div class="form-group">
       <div class="form-field">
         <CoreDropdown
           :list-options="shiftListData"
@@ -92,6 +92,24 @@
           shiftError
         }}</span>
       </div>
+      <div class="form-field">
+        <CoreRangeSlider
+          label="Rango salarial"
+          @drag-end="onHandleRangeSelection" />
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="form-field">
+        <CoreDropdown
+          :list-options="skillListData"
+          label="Habilidades"
+          placeholder="Habilidades necesarias para un cargo"
+          @select="(data) => handleOnInput('skill', data)"
+        />
+        <span v-if="form.skill.length < 1" class="error-message">{{
+          skillError
+        }}</span>
+      </div>
     </div>
   </div>
 </template>
@@ -101,6 +119,7 @@ import { genderListData } from "~/data/gender/gender";
 import { locationListData } from "~/data/locations/locations";
 import { positionListData } from "~/data/positions/positions";
 import { shiftListData } from "~/data/shift/shifts";
+import { skillListData } from "~/data/skills/skills";
 
 interface ICreateProcessForm {
   process_name: string;
@@ -110,6 +129,7 @@ interface ICreateProcessForm {
   gender: string;
   max_positions: number;
   shift: string;
+  skill: string;
 }
 const form = ref<ICreateProcessForm>({
   process_name: "",
@@ -118,7 +138,8 @@ const form = ref<ICreateProcessForm>({
   education: "",
   gender: "",
   max_positions: 1,
-  shift: '',
+  shift: "",
+  skill: "",
 });
 const processNameError = ref<string>("");
 const locationError = ref<string>("");
@@ -127,6 +148,11 @@ const educationError = ref<string>("");
 const genderError = ref<string>("");
 const maxPositionsError = ref<string>("");
 const shiftError = ref<string>("");
+const skillError = ref<string>("");
+
+const onHandleRangeSelection = (data: { min: number; max: number }): void => {
+  console.log(data);
+};
 
 const handleOnInput = (keyField: string, value: string): void => {
   console.log({
