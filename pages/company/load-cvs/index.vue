@@ -12,7 +12,7 @@
         <div class="form-field">
           <CoreDropdown
             :list-options="processListData"
-            label="Nombres del proceso"
+            label="Nombre del proceso"
             placeholder="Seleccione una opción"
             @select="(data) => handleOnInput('process_name', data)"
           />
