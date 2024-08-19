@@ -23,6 +23,7 @@
     "nuxt": "^3.12.4",
     "pinia": "^2.2.1",
     "vue": "^3.3.7",
+    "click-outside-vue3": "^4.0.1",
     "vue-3-slider-component": "^1.0.0"
   },
   "devDependencies": {

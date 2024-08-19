@@ -30,7 +30,7 @@ definePageMeta({
   }
   .processes-container {
     flex: 1;
-    padding: 5rem;
+    padding: 5rem 5rem 25rem;
     display: flex;
     justify-content: flex-start;
     align-items: center;

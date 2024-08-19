@@ -120,16 +120,5 @@ const onCreatePosition = async (): Promise<void> => {
   h2 {
     font-size: 1.7rem;
   }
-
-  .form-field {
-    .error-message {
-      display: block;
-      color: var(--color-text-900);
-      margin: 1rem 0;
-      font-size: 1.2rem;
-      font-weight: 500;
-      letter-spacing: 1px;
-    }
-  }
 }
 </style>

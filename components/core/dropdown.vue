@@ -18,7 +18,7 @@
       <div
         v-if="renderDropdownOptions"
         v-click-outside="onEmitValue"
-        class="content shadow-2xl"
+        :class="contentClasses"
       >
         <span
           v-for="(item, index) in listOptions"
@@ -35,23 +35,24 @@ interface IListOptions {
   key: string;
   value: string;
 }
-
 interface InputProps {
   label?: string;
   id?: string;
   required?: boolean;
   placeholder?: string;
   listOptions?: IListOptions[] | undefined;
+  maxHeight?: string;
 }
 interface IDropdownEmit {
   (event: "select", value: string): void;
 }
-withDefaults(defineProps<InputProps>(), {
+const props = withDefaults(defineProps<InputProps>(), {
   label: "Label test",
   id: "id-test-one",
   required: true,
   placeholder: "Select a country",
   listOptions: undefined,
+  maxHeight: ''
 });
 const currentSelection = ref<string>("");
 const emit = defineEmits<IDropdownEmit>();
@@ -62,6 +63,10 @@ const toggleCategoryDropdown = (): void => {
 const closeDropdown = (): void => {
   renderDropdownOptions.value = false;
 };
+const contentClasses = computed(() => ({
+  "content": true,
+  "content--custom-height": props.maxHeight !== ""
+}));
 const onEmitValue = (item?: IListOptions): void => {
   if (item?.key) {
     currentSelection.value = item.value;
@@ -116,6 +121,10 @@ const onEmitValue = (item?: IListOptions): void => {
     max-height: 250px;
     overflow: auto;
     scroll-behavior: smooth;
+
+    &--custom-height {
+      max-height: 100px;
+    }
 
     & span {
       padding: 1.5rem;
