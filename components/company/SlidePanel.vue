@@ -4,7 +4,7 @@
       <img src="https://talent.deepvoicelabs.com/media/c23e85beb3d763fb2ea40ac62cb2badd346024911e684747777d6b46.png" alt="logo">
     </div>
     <ul>
-      <li>
+      <li :class="{ 'active-item': isActive('/company/position') }">
         <NuxtLink to="/company/position" class="item-field">
           <font-awesome-icon
             class="icon"
@@ -14,7 +14,7 @@
           <span>Cargos | Habilidades</span>
         </NuxtLink>
       </li>
-      <li>
+      <li :class="{ 'active-item': isActive('/company/processes') }">
         <NuxtLink to="/company/processes" class="item-field">
           <font-awesome-icon
             class="icon"
@@ -24,7 +24,7 @@
           <span>Procesos</span>
         </NuxtLink>
       </li>
-      <li>
+      <li :class="{ 'active-item': isActive('/company/load-cvs') }">
         <NuxtLink to="/company/load-cvs" class="item-field">
           <font-awesome-icon
             class="icon"
@@ -34,7 +34,7 @@
           <span>Carga CV's</span>
         </NuxtLink>
       </li>
-      <li>
+      <li :class="{ 'active-item': isActive('/company/deep-talent') }">
         <NuxtLink to="/company/deep-talent" class="item-field">
           <font-awesome-icon
             class="icon"
@@ -60,11 +60,17 @@
 import { useUserStore } from '~/store/user.store';
 
 const userStore = useUserStore()
+const route = useRoute()
 
 const onHandleLogout = (): void => {
   userStore.reset();
   navigateTo("/login");
 };
+
+const isActive = (path: string): boolean => {
+  return route.path === path;
+};
+
 </script>
 <style lang="scss" scoped>
 .slide-panel {
@@ -111,6 +117,10 @@ const onHandleLogout = (): void => {
           margin-top: 5px;
           font-family: inherit;
         }
+      }
+
+      &.active-item {
+        background-color: #FF4B4B;
       }
     }
   }
