@@ -4,11 +4,18 @@
       <CompanySlidePanel />
     </div>
     <div class="processes-container">
-      <h1>This is my processes page</h1>
+      <div class="logo-wrapper">
+        <img :src="logo" alt="logo" />
+      </div>
+      <div class="form-container">
+        <CompanyCreateProcess />
+      </div>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
+import logo from "~/public/images/logo.png";
+
 definePageMeta({
   middleware: ["protected", "company-guard"],
 });
@@ -22,9 +29,26 @@ definePageMeta({
     width: 20%;
   }
   .processes-container {
-    display: flex;
     flex: 1;
+    padding: 5rem;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: column;
+    gap: 2rem;
     background-color: var(--background-color-primary);
+
+    .logo-wrapper {
+      text-align: center;
+  
+      img {
+        width: 50%;
+      }
+    }
+
+    .form-container {
+      width: 100%;
+    }
   }
 } 
 </style>

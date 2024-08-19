@@ -75,6 +75,7 @@ const onEmitValue = (item?: IListOptions): void => {
 </script>
 <style lang="scss" scoped>
 .dropwdown {
+  width: 100%;
   label {
     color: var(--color-text-900);
     font-weight: 600;
