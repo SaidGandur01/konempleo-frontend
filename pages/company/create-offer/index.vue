@@ -97,7 +97,7 @@ const onHandleTabSelection = (tab: TSelectedTab): void => {
 
         .selected {
           border-radius: 6px;
-          background-color: #ff4b4b;
+          background-color: #ec6b62;
           font-weight: 700;
           transition: all 0.2s ease;
         }

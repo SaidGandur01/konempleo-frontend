@@ -1,5 +1,5 @@
 <template>
-  <div class="create-position">
+  <div class="create-position box-shadow-2xl">
     <h2>Crear cargo</h2>
     <div class="form-field">
       <CoreInput
@@ -107,7 +107,8 @@ const onCreatePosition = async (): Promise<void> => {
 <style lang="scss" scoped>
   .create-position {
     border-radius: 1rem;
-    border: 1px solid #6e718b;
+    // border: 1px solid #6e718b;
+    background-color: var(--background-color-secondary);
     display: flex;
     flex-direction: column;
     gap: 3rem;

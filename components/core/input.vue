@@ -145,7 +145,8 @@ watch(
 <style lang="scss" scoped>
 .form-input {
   label {
-    color: var(--color-text-900);
+    color: var(--color-text-200);
+    // color: var(--color-text-900);
     font-weight: 500;
     display: block;
     margin-bottom: 1rem;
@@ -153,10 +154,10 @@ watch(
   }
 
   input {
-    background: var(--background-input-field);
+    background: var(--color-brand-neutral-700);
     border: 1px var(--color-neutral-border) solid;
     border-radius: 0.5rem;
-    color: var(--color-text-900);
+    color: var(--color-text-200);
     font-size: 1.6rem;
     width: 100%;
 
@@ -165,7 +166,7 @@ watch(
     }
 
     &::placeholder {
-      color: var(--color-field-readonly-text);
+      color: var(--color-brand-neutral-500);
       opacity: 1;
     }
 

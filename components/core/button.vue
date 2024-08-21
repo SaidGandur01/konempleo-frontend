@@ -92,18 +92,18 @@ $submit-color: #004d80;
     padding: 1.5rem 2rem;
     text-transform: capitalize;
     background-color: transparent;
-    border: 1px solid #6e718b;
-    color: var(--color-text-900);
+    border: 1px solid var(--color-brand-neutral-600);
+    color: var(--color-text-200);
     cursor: pointer;
     transition: all 0.3s ease;
 
     &:hover {
-      background-color: darken($color: #6e718b, $amount: 10%);
+      background-color: var(--color-brand-neutral-700);
     }
 
     &[disabled] {
       cursor: not-allowed;
-      background-color: var(--color-brand-neutral-300);
+      background-color: var(--color-brand-neutral-700);
     }
 
     &--sm {

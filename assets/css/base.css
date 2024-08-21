@@ -1,7 +1,7 @@
 :root {
-  --background-color-primary: #0d1116;
+  --background-color-primary: #F2F2F2;
   --background-color-secondary: #ffffff;
-  --background-input-field: #363744;
+  --background-input-field: #F0F2F6;
 
   --color-gray-600: #2d2525;
 
@@ -205,4 +205,10 @@ a:visited {
 }
 .filepond--file-info {
   padding-left: 3rem !important;
+}
+.box-shadow-xl {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+.box-shadow-2xl {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 }
