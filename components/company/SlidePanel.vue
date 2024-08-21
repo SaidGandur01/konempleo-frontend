@@ -5,7 +5,7 @@
     </div>
     <ul>
       <li :class="{ 'active-item': isActive('/company/create-offer') }">
-        <NuxtLink to="/company/position" class="item-field">
+        <NuxtLink to="/company/create-offer" class="item-field">
           <font-awesome-icon
             class="icon"
             :icon="['fas', 'user-tie']"
