@@ -1,5 +1,14 @@
 :root {
   --background-color-primary: #0d1116;
+  --background-color-secondary: #ffffff;
+  --background-input-field: #363744;
+
+  --color-gray-600: #2d2525;
+
+  --color-text-100: #000000;
+  --color-text-200: #0d1116;
+  --color-text-900: #ffffff;
+  /* --background-color-primary: #0d1116;
   --background-color-secondary: #262730;
   --background-input-field: #363744;
 
@@ -7,6 +16,7 @@
 
   --color-text-100: #000000;
   --color-text-900: #ffffff;
+  --previous-active-color: #FF4B4B*/
 
   --color-brand-primary-100: #104a45;
   --color-brand-primary-200: #155d57;
@@ -92,7 +102,7 @@ body {
   font-size: 1.4rem;
   line-height: 1;
   min-height: 100vh;
-  color: var(--color-text-900);
+  color: var(--color-text-200);
 }
 
 a {
@@ -114,6 +124,20 @@ a:visited {
   text-decoration: inherit;
   color: inherit;
   cursor: auto;
+}
+*::-webkit-scrollbar {
+  width: 7px;
+}
+
+*::-webkit-scrollbar-track {
+  border-radius: 7px;
+  background-color: #303030;
+  border: 0;
+}
+
+*::-webkit-scrollbar-thumb {
+  border-radius: 7px;
+  background-color: rgba(255, 255, 255, 0.6);
 }
 .form-field {
   position: relative;

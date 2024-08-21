@@ -14,26 +14,6 @@
           <span>Crear oferta</span>
         </NuxtLink>
       </li>
-      <li :class="{ 'active-item': isActive('/company/position') }">
-        <NuxtLink to="/company/position" class="item-field">
-          <font-awesome-icon
-            class="icon"
-            :icon="['fas', 'users']"
-            size="xl"
-          />
-          <span>Cargos | Habilidades</span>
-        </NuxtLink>
-      </li>
-      <li :class="{ 'active-item': isActive('/company/processes') }">
-        <NuxtLink to="/company/processes" class="item-field">
-          <font-awesome-icon
-            class="icon"
-            :icon="['fas', 'chalkboard-user']"
-            size="xl"
-          />
-          <span>Procesos</span>
-        </NuxtLink>
-      </li>
       <li :class="{ 'active-item': isActive('/company/load-cvs') }">
         <NuxtLink to="/company/load-cvs" class="item-field">
           <font-awesome-icon
@@ -89,7 +69,7 @@ const isActive = (path: string): boolean => {
   flex-direction: column;
   background-color: var(--background-color-secondary);
   font-family: "Avenir", sans-serif;
-  height: 100%;
+  height: 100vh;
   padding: 10rem 2rem 2rem 2rem;
 
   .logo-wrapper {
@@ -133,7 +113,7 @@ const isActive = (path: string): boolean => {
       }
 
       &.active-item {
-        background-color: #FF4B4B;
+        background-color: #ec6b62;
         border-radius: 1rem;
       }
     }
