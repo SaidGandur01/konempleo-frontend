@@ -15,7 +15,7 @@ export const useUserStore = defineStore("user-store", {
       if(role === EUser.ADMIN) {
         navigateTo('/admin')
       } else {
-        navigateTo('/company/position')
+        navigateTo('/company/create-offer')
       }
     },
     getUserRole(): EUser | null {

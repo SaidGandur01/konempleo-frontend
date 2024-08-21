@@ -7,6 +7,6 @@ export default defineNuxtRouteMiddleware(async (to) => {
   console.log('admin guard: ', userRole)
 
   if(userRole !== EUser.ADMIN) {
-    return navigateTo('/company/position')
+    return navigateTo('/company/create-offer')
   }
 });

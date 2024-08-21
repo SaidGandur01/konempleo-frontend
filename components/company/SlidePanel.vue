@@ -1,9 +1,19 @@
 <template>
   <div class="slide-panel">
     <div class="logo-wrapper">
-      <img src="https://talent.deepvoicelabs.com/media/c23e85beb3d763fb2ea40ac62cb2badd346024911e684747777d6b46.png" alt="logo">
+      <img :src="logo" alt="logo">
     </div>
     <ul>
+      <li :class="{ 'active-item': isActive('/company/create-offer') }">
+        <NuxtLink to="/company/position" class="item-field">
+          <font-awesome-icon
+            class="icon"
+            :icon="['fas', 'user-tie']"
+            size="xl"
+          />
+          <span>Crear oferta</span>
+        </NuxtLink>
+      </li>
       <li :class="{ 'active-item': isActive('/company/position') }">
         <NuxtLink to="/company/position" class="item-field">
           <font-awesome-icon
@@ -58,6 +68,7 @@
 </template>
 <script lang="ts" setup>
 import { useUserStore } from '~/store/user.store';
+import logo from "~/public/images/deepvoice-logo.png";
 
 const userStore = useUserStore()
 const route = useRoute()
@@ -87,6 +98,8 @@ const isActive = (path: string): boolean => {
 
     img {
       width: 50%;
+      background: white;
+      border-radius: 50%;
     }
   }
 

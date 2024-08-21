@@ -121,7 +121,7 @@ const handleOnLogin = async (): Promise<void> => {
     formData: formData.toString(),
   });
 
-  userStore.setUserRole(EUser.ADMIN)
+  userStore.setUserRole(EUser.COMPANY)
   // const headers = {
   //   accept: "application/json",
   //   "Content-Type": "application/x-www-form-urlencoded",
