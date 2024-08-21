@@ -1,5 +1,5 @@
 <template>
-  <div class="create-process">
+  <div class="create-process box-shadow-2xl">
     <h2>Crear Proceso</h2>
     <div class="form-field">
       <CoreInput
@@ -324,7 +324,7 @@ const onCreateProcess = async (): Promise<void> => {
 <style lang="scss" scoped>
 .create-process {
   border-radius: 1rem;
-  border: 1px solid #6e718b;
+  background-color: var(--background-color-secondary);
   display: flex;
   flex-direction: column;
   gap: 3.5rem;

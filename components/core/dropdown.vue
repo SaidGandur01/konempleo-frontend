@@ -82,7 +82,7 @@ const onEmitValue = (item?: IListOptions): void => {
 .dropwdown {
   width: 100%;
   label {
-    color: var(--color-text-900);
+    color: var(--color-text-200);
     font-weight: 600;
     display: block;
     margin-bottom: 0.75rem;
@@ -99,10 +99,10 @@ const onEmitValue = (item?: IListOptions): void => {
 
   .body {
     position: relative;
-    background: var(--background-input-field);
+    background: var(--color-brand-neutral-700);
     border: 1px var(--color-neutral-border) solid;
     border-radius: 0.5rem;
-    color: var(--color-text-900);
+    color: var(--color-text-200);
     font-size: inherit;
     width: 100%;
     padding: 1.25rem;
@@ -116,7 +116,7 @@ const onEmitValue = (item?: IListOptions): void => {
     left: 0;
     display: flex;
     flex-direction: column;
-    background: var(--background-input-field);
+    background: var(--color-brand-neutral-700);
     border: 1px solid var(--color-brand-light-gray);
     max-height: 250px;
     overflow: auto;
@@ -137,7 +137,7 @@ const onEmitValue = (item?: IListOptions): void => {
     }
 
     & span:hover {
-      background-color: lighten($color: #363744, $amount: 10%);
+      background-color: var(--color-brand-neutral-600);
     }
   }
 }

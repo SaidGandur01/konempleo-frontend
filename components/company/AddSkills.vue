@@ -1,7 +1,7 @@
 <template>
   <div class="company-content">
     <div class="add-skills-container">
-      <div class="add-skills">
+      <div class="add-skills box-shadow-2xl">
         <h2>Añadir habilidades</h2>
         <div class="form-field">
           <CoreDropdown
@@ -125,20 +125,21 @@ const onCreatePosition = async (): Promise<void> => {
     flex-direction: column;
     gap: 2rem;
     background-color: var(--background-color-primary);
-  }
 
-  .add-skills {
-    width: 100%;
-    border-radius: 1rem;
-    border: 1px solid #6e718b;
-    display: flex;
-    flex-direction: column;
-    gap: 3rem;
-    padding: 2rem;
-  
-    h2 {
-      font-size: 1.7rem;
+    .add-skills {
+      width: 100%;
+      border-radius: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 3rem;
+      padding: 2rem;
+      background-color: var(--background-color-secondary);
+    
+      h2 {
+        font-size: 1.7rem;
+      }
     }
   }
+
 }
 </style>

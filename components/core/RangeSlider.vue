@@ -88,7 +88,7 @@ function formatter(val: number) {
   padding: 0 2rem;
 
   span {
-    color: var(--color-text-900);
+    color: var(--color-text-200);
     font-weight: 500;
     display: block;
     margin-bottom: 1rem;

@@ -100,6 +100,7 @@ const onHandleTabSelection = (tab: TSelectedTab): void => {
           background-color: #ec6b62;
           font-weight: 700;
           transition: all 0.2s ease;
+          color: white;
         }
 
         .tab {
@@ -107,6 +108,13 @@ const onHandleTabSelection = (tab: TSelectedTab): void => {
           padding: 1rem;
           text-align: center;
           width: 50%;
+          transition: all 0.3s ease;
+
+          &:hover {
+            border-radius: 6px;
+            background-color: #ec6b62;
+            color: white;
+          }
         }
       }
     }

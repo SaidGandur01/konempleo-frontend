@@ -107,7 +107,6 @@ const onCreatePosition = async (): Promise<void> => {
 <style lang="scss" scoped>
   .create-position {
     border-radius: 1rem;
-    // border: 1px solid #6e718b;
     background-color: var(--background-color-secondary);
     display: flex;
     flex-direction: column;
