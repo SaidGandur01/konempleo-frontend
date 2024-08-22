@@ -8,16 +8,16 @@
         <img :src="logo" alt="logo" />
       </div>
       <div class="content box-shadow-2xl">
-        <h2>Crear Proceso</h2>
+        <h2>Cargar hojas de vida</h2>
         <div class="form-field">
           <CoreDropdown
-            :list-options="processListData"
-            label="Nombre del proceso"
+            :list-options="offerListData"
+            label="Nombre de la oferta"
             placeholder="Seleccione una opción"
-            @select="(data) => handleOnInput('process_name', data)"
+            @select="(data) => handleOnInput('offer_name', data)"
           />
-          <span v-if="form.process_name.length < 1" class="error-message">{{
-            processNameError
+          <span v-if="form.offer_name.length < 1" class="error-message">{{
+            offerNameError
           }}</span>
         </div>
         <CoreUploadFile @emitfile="onHandleFiles" />
@@ -34,20 +34,20 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { processListData } from "~/data/process/process";
+import { offerListData } from "~/data/offer/offer";
 import logo from "~/public/images/logo.png";
 
 definePageMeta({
   middleware: ["protected", "company-guard"],
 });
 
-interface ICreateProcessForm {
-  process_name: string;
+interface ICreateOfferForm {
+  offer_name: string;
 }
-const form = ref<ICreateProcessForm>({
-  process_name: "",
+const form = ref<ICreateOfferForm>({
+  offer_name: "",
 });
-const processNameError = ref<string>("");
+const offerNameError = ref<string>("");
 const disabledButton = ref<boolean>(true);
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const files = ref<any>([]);
@@ -62,25 +62,24 @@ const handleOnInput = (keyField: string, value: string): void => {
 };
 const validateErrorsForm = (keyField: string, value: string): void => {
   switch (keyField) {
-    case "process_name":
-      processNameError.value = !value.length ? "Selecciona un opción" : "";
+    case "offer_name":
+      offerNameError.value = !value.length ? "Selecciona un opción" : "";
       break;
     default:
       break;
   }
 };
 const validateForm = (): void => {
-  const isProcessNameValid =
-    form.value.process_name && processNameError.value === "";
+  const isOfferNameValid = form.value.offer_name && offerNameError.value === "";
   const isFilesEmpty = files.value.length;
 
-  disabledButton.value = !(isProcessNameValid && isFilesEmpty);
+  disabledButton.value = !(isOfferNameValid && isFilesEmpty);
 };
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const onHandleFiles = (inputFiles: any): void => {
   console.log("fileS: ", inputFiles);
   files.value = inputFiles;
-  validateForm()
+  validateForm();
 };
 function sendFiles() {
   // if (pond.value) {

@@ -1,19 +1,19 @@
 <template>
-  <div class="create-process box-shadow-2xl">
-    <h2>Crear Proceso</h2>
+  <div class="create-offer box-shadow-2xl">
+    <h2>Crear Oferta</h2>
     <div class="form-field">
       <CoreInput
-        id="process-id"
+        id="offer-id"
         name="text"
         min-length="2"
-        label="Nombre del proceso"
-        placeholder="Nombre del proceso"
+        label="Nombre de la oferta"
+        placeholder="Nombre de la oferta"
         required
         type="text"
-        @input="(data) => handleOnInput('process_name', data)"
+        @input="(data) => handleOnInput('offer_name', data)"
       />
-      <span v-if="form.process_name.length < 3" class="error-message">{{
-        processNameError
+      <span v-if="form.offer_name.length < 3" class="error-message">{{
+        offerNameError
       }}</span>
     </div>
     <div class="form-group">
@@ -160,7 +160,7 @@
         size="sm"
         label="Guardar"
         :disabled="disableButton"
-        @click="onCreateProcess"
+        @click="onCreateOffer"
       />
     </div>
   </div>
@@ -174,8 +174,8 @@ import { shiftListData } from "~/data/shift/shifts";
 import { skillListData } from "~/data/skills/skills";
 import { workConditionsListData } from "~/data/work-conditions/work-conditions";
 
-interface ICreateProcessForm {
-  process_name: string;
+interface ICreateOfferForm {
+  offer_name: string;
   location: string;
   position: string;
   education: string;
@@ -188,8 +188,8 @@ interface ICreateProcessForm {
   work_condition: string;
   work_duration_average: number;
 }
-const form = ref<ICreateProcessForm>({
-  process_name: "",
+const form = ref<ICreateOfferForm>({
+  offer_name: "",
   location: "",
   position: "",
   education: "",
@@ -202,7 +202,7 @@ const form = ref<ICreateProcessForm>({
   work_condition: "",
   work_duration_average: 0,
 });
-const processNameError = ref<string>("");
+const offerNameError = ref<string>("");
 const locationError = ref<string>("");
 const positionError = ref<string>("");
 const educationError = ref<string>("");
@@ -232,9 +232,8 @@ const handleOnInput = (keyField: string, value: string): void => {
 };
 const validateErrorsForm = (keyField: string, value: string): void => {
   switch (keyField) {
-    case "process_name":
-      processNameError.value =
-        value.length < 3 ? "Inserta un nombre válido" : "";
+    case "offer_name":
+      offerNameError.value = value.length < 3 ? "Inserta un nombre válido" : "";
       break;
     case "location":
       locationError.value = !value.length ? "Selecciona una ciudad" : "";
@@ -280,8 +279,8 @@ const validateErrorsForm = (keyField: string, value: string): void => {
   }
 };
 const validateForm = (): void => {
-  const isProcessNameValid =
-    form.value.process_name.length >= 3 && processNameError.value === "";
+  const isOfferNameValid =
+    form.value.offer_name.length >= 3 && offerNameError.value === "";
   const isLocationValid = form.value.location && locationError.value === "";
   const isPositionValid = form.value.position && positionError.value === "";
   const isEducationValid = form.value.education && educationError.value === "";
@@ -304,7 +303,7 @@ const validateForm = (): void => {
   const isSkillValid = form.value.skill && skillError.value === "";
 
   disableButton.value = !(
-    isProcessNameValid &&
+    isOfferNameValid &&
     isLocationValid &&
     isPositionValid &&
     isEducationValid &&
@@ -317,12 +316,12 @@ const validateForm = (): void => {
     isSkillValid
   );
 };
-const onCreateProcess = async (): Promise<void> => {
+const onCreateOffer = async (): Promise<void> => {
   console.log(form.value);
 };
 </script>
 <style lang="scss" scoped>
-.create-process {
+.create-offer {
   border-radius: 1rem;
   background-color: var(--background-color-secondary);
   display: flex;

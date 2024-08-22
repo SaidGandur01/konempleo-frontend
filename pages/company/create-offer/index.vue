@@ -5,7 +5,7 @@
     </div>
     <div class="create-offer-container">
       <div class="content">
-        <div class="tabs-container">
+        <div v-if="false" class="tabs-container">
           <div
             class="tab create-position"
             :class="{ selected: currentTabSelected === 'position' }"
@@ -14,11 +14,11 @@
             <span>Crear cargo</span>
           </div>
           <div
-            class="tab create-process"
-            :class="{ selected: currentTabSelected === 'process' }"
-            @click="onHandleTabSelection('process')"
+            class="tab create-offer"
+            :class="{ selected: currentTabSelected === 'offer' }"
+            @click="onHandleTabSelection('offer')"
           >
-            <span>Crear Proceso</span>
+            <span>Crear Oferta</span>
           </div>
           <div
             class="tab add-skill"
@@ -29,9 +29,9 @@
           </div>
         </div>
         <div class="information">
-          <CompanyPositionWrapper v-if="currentTabSelected === 'position'" />
-          <CompanyProcessWrapper v-if="currentTabSelected === 'process'" />
-          <CompanyAddSkills v-if="currentTabSelected === 'skill'" />
+          <CompanyOfferWrapper />
+          <CompanyPositionWrapper v-if="false" />
+          <CompanyAddSkills v-if="false" />
         </div>
       </div>
     </div>
@@ -42,7 +42,7 @@ definePageMeta({
   middleware: ["protected", "company-guard"],
 });
 
-type TSelectedTab = "position" | "process" | "skill";
+type TSelectedTab = "position" | "offer" | "skill";
 
 const currentTabSelected = ref<TSelectedTab>("position");
 const onHandleTabSelection = (tab: TSelectedTab): void => {

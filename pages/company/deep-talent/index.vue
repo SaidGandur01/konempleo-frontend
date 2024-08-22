@@ -11,48 +11,48 @@
         <h2>Resultados</h2>
         <div class="form-field">
           <CoreDropdown
-            :list-options="processListData"
-            label="Nombre del proceso"
+            :list-options="offerListData"
+            label="Nombre de la oferta"
             placeholder="Seleccione una opción"
-            @select="(data) => handleOnInput('process_name', data)"
+            @select="(data) => handleOnInput('offer_name', data)"
           />
-          <span v-if="form.process_name.length < 1" class="error-message">{{
-            processNameError
+          <span v-if="form.offer_name.length < 1" class="error-message">{{
+            offerNameError
           }}</span>
         </div>
-        <CoreResultsTable :process-name="currentSelection"/>
+        <CoreResultsTable :offer-name="currentSelection" />
       </div>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-import { processListData } from "~/data/process/process";
+import { offerListData } from "~/data/offer/offer";
 import logo from "~/public/images/logo.png";
 
 definePageMeta({
   middleware: ["protected", "company-guard"],
 });
 
-interface ICreateProcessForm {
-  process_name: string;
+interface ICreateOfferForm {
+  offer_name: string;
 }
-const form = ref<ICreateProcessForm>({
-  process_name: "",
+const form = ref<ICreateOfferForm>({
+  offer_name: "",
 });
-const processNameError = ref<string>("");
-const currentSelection = ref<string>('');
+const offerNameError = ref<string>("");
+const currentSelection = ref<string>("");
 const handleOnInput = (keyField: string, value: string): void => {
   form.value = {
     ...form.value,
     [keyField]: value,
   };
-  currentSelection.value = value
+  currentSelection.value = value;
   validateErrorsForm(keyField, value);
 };
 const validateErrorsForm = (keyField: string, value: string): void => {
   switch (keyField) {
-    case "process_name":
-      processNameError.value = !value.length ? "Selecciona un opción" : "";
+    case "offer_name":
+    offerNameError.value = !value.length ? "Selecciona un opción" : "";
       break;
     default:
       break;

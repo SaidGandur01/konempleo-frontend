@@ -10,14 +10,14 @@
 </template>
 <script lang="ts" setup>
 interface ITableProps {
-  processName: string;
+  offerName: string;
 }
 const props = withDefaults(defineProps<ITableProps>(), {
-  processName: ""
+  offerName: ""
 });
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const results = ref<any>([])
-watch(() => props.processName, (newValue: string) => {
+watch(() => props.offerName, (newValue: string) => {
   console.log('new value: ', newValue)
 })
 </script>

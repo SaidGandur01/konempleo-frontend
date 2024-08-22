@@ -1,8 +1,8 @@
 <template>
   <div class="company-content">
-    <div class="processes-container">
+    <div class="offers-container">
       <div class="form-container">
-        <CompanyCreateProcess />
+        <CompanyCreateOffer />
       </div>
     </div>
   </div>
@@ -16,7 +16,7 @@ definePageMeta({
 .company-content {
   display: flex;
 
-  .processes-container {
+  .offers-container {
     flex: 1;
     padding: 5rem 5rem 7rem;
     display: flex;
