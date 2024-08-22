@@ -25,11 +25,11 @@ watch(() => props.processName, (newValue: string) => {
 .results-table {
   .no-data {
     padding: 2rem;
-    background: #3E3C1E;
+    background: var(--color-brand-neutral-700);
     width: 100%;
     display: flex;
     border-radius: 1rem;
-    color: #FFFFC1;
+    color: var(--color-text-200);
     font-weight: 600;
   }
 }
