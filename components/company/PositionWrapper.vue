@@ -14,7 +14,6 @@ definePageMeta({
 </script>
 <style lang="scss" scoped>
 .company-content {
-  min-height: 100vh;
   display: flex;
 
   .positions-container {

@@ -51,7 +51,7 @@ const onHandleTabSelection = (tab: TSelectedTab): void => {
 </script>
 <style lang="scss" scoped>
 .create-offer-content {
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
 
   .slide-wrapper {
@@ -59,13 +59,15 @@ const onHandleTabSelection = (tab: TSelectedTab): void => {
   }
   .create-offer-container {
     flex: 1;
-    padding: 5rem 5rem 25rem;
+    padding: 5rem 5rem;
     display: flex;
     justify-content: flex-start;
     align-items: center;
     flex-direction: column;
     gap: 2rem;
     background-color: var(--background-color-primary);
+    height: 100vh;
+    overflow-y: scroll;
 
     .logo-wrapper {
       text-align: center;

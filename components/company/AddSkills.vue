@@ -113,7 +113,6 @@ const onCreatePosition = async (): Promise<void> => {
 </script>
 <style lang="scss" scoped>
 .company-content {
-  min-height: 100vh;
   display: flex;
 
   .add-skills-container {

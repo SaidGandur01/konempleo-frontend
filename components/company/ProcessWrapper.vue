@@ -14,12 +14,11 @@ definePageMeta({
 </script>
 <style lang="scss" scoped>
 .company-content {
-  height: calc(100vh - 50%);
   display: flex;
 
   .processes-container {
     flex: 1;
-    padding: 5rem 5rem 25rem;
+    padding: 5rem 5rem 7rem;
     display: flex;
     justify-content: flex-start;
     align-items: center;
