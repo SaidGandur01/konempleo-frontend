@@ -37,7 +37,7 @@
     </ul>
     <div class="bottom-actions">
       <CoreButton
-        size="sm"
+        size="md"
         label="Cerrar sesión"
         :disabled="false"
         :full-width="true"
