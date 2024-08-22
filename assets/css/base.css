@@ -158,8 +158,8 @@ a:visited {
 }
 .filepond--drop-label {
   font-size: 2rem !important;
-  color: var(--color-text-900) !important;
-  background-color: var(--background-color-secondary) !important;
+  color: var(--color-text-200) !important;
+  background-color: var(--color-brand-neutral-700) !important;
   justify-content: flex-start !important;
   padding: 3rem !important;
   border-radius: 1rem;
@@ -194,16 +194,18 @@ a:visited {
   background: transparent !important;
   padding: 1.2rem 1rem 1rem !important;
   border-radius: 1rem !important;
-  border: 1px solid #6e718b !important;
+  border: 1px solid var(--color-brand-neutral-500) !important;
   transition: all 0.3s ease !important;
 }
 .filepond--label-action:hover {
-  background-color: #575a6f !important;
+  background-color: var(--color-brand-neutral-600) !important;
 }
 .filepond--file {
+  color: var(--color-text-200) !important;
   font-size: 2rem !important;
 }
 .filepond--file-info {
+  color: var(--color-text-200) !important;
   padding-left: 3rem !important;
 }
 .box-shadow-xl {

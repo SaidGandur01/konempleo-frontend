@@ -7,7 +7,7 @@
       <div class="logo-wrapper">
         <img :src="logo" alt="logo" />
       </div>
-      <div class="content">
+      <div class="content box-shadow-2xl">
         <h2>Crear Proceso</h2>
         <div class="form-field">
           <CoreDropdown
@@ -119,6 +119,9 @@ function sendFiles() {
       flex-direction: column;
       gap: 3rem;
       width: 100%;
+      padding: 2rem;
+      border-radius: 1rem;
+      background-color: var(--background-color-secondary);
 
       h2 {
         font-size: 1.7rem;

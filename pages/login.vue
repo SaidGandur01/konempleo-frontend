@@ -3,7 +3,7 @@
     <div class="logo">
       <img :src="logo" alt="logo" >
     </div>
-    <div class="form-section">
+    <div class="form-section box-shadow-2xl">
       <h2>Inicio de sesión</h2>
       <div class="form-field">
         <CoreInput
@@ -149,7 +149,7 @@ const handleOnLogin = async (): Promise<void> => {
   align-items: center;
   padding: 3rem 0 0 0;
   min-height: 100vh;
-  color: var(--color-text-900);
+  color: var(--color-text-200);
 
   .logo {
     text-align: center;
@@ -166,8 +166,8 @@ const handleOnLogin = async (): Promise<void> => {
     gap: 4rem;
     width: 50%;
     padding: 4rem;
-    border: 1px solid #6e718b;
     border-radius: 1rem;
+    background-color: var(--background-color-secondary);
 
     .form-field {
       .error-message {
