@@ -99,9 +99,9 @@ const onEmitValue = (item?: IListOptions): void => {
 
   .body {
     position: relative;
-    background: var(--color-brand-neutral-700);
-    border: 1px var(--color-neutral-border) solid;
-    border-radius: 0.5rem;
+    background: var(--background-input-field);
+    border: 1px #D1D5DC solid;
+    border-radius: 1rem;
     color: var(--color-text-200);
     font-size: inherit;
     width: 100%;
@@ -116,8 +116,8 @@ const onEmitValue = (item?: IListOptions): void => {
     left: 0;
     display: flex;
     flex-direction: column;
-    background: var(--color-brand-neutral-700);
-    border: 1px solid var(--color-brand-light-gray);
+    background: var(--background-input-field);
+    border: 1px #D1D5DC solid;
     max-height: 250px;
     overflow: auto;
     scroll-behavior: smooth;
@@ -137,7 +137,7 @@ const onEmitValue = (item?: IListOptions): void => {
     }
 
     & span:hover {
-      background-color: var(--color-brand-neutral-600);
+      background-color: var(--color-brand-neutral-700);
     }
   }
 }

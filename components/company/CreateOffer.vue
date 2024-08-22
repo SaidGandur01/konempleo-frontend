@@ -159,7 +159,7 @@
       <CoreButton
         size="sm"
         label="Guardar"
-        :disabled="disableButton"
+        :disabled="false"
         @click="onCreateOffer"
       />
     </div>

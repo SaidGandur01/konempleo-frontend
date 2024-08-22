@@ -85,20 +85,20 @@ $submit-color: #004d80;
   }
   .core-button {
     width: 100%;
-    border-radius: 0.5rem;
+    border-radius: 1rem;
     font-size: 1.6rem;
     font-weight: 400;
     min-width: 150px;
     padding: 1.5rem 2rem;
     text-transform: capitalize;
-    background-color: transparent;
+    background-color: #1C4ED8;
     border: 1px solid var(--color-brand-neutral-600);
-    color: var(--color-text-200);
+    color: var(--color-text-900);
     cursor: pointer;
     transition: all 0.3s ease;
 
     &:hover {
-      background-color: var(--color-brand-neutral-700);
+      background-color: darken($color: #1C4ED8, $amount: 15%);
     }
 
     &[disabled] {

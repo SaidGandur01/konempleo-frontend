@@ -154,9 +154,9 @@ watch(
   }
 
   input {
-    background: var(--color-brand-neutral-700);
-    border: 1px var(--color-neutral-border) solid;
-    border-radius: 0.5rem;
+    background: var(--background-input-field);
+    border: 1px #D1D5DC solid;
+    border-radius: 1rem;
     color: var(--color-text-200);
     font-size: 1.6rem;
     width: 100%;
@@ -166,7 +166,7 @@ watch(
     }
 
     &::placeholder {
-      color: var(--color-brand-neutral-500);
+      color: #6B7280;
       opacity: 1;
     }
 
