@@ -113,7 +113,7 @@ const isActive = (path: string): boolean => {
       }
 
       &.active-item {
-        background-color: #ec6b62;
+        background-color: var(--color-brand);
         border-radius: 1rem;
       }
     }

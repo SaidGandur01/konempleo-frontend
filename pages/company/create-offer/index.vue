@@ -58,16 +58,16 @@ const onHandleTabSelection = (tab: TSelectedTab): void => {
     width: 20%;
   }
   .create-offer-container {
-    flex: 1;
-    padding: 5rem 5rem;
-    display: flex;
-    justify-content: flex-start;
     align-items: center;
-    flex-direction: column;
-    gap: 2rem;
     background-color: var(--background-color-primary);
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 2rem;
     height: 100vh;
+    justify-content: flex-start;
     overflow-y: scroll;
+    padding: 2rem 5rem;
 
     .logo-wrapper {
       text-align: center;

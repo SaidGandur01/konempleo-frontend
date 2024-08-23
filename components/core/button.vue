@@ -84,26 +84,27 @@ $submit-color: #004d80;
     width: 100% !important;
   }
   .core-button {
-    width: 100%;
+    background-color: #30C2DB;
     border-radius: 1rem;
+    border: 1px solid darken($color: #30C2DB, $amount: 5%);
+    color: var(--color-text-900);
+    cursor: pointer;
     font-size: 1.6rem;
     font-weight: 400;
     min-width: 150px;
     padding: 1.5rem 2rem;
     text-transform: capitalize;
-    background-color: #1C4ED8;
-    border: 1px solid var(--color-brand-neutral-600);
-    color: var(--color-text-900);
-    cursor: pointer;
     transition: all 0.3s ease;
+    width: 100%;
 
     &:hover {
-      background-color: darken($color: #1C4ED8, $amount: 15%);
+      background-color: darken($color: #30C2DB, $amount: 10%);
     }
 
     &[disabled] {
-      cursor: not-allowed;
       background-color: var(--color-brand-neutral-700);
+      border: none;
+      cursor: not-allowed;
     }
 
     &--sm {

@@ -4,9 +4,9 @@
       <CompanySlidePanel />
     </div>
     <div class="deep-talent-container">
-      <div class="logo-wrapper">
+      <!-- <div class="logo-wrapper">
         <img :src="logo" alt="logo" />
-      </div>
+      </div> -->
       <div class="content box-shadow-2xl">
         <h2>Resultados</h2>
         <div class="form-field">
@@ -68,14 +68,16 @@ const validateErrorsForm = (keyField: string, value: string): void => {
     width: 20%;
   }
   .deep-talent-container {
-    flex: 1;
-    padding: 5rem 5rem 25rem;
-    display: flex;
-    justify-content: flex-start;
     align-items: center;
-    flex-direction: column;
-    gap: 2rem;
     background-color: var(--background-color-primary);
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 2rem;
+    height: 100vh;
+    justify-content: flex-start;
+    overflow-y: scroll;
+    padding: 5rem 5rem 25rem;
 
     .logo-wrapper {
       text-align: center;

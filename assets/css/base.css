@@ -3,6 +3,7 @@
   --background-color-secondary: #ffffff;
   --background-input-field: #F9FAFB;
 
+  --color-brand: #30C2DB;
   --color-gray-600: #2d2525;
 
   --color-text-100: #000000;
@@ -144,30 +145,37 @@ a:visited {
   width: 100%;
 }
 .error-message {
-  position: absolute;
-  display: block;
   color: var(--color-brand-danger-700);
-  margin: 1rem 0 0;
+  display: block;
   font-size: 1.2rem;
   font-weight: 500;
   letter-spacing: 1px;
+  margin: 1rem 0 0;
+  position: absolute;
 }
 .filepond--wrapper {
-  overflow: hidden !important;
   border-radius: 1rem !important;
+  height: 100% !important;
+  overflow: auto !important;
 }
 .filepond--drop-label {
-  font-size: 2rem !important;
-  color: var(--color-text-200) !important;
-  background-color: var(--color-brand-neutral-700) !important;
-  justify-content: flex-start !important;
-  padding: 3rem !important;
+  background-color: var(--background-input-field) !important;
   border-radius: 1rem;
+  border: 5px #D1D5DC dashed !important;
+  color: var(--color-text-200) !important;
+  cursor: pointer !important;
+  font-size: 2rem !important;
+  justify-content: flex-start !important;
+  min-height: 300px !important;
+  padding: 3rem !important;
+}
+.filepond--drop-label label:first-child {
+  height: 100% !important;
 }
 .filepond--drop-label label {
+  align-items: baseline !important;
   display: flex !important;
   flex-direction: column !important;
-  align-items: baseline !important;
   width: 100% !important;
 }
 .filepond--panel-bottom {
@@ -178,27 +186,35 @@ a:visited {
   background-color: var(--background-color-secondary) !important;
 }
 .filepond--label-columns {
-  display: flex !important; 
-  justify-content: space-between !important; 
   align-items: center !important; 
+  display: flex !important;
+  flex-direction: column;
+  gap: 2rem;
+  height: 100% !important;
+  justify-content: center !important; 
+  text-align: center;
   width: 100% !important;
-  padding-left: 6rem !important;
+}
+.filepond--label-columns .upload-icon {
+  color: #adb1b9 !important;
+  width: 5% !important;
 }
 .filepond--label-columns .label-column-one {
   display: flex;
   flex-direction: column;
-  align-items: baseline;
+  gap: 1.5rem;
 }
 .filepond--label-action {
-  text-decoration: none !important;
-  background: transparent !important;
-  padding: 1.2rem 1rem 1rem !important;
+  background-color: #30C2DB;
   border-radius: 1rem !important;
-  border: 1px solid var(--color-brand-neutral-500) !important;
+  border: 1px solid #24b5ce !important;
+  color: var(--color-text-900);
+  padding: 1.2rem 1rem 1rem !important;
+  text-decoration: none !important;
   transition: all 0.3s ease !important;
 }
 .filepond--label-action:hover {
-  background-color: var(--color-brand-neutral-600) !important;
+  background-color: #20a2b8;
 }
 .filepond--file {
   color: var(--color-text-200) !important;

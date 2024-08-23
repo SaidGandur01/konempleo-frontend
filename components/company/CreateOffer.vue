@@ -1,5 +1,5 @@
 <template>
-  <div class="create-offer box-shadow-2xl">
+  <div class="create-offer">
     <h2>Crear Oferta</h2>
     <div class="form-field">
       <CoreInput
@@ -322,6 +322,7 @@ const onCreateOffer = async (): Promise<void> => {
 </script>
 <style lang="scss" scoped>
 .create-offer {
+  border: 1px solid #D1D5DC;
   border-radius: 1rem;
   background-color: var(--background-color-secondary);
   display: flex;

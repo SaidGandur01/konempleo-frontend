@@ -4,10 +4,10 @@
       <CompanySlidePanel />
     </div>
     <div class="load-cvs-container">
-      <div class="logo-wrapper">
+      <!-- <div class="logo-wrapper">
         <img :src="logo" alt="logo" />
-      </div>
-      <div class="content box-shadow-2xl">
+      </div> -->
+      <div class="content">
         <h2>Cargar hojas de vida</h2>
         <div class="form-field">
           <CoreDropdown
@@ -96,14 +96,16 @@ function sendFiles() {
     width: 20%;
   }
   .load-cvs-container {
-    flex: 1;
-    padding: 5rem 5rem 25rem;
-    display: flex;
-    justify-content: flex-start;
     align-items: center;
-    flex-direction: column;
-    gap: 2rem;
     background-color: var(--background-color-primary);
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 2rem;
+    height: 100vh;
+    justify-content: flex-start;
+    overflow-y: scroll;
+    padding: 5rem 5rem 25rem;
 
     .logo-wrapper {
       text-align: center;
@@ -114,13 +116,14 @@ function sendFiles() {
     }
 
     .content {
+      background-color: var(--background-color-secondary);
+      border-radius: 1rem;
+      border: 1px solid #D1D5DC;
       display: flex;
       flex-direction: column;
       gap: 3rem;
-      width: 100%;
       padding: 2rem;
-      border-radius: 1rem;
-      background-color: var(--background-color-secondary);
+      width: 100%;
 
       h2 {
         font-size: 1.7rem;
