@@ -34,6 +34,16 @@
           <span>Detalle de oferta</span>
         </NuxtLink>
       </li>
+      <li :class="{ 'active-item': isActive('/company/offer-list') }">
+        <NuxtLink to="/company/offer-list" class="item-field">
+          <font-awesome-icon
+            class="icon"
+            :icon="['fas', 'hippo']"
+            size="xl"
+          />
+          <span>Lista de ofertas</span>
+        </NuxtLink>
+      </li>
     </ul>
     <div class="bottom-actions">
       <CoreButton

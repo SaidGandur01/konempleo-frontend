@@ -4,9 +4,6 @@
       <CompanySlidePanel />
     </div>
     <div class="offer-details-container">
-      <!-- <div class="logo-wrapper">
-        <img :src="logo" alt="logo" />
-      </div> -->
       <div class="content">
         <h2>Detalles de oferta</h2>
         <div class="form-field">
@@ -27,7 +24,6 @@
 </template>
 <script lang="ts" setup>
 import { offerListData } from "~/data/offer/offer";
-// import logo from "~/public/images/logo.png";
 
 definePageMeta({
   middleware: ["protected", "company-guard"],
@@ -78,14 +74,6 @@ const validateErrorsForm = (keyField: string, value: string): void => {
     justify-content: flex-start;
     overflow-y: scroll;
     padding: 7rem;
-
-    .logo-wrapper {
-      text-align: center;
-
-      img {
-        width: 50%;
-      }
-    }
 
     .content {
       display: flex;
