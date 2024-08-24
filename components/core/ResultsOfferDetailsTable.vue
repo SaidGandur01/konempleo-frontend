@@ -1,6 +1,9 @@
 <template>
   <div class="results-table">
-    <div v-if="offerName && paginatedResults && paginatedResults.length" class="table-wrapper">
+    <div
+      v-if="offerName && paginatedResults && paginatedResults.length"
+      class="table-wrapper"
+    >
       <div class="kpi-section">
         <CoreKpiWrapper
           title-one="Budget"
@@ -12,17 +15,20 @@
           :has-increased="true"
           description-one="30%"
           description-two="Since last month"
-          type="success"/>
+          type="success"
+        />
         <CoreKpiWrapper
           title-two="35"
           title-two-children="(35%)"
           :title-two-font-size="true"
-          description-one="Candidatos Aptos"/>
+          description-one="Candidatos Aptos"
+        />
         <CoreKpiWrapper
           title-two="10"
           title-two-children="(28%)"
           :title-two-font-size="true"
-          description-one="Candidatos Contactados"/>
+          description-one="Candidatos Contactados"
+        />
         <CoreKpiWrapper
           title-one="Total hours"
           title-two="1400"
@@ -33,14 +39,16 @@
           :has-decreased="true"
           description-one="-10%"
           description-two="Since last month"
-          type="danger"/>
+          type="danger"
+        />
         <CoreKpiWrapper
           title-two="5%"
           title-two-children=""
           :title-two-font-size="true"
-          description-one="Efectividad Total"/>
+          description-one="Efectividad Total"
+        />
       </div>
-      
+
       <table>
         <thead>
           <tr>
@@ -89,11 +97,17 @@
             <td>{{ result.mail }}</td>
             <td>{{ result.score }}</td>
             <td>{{ result.contratado }}</td>
-            <td>
-              <button class="action-button view-button">View</button>
-              <button class="action-button delete-button">
-                <font-awesome-icon :icon="['fas', 'trash']" />
-              </button>
+            <td class="actions">
+              <font-awesome-icon
+                class="icon"
+                :icon="['fas', 'pen-to-square']"
+                :style="{ color: '#5C60F5' }"
+              />
+              <font-awesome-icon
+                class="icon"
+                :icon="['fas', 'trash']"
+                :style="{ color: '#FE3366' }"
+              />
             </td>
           </tr>
         </tbody>
@@ -275,6 +289,16 @@ watch(
           margin-top: 2px;
         }
       }
+      .actions {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 2rem;
+
+        .icon {
+          cursor: pointer;
+        }
+      }
     }
   }
   .pagination {
@@ -318,27 +342,6 @@ watch(
     font-weight: 600;
     font-size: 0.875rem;
     margin: 0 0.25rem;
-  }
-
-  .view-button {
-    background-color: #ffffff;
-    color: #333333;
-    border: 1px solid #d1d5dc;
-  }
-
-  .delete-button {
-    background-color: #f9f9f9;
-    color: #e3342f;
-    border: 1px solid #e3342f;
-  }
-
-  .view-button:hover {
-    background-color: #f0f0f0;
-  }
-
-  .delete-button:hover {
-    background-color: #e3342f;
-    color: #ffffff;
   }
 }
 </style>

@@ -75,11 +75,17 @@
             <td>{{ result.ecg }}</td>
             <td>{{ result.accuracy }}</td>
             <td>{{ result.score }}</td>
-            <td>
-              <button class="action-button view-button">View</button>
-              <button class="action-button delete-button">
-                <font-awesome-icon :icon="['fas', 'trash']" />
-              </button>
+            <td class="actions">
+              <font-awesome-icon
+                class="icon"
+                :icon="['fas', 'pen-to-square']"
+                :style="{ color: '#5C60F5' }"
+              />
+              <font-awesome-icon
+                class="icon"
+                :icon="['fas', 'trash']"
+                :style="{ color: '#FE3366' }"
+              />
             </td>
           </tr>
         </tbody>
@@ -233,6 +239,16 @@ const previousPage = () => {
           margin-top: 2px;
         }
       }
+      .actions {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 2rem;
+
+        .icon {
+          cursor: pointer;
+        }
+      }
     }
   }
   .pagination {
@@ -276,27 +292,6 @@ const previousPage = () => {
     font-weight: 600;
     font-size: 0.875rem;
     margin: 0 0.25rem;
-  }
-
-  .view-button {
-    background-color: #ffffff;
-    color: #333333;
-    border: 1px solid #d1d5dc;
-  }
-
-  .delete-button {
-    background-color: #f9f9f9;
-    color: #e3342f;
-    border: 1px solid #e3342f;
-  }
-
-  .view-button:hover {
-    background-color: #f0f0f0;
-  }
-
-  .delete-button:hover {
-    background-color: #e3342f;
-    color: #ffffff;
   }
 }
 </style>
