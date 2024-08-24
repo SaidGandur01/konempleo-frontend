@@ -22,8 +22,12 @@
         <font-awesome-icon v-if="hasIncreased" :icon="['fas', 'arrow-up']" size="sm" />
         <font-awesome-icon v-if="hasDecreased" :icon="['fas', 'arrow-down']" size="sm" />
         {{ descriptionOne }}
+        <span v-if="descriptionOneChildren" class="description-one-children">{{ descriptionOneChildren }}</span>
       </span>
-      <span v-if="descriptionTwo" class="description-two">{{ descriptionTwo }}</span>
+      <span v-if="descriptionTwo" class="description-two">
+        {{ descriptionTwo }}
+        <span v-if="descriptionTwoChildren" class="description-two-children">{{ descriptionTwoChildren }}</span>
+      </span>
     </div>
   </div>
 </template>
@@ -35,6 +39,8 @@ interface IProps {
   titleTwoChildren: string;
   descriptionOne: string;
   descriptionTwo: string;
+  descriptionOneChildren: string;
+  descriptionTwoChildren: string;
   hasIcon: boolean;
   iconColor: string;
   iconTagOne: string;
@@ -51,6 +57,8 @@ const props = withDefaults(defineProps<IProps>(), {
   titleTwoChildren: "",
   descriptionOne: "",
   descriptionTwo: "",
+  descriptionOneChildren: "",
+  descriptionTwoChildren: "",
   hasIcon: false,
   iconColor: "",
   iconTagOne: "",
@@ -132,6 +140,16 @@ const contentClasses = computed(() => ({
     span {
       font-family: "Source Sans Pro", sans-serif !important;
       letter-spacing: 0.5px;
+    }
+
+    .description-one {
+      .description-one-children {
+        font-style: italic;
+        font-size: 1.3rem;
+        font-weight: 400;
+        margin-top: 5px;
+        color: #1A1A1A;
+      }
     }
 
     &--success {
