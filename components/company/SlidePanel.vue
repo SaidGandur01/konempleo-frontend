@@ -24,14 +24,14 @@
           <span>Carga CV's</span>
         </NuxtLink>
       </li>
-      <li :class="{ 'active-item': isActive('/company/deep-talent') }">
-        <NuxtLink to="/company/deep-talent" class="item-field">
+      <li :class="{ 'active-item': isActive('/company/offer-details') }">
+        <NuxtLink to="/company/offer-details" class="item-field">
           <font-awesome-icon
             class="icon"
             :icon="['fas', 'chart-column']"
             size="xl"
           />
-          <span>DeepTalent</span>
+          <span>Detalle de oferta</span>
         </NuxtLink>
       </li>
     </ul>

@@ -8,7 +8,7 @@
         <img :src="logo" alt="logo" />
       </div> -->
       <div class="content box-shadow-2xl">
-        <h2>Resultados</h2>
+        <h2>Detalles de oferta</h2>
         <div class="form-field">
           <CoreDropdown
             :list-options="offerListData"
@@ -20,14 +20,14 @@
             offerNameError
           }}</span>
         </div>
-        <CoreResultsTable :offer-name="currentSelection" />
+        <CoreResultsOfferDetailsTable :offer-name="currentSelection" />
       </div>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
 import { offerListData } from "~/data/offer/offer";
-import logo from "~/public/images/logo.png";
+// import logo from "~/public/images/logo.png";
 
 definePageMeta({
   middleware: ["protected", "company-guard"],

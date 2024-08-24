@@ -16,7 +16,7 @@
         :placeholder="placeholder"
         class="input-field"
         @input="onInput(index, ($event.target as HTMLInputElement).value)"
-      />
+      >
       <CoreButton
         label=""
         size="custom"

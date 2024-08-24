@@ -230,3 +230,42 @@ a:visited {
 .box-shadow-2xl {
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 }
+
+.status-success {
+  background-color: #00CC88;
+  width: 15px;
+  height: 15px;
+  display: inline-block;
+  border-radius: 50%;
+}
+.status-pending {
+  background-color: #FF8C00;
+  width: 15px;
+  height: 15px;
+  display: inline-block;
+  border-radius: 50%;
+}
+
+.status-danger {
+  background-color: #FE3366;
+  width: 15px;
+  height: 15px;
+  display: inline-block;
+  border-radius: 50%;
+}
+
+.status-info {
+  background-color: var(--color-brand-info-600);
+  width: 15px;
+  height: 15px;
+  display: inline-block;
+  border-radius: 50%;
+}
+
+.status-default {
+  background-color: var(--color-brand-neutral-600);
+  width: 15px;
+  height: 15px;
+  display: inline-block;
+  border-radius: 50%;
+}
