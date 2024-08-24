@@ -19,6 +19,10 @@
   --color-text-900: #ffffff;
   --previous-active-color: #FF4B4B*/
 
+  --color-success: #00CC88;
+  --color-pending: #FF8C00;
+  --color-danger: #FE3366;
+
   --color-brand-primary-100: #104a45;
   --color-brand-primary-200: #155d57;
   --color-brand-primary-300: #1d8279;
@@ -232,14 +236,14 @@ a:visited {
 }
 
 .status-success {
-  background-color: #00CC88;
+  background-color: var(--color-success);
   width: 15px;
   height: 15px;
   display: inline-block;
   border-radius: 50%;
 }
 .status-pending {
-  background-color: #FF8C00;
+  background-color: var(--color-pending);
   width: 15px;
   height: 15px;
   display: inline-block;
@@ -247,7 +251,7 @@ a:visited {
 }
 
 .status-danger {
-  background-color: #FE3366;
+  background-color: var(--color-danger);
   width: 15px;
   height: 15px;
   display: inline-block;

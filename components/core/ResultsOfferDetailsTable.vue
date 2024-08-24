@@ -1,6 +1,46 @@
 <template>
   <div class="results-table">
-    <div v-if="paginatedResults && paginatedResults.length" class="table-wrapper">
+    <div v-if="offerName && paginatedResults && paginatedResults.length" class="table-wrapper">
+      <div class="kpi-section">
+        <CoreKpiWrapper
+          title-one="Budget"
+          title-two="$750.90"
+          :has-icon="true"
+          icon-tag-one="fas"
+          icon-tag-two="money-bills"
+          icon-color="#ff579a"
+          :has-increased="true"
+          description-one="30%"
+          description-two="Since last month"
+          type="success"/>
+        <CoreKpiWrapper
+          title-two="35"
+          title-two-children="(35%)"
+          :title-two-font-size="true"
+          description-one="Candidatos Aptos"/>
+        <CoreKpiWrapper
+          title-two="10"
+          title-two-children="(28%)"
+          :title-two-font-size="true"
+          description-one="Candidatos Contactados"/>
+        <CoreKpiWrapper
+          title-one="Total hours"
+          title-two="1400"
+          :has-icon="true"
+          icon-tag-one="fas"
+          icon-tag-two="hippo"
+          icon-color="#5C60F5"
+          :has-decreased="true"
+          description-one="-10%"
+          description-two="Since last month"
+          type="danger"/>
+        <CoreKpiWrapper
+          title-two="5%"
+          title-two-children=""
+          :title-two-font-size="true"
+          description-one="Efectividad Total"/>
+      </div>
+      
       <table>
         <thead>
           <tr>
@@ -83,7 +123,7 @@ interface ITableProps {
 const props = withDefaults(defineProps<ITableProps>(), {
   offerName: "",
 });
-const results = ref<ITableRow[]>(generateCandidatesData(45));
+const results = ref<ITableRow[]>(generateCandidatesData(35));
 const getStatusText = (
   status: "success" | "pending" | "danger" | "info" | "default"
 ): string => {
@@ -138,6 +178,13 @@ watch(
 
 <style lang="scss" scoped>
 .results-table {
+  .kpi-section {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-bottom: 5rem;
+  }
   .table-wrapper {
     overflow-x: auto;
     width: 100%;
