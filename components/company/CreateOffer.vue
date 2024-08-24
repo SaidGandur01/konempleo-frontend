@@ -26,10 +26,10 @@
           placeholder="Funciones"
           required
           type="text"
-          @input="(data) => handleOnInput('offer_functions', data)"
+          @input="(data) => handleOnInput('duties', data)"
         />
-        <span v-if="form.offer_functions.length < 3" class="error-message">{{
-          offerFunctionsError
+        <span v-if="form.duties.length < 3" class="error-message">{{
+          dutiesError
         }}</span>
       </div>
     </div>
@@ -174,6 +174,23 @@
     </div>
     <div class="form-group">
       <div class="form-field">
+        <CoreInput
+          id="profesional-experience-id"
+          name="number"
+          min-length="2"
+          label="Experiencia laboral"
+          required
+          type="number"
+          :value="0"
+          @input="(data) => handleOnInput('profesional_experience_years', data)"
+        />
+        <span
+          v-if="form.profesional_experience_years < 1"
+          class="error-message"
+          >{{ profesionalExperienceError }}</span
+        >
+      </div>
+      <div class="form-field">
         <CoreDropdown
           :list-options="positionListData"
           label="Cargo"
@@ -197,49 +214,15 @@
           educationError
         }}</span>
       </div>
-    </div>
-    <div class="form-group">
-      <div class="form-field">
-        <CoreInput
-          id="profesional-experience-id"
-          name="number"
-          min-length="2"
-          label="Experiencia laboral (Años)"
-          required
-          type="number"
-          :value="0"
-          @input="(data) => handleOnInput('profesional_experience_years', data)"
-        />
-        <span
-          v-if="form.profesional_experience_years < 1"
-          class="error-message"
-          >{{ profesionalExperienceError }}</span
-        >
-      </div>
       <div class="form-field">
         <CoreDropdown
-          :list-options="workConditionsListData"
-          label="Condición laboral"
-          placeholder="Seleccione un opción"
-          @select="(data) => handleOnInput('work_condition', data)"
+          :list-options="positionTypeListData"
+          label="Tipo de Cargo"
+          placeholder="Seleccione un tipo cargo"
+          @select="(data) => handleOnInput('position_type', data)"
         />
-        <span v-if="!form.work_condition" class="error-message">{{
-          workConditionError
-        }}</span>
-      </div>
-      <div class="form-field">
-        <CoreInput
-          id="work-duration-average-id"
-          name="number"
-          min-length="2"
-          label="Duración promedio en los trabajos (Meses)"
-          required
-          type="number"
-          :value="0"
-          @input="(data) => handleOnInput('work_duration_average', data)"
-        />
-        <span v-if="form.work_duration_average < 1" class="error-message">{{
-          workDurationAverageError
+        <span v-if="!form.position_type" class="error-message">{{
+          positionTypeError
         }}</span>
       </div>
     </div>
@@ -277,15 +260,15 @@ import { expertiseAreaListData } from "~/data/expertise-area/expertise-area";
 import { genderListData } from "~/data/gender/gender";
 import { locationListData } from "~/data/locations/locations";
 import { militaryServiceBookListData } from "~/data/military-service-book/military-service-book";
+import { positionTypeListData } from "~/data/position-type/position-type";
 import { positionListData } from "~/data/positions/positions";
 import { shiftListData } from "~/data/shift/shifts";
 import { skillListData } from "~/data/skills/skills";
-import { workConditionsListData } from "~/data/work-conditions/work-conditions";
 import { workTypeListData } from "~/data/work-type/work-type";
 
 interface ICreateOfferForm {
   offer_name: string;
-  offer_functions: string;
+  duties: string;
   expertise_area: string;
   max_positions: number;
   contract_type: string;
@@ -299,15 +282,14 @@ interface ICreateOfferForm {
   disability: string;
   location: string;
   position: string;
+  position_type: string;
   education: string;
   skill: string;
   profesional_experience_years: number;
-  work_condition: string;
-  work_duration_average: number;
 }
 const form = ref<ICreateOfferForm>({
   offer_name: "",
-  offer_functions: "",
+  duties: "",
   expertise_area: "",
   max_positions: 1,
   contract_type: "",
@@ -321,14 +303,13 @@ const form = ref<ICreateOfferForm>({
   disability: "",
   location: "",
   position: "",
+  position_type: "",
   education: "",
   skill: "",
-  profesional_experience_years: 0,
-  work_condition: "",
-  work_duration_average: 0,
+  profesional_experience_years: 0
 });
 const offerNameError = ref<string>("");
-const offerFunctionsError = ref<string>("");
+const dutiesError = ref<string>("");
 const expertiseAreaError = ref<string>("");
 const maxPositionsError = ref<string>("");
 const contractTypeError = ref<string>("");
@@ -340,12 +321,10 @@ const workTypeError = ref<string>("");
 const militaryServiceBookError = ref<string>("");
 const drivingLicenseError = ref<string>("");
 const disabilityError = ref<string>("");
-
+const positionTypeError = ref<string>("");
 const positionError = ref<string>("");
 const educationError = ref<string>("");
 const profesionalExperienceError = ref<string>("");
-const workConditionError = ref<string>("");
-const workDurationAverageError = ref<string>("");
 const skillError = ref<string>("");
 const disableButton = ref<boolean>(true);
 
@@ -369,8 +348,8 @@ const validateErrorsForm = (keyField: string, value: string): void => {
     case "offer_name":
       offerNameError.value = value.length < 3 ? "Inserta un nombre válido" : "";
       break;
-    case "offer_functions":
-      offerFunctionsError.value =
+    case "duties":
+      dutiesError.value =
         value.length < 3 ? "Inserta un valor válido" : "";
       break;
     case "expertise_area":
@@ -425,15 +404,6 @@ const validateErrorsForm = (keyField: string, value: string): void => {
           ? "Inserta un valor válido"
           : "";
       break;
-    case "work_condition":
-      workConditionError.value = !value.length ? "Selecciona una opción" : "";
-      break;
-    case "work_duration_average":
-      workDurationAverageError.value =
-        isNaN(Number(value)) || Number(value) === 0
-          ? "Inserta un valor válido"
-          : "";
-      break;
     case "skill":
       skillError.value = !value.length ? "Selecciona una opción" : "";
       break;
@@ -444,8 +414,8 @@ const validateErrorsForm = (keyField: string, value: string): void => {
 const validateForm = (): void => {
   const isOfferNameValid =
     form.value.offer_name.length >= 3 && offerNameError.value === "";
-  const isOfferFunctionsValid =
-    form.value.offer_functions.length >= 3 && offerFunctionsError.value === "";
+  const isDutiesValid =
+    form.value.duties.length >= 3 && dutiesError.value === "";
   const isExpertiseAreaValid =
     form.value.expertise_area && expertiseAreaError.value === "";
   const isMaxPositionsValid =
@@ -472,17 +442,11 @@ const validateForm = (): void => {
     !isNaN(Number(form.value.profesional_experience_years)) &&
     Number(form.value.profesional_experience_years) > 0 &&
     profesionalExperienceError.value === "";
-  const isWorkConditionValid =
-    form.value.work_condition && workConditionError.value === "";
-  const isWorkDurationAverageValid =
-    !isNaN(Number(form.value.work_duration_average)) &&
-    Number(form.value.work_duration_average) > 0 &&
-    workDurationAverageError.value === "";
   const isSkillValid = form.value.skill && skillError.value === "";
 
   disableButton.value = !(
     isOfferNameValid &&
-    isOfferFunctionsValid &&
+    isDutiesValid &&
     isExpertiseAreaValid &&
     isMaxPositionsValid &&
     isContractTypeValid &&
@@ -497,8 +461,6 @@ const validateForm = (): void => {
     isPositionValid &&
     isEducationValid &&
     isProfessionalExperienceValid &&
-    isWorkConditionValid &&
-    isWorkDurationAverageValid &&
     isSkillValid
   );
 };
