@@ -3,11 +3,11 @@
     <div class="slide-wrapper">
       <CompanySlidePanel />
     </div>
-    <div class="deep-talent-container">
+    <div class="offer-details-container">
       <!-- <div class="logo-wrapper">
         <img :src="logo" alt="logo" />
       </div> -->
-      <div class="content box-shadow-2xl">
+      <div class="content">
         <h2>Detalles de oferta</h2>
         <div class="form-field">
           <CoreDropdown
@@ -67,7 +67,7 @@ const validateErrorsForm = (keyField: string, value: string): void => {
   .slide-wrapper {
     width: 20%;
   }
-  .deep-talent-container {
+  .offer-details-container {
     align-items: center;
     background-color: var(--background-color-primary);
     display: flex;
@@ -77,7 +77,7 @@ const validateErrorsForm = (keyField: string, value: string): void => {
     height: 100vh;
     justify-content: flex-start;
     overflow-y: scroll;
-    padding: 5rem 5rem 25rem;
+    padding: 7rem;
 
     .logo-wrapper {
       text-align: center;
@@ -90,6 +90,7 @@ const validateErrorsForm = (keyField: string, value: string): void => {
     .content {
       display: flex;
       flex-direction: column;
+      border: 1px solid #D1D5DC;
       gap: 3rem;
       width: 100%;
       padding: 2rem;

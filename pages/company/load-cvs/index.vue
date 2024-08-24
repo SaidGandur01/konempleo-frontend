@@ -35,7 +35,7 @@
 </template>
 <script lang="ts" setup>
 import { offerListData } from "~/data/offer/offer";
-import logo from "~/public/images/logo.png";
+// import logo from "~/public/images/logo.png";
 
 definePageMeta({
   middleware: ["protected", "company-guard"],
@@ -105,7 +105,7 @@ function sendFiles() {
     height: 100vh;
     justify-content: flex-start;
     overflow-y: scroll;
-    padding: 5rem 5rem 25rem;
+    padding: 7rem;
 
     .logo-wrapper {
       text-align: center;

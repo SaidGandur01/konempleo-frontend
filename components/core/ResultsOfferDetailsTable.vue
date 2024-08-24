@@ -1,6 +1,6 @@
 <template>
   <div class="results-table">
-    <div v-if="results && results.length" class="table-wrapper">
+    <div v-if="paginatedResults && paginatedResults.length" class="table-wrapper">
       <table>
         <thead>
           <tr>
@@ -17,7 +17,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(result, index) in results" :key="index">
+          <tr v-for="(result, index) in paginatedResults" :key="index">
             <td>
               <div class="avatar">
                 <font-awesome-icon
@@ -32,41 +32,17 @@
             <td>
               <div class="whatsapp-wrapper">
                 <span :class="'status-' + result.whatsapp" />
-                <span v-if="result.whatsapp === 'success'" class="text-info"
-                  >Done</span
-                >
-                <span v-if="result.whatsapp === 'pending'" class="text-info"
-                  >In progress</span
-                >
-                <span v-if="result.whatsapp === 'danger'" class="text-info"
-                  >Error</span
-                >
-                <span v-if="result.whatsapp === 'info'" class="text-info"
-                  >Information</span
-                >
-                <span v-if="result.whatsapp === 'default'" class="text-info"
-                  >Default</span
-                >
+                <span class="text-info">{{
+                  getStatusText(result.whatsapp)
+                }}</span>
               </div>
             </td>
             <td>
               <div class="tus-datos-wrapper">
                 <span :class="'status-' + result.tusDatos" />
-                <span v-if="result.tusDatos === 'success'" class="text-info"
-                  >Done</span
-                >
-                <span v-if="result.tusDatos === 'pending'" class="text-info"
-                  >In progress</span
-                >
-                <span v-if="result.tusDatos === 'danger'" class="text-info"
-                  >Error</span
-                >
-                <span v-if="result.tusDatos === 'info'" class="text-info"
-                  >Information</span
-                >
-                <span v-if="result.tusDatos === 'default'" class="text-info"
-                  >Default</span
-                >
+                <span class="text-info">{{
+                  getStatusText(result.whatsapp)
+                }}</span>
               </div>
             </td>
             <td>{{ result.movil }}</td>
@@ -82,6 +58,15 @@
           </tr>
         </tbody>
       </table>
+      <div class="pagination">
+        <button :disabled="currentPage === 1" @click="previousPage">
+          Previous
+        </button>
+        <span>Page {{ currentPage }} of {{ totalPages }}</span>
+        <button :disabled="currentPage === totalPages" @click="nextPage">
+          Next
+        </button>
+      </div>
     </div>
     <div v-else class="no-data">
       <span>No existen datos para mostrar</span>
@@ -92,16 +77,57 @@
 <script lang="ts" setup>
 import { generateCandidatesData } from "~/utils/helpers/candidates-generator.helper";
 import type { ITableRow } from "~/utils/interfaces";
-
 interface ITableProps {
   offerName: string;
 }
-
 const props = withDefaults(defineProps<ITableProps>(), {
   offerName: "",
 });
+const results = ref<ITableRow[]>(generateCandidatesData(45));
+const getStatusText = (
+  status: "success" | "pending" | "danger" | "info" | "default"
+): string => {
+  switch (status) {
+    case "success":
+      return "Done";
+    case "pending":
+      return "In progress";
+    case "danger":
+      return "Error";
+    case "info":
+      return "Information";
+    case "default":
+    default:
+      return "Default";
+  }
+};
+const currentPage = ref(1);
+const rowsPerPage = ref(10);
 
-const results = ref<ITableRow[]>(generateCandidatesData(10));
+// Computed property to calculate the total number of pages
+const totalPages = computed(() => {
+  return Math.ceil(results.value.length / rowsPerPage.value);
+});
+
+// Computed property to slice the results based on the current page
+const paginatedResults = computed(() => {
+  const start = (currentPage.value - 1) * rowsPerPage.value;
+  const end = start + rowsPerPage.value;
+  return results.value.slice(start, end);
+});
+
+const nextPage = () => {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++;
+  }
+};
+
+const previousPage = () => {
+  if (currentPage.value > 1) {
+    currentPage.value--;
+  }
+};
+
 watch(
   () => props.offerName,
   (newValue: string) => {
@@ -126,7 +152,7 @@ watch(
 
       thead th:nth-child(3),
       tbody td:nth-child(3) {
-        width: 15%;
+        // width: 15%;
       }
 
       tbody tr:first-child {
@@ -143,9 +169,13 @@ watch(
 
       th,
       td {
-        font-family: 'Source Sans Pro', sans-serif !important;
+        font-family: "Source Sans Pro", sans-serif !important;
         padding: 0.5rem;
         text-align: center;
+      }
+
+      tbody tr:nth-child(2n) {
+        background-color: #f5f9fc; /* Adjust this color to your needs */
       }
 
       th:first-child {
@@ -163,11 +193,11 @@ watch(
       th {
         background-color: #f5f9fc;
         font-weight: bold;
-        padding: 2rem 2rem;
+        padding: 1.5rem 2rem;
       }
       td {
         vertical-align: middle;
-        padding: 2rem 2rem;
+        padding: 1.5rem 2rem;
       }
       .avatar {
         height: 30px;
@@ -197,6 +227,30 @@ watch(
           margin-top: 2px;
         }
       }
+    }
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1rem;
+
+    button {
+      padding: 0.5rem 1rem;
+      margin: 0 0.5rem;
+      border: 1px solid #ccc;
+      background-color: #f5f5f5;
+      cursor: pointer;
+      border-radius: 4px;
+
+      &:disabled {
+        cursor: not-allowed;
+        opacity: 0.6;
+      }
+    }
+
+    span {
+      font-weight: 600;
     }
   }
   .no-data {

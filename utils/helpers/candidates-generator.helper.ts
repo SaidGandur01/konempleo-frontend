@@ -7,7 +7,7 @@ const getWhatsAppStatus = ():
   | "danger"
   | "info"
   | "default" => {
-  const statuses = ["success", "pending", "danger", "info", "default"];
+  const statuses = ["success", "pending", "danger"];
   return faker.helpers.arrayElement(statuses) as
     | "success"
     | "pending"
@@ -21,7 +21,7 @@ const getTusDatosStatus = ():
   | "danger"
   | "info"
   | "default" => {
-  const statuses = ["success", "pending", "danger", "info", "default"];
+  const statuses = ["success", "pending", "danger"];
   return faker.helpers.arrayElement(statuses) as
     | "success"
     | "pending"
