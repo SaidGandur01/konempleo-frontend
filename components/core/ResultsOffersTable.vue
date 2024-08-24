@@ -47,14 +47,13 @@
         <thead>
           <tr>
             <th>Icon</th>
-            <th>Ranking</th>
-            <th>Nombre</th>
-            <th>WhatsApp</th>
-            <th>Tus Datos</th>
-            <th>Movil</th>
-            <th>Mail</th>
+            <th>#</th>
+            <th>Nombre Oferta</th>
+            <th>Candidatos</th>
+            <th>Contactados</th>
+            <th>ECG</th>
+            <th>Exactitud</th>
             <th>Score</th>
-            <th>Contratado</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -69,28 +68,13 @@
                 />
               </div>
             </td>
-            <td class="ranking">{{ result.ranking }}</td>
-            <td>{{ result.nombre }}</td>
-            <td>
-              <div class="whatsapp-wrapper">
-                <span :class="'status-' + result.whatsapp" />
-                <span class="text-info">{{
-                  getStatusText(result.whatsapp)
-                }}</span>
-              </div>
-            </td>
-            <td>
-              <div class="tus-datos-wrapper">
-                <span :class="'status-' + result.tusDatos" />
-                <span class="text-info">{{
-                  getStatusText(result.whatsapp)
-                }}</span>
-              </div>
-            </td>
-            <td>{{ result.movil }}</td>
-            <td>{{ result.mail }}</td>
+            <td class="ranking">{{ result.number }}</td>
+            <td>{{ result.offer_name }}</td>
+            <td>{{ result.candidates }}</td>
+            <td>{{ result.contacted }}</td>
+            <td>{{ result.ecg }}</td>
+            <td>{{ result.accuracy }}</td>
             <td>{{ result.score }}</td>
-            <td>{{ result.contratado }}</td>
             <td>
               <button class="action-button view-button">View</button>
               <button class="action-button delete-button">
@@ -117,27 +101,11 @@
 </template>
 
 <script lang="ts" setup>
-import { generateCandidatesData } from "~/utils/helpers/candidates-generator.helper";
-import type { ITableRow } from "~/utils/interfaces";
+import { generateOffersData } from "~/utils/helpers/offers-list-generator.helper";
+import type { IOffersListTableRow } from "~/utils/interfaces";
 
-const results = ref<ITableRow[]>(generateCandidatesData(10));
-const getStatusText = (
-  status: "success" | "pending" | "danger" | "info" | "default"
-): string => {
-  switch (status) {
-    case "success":
-      return "Done";
-    case "pending":
-      return "In progress";
-    case "danger":
-      return "Error";
-    case "info":
-      return "Information";
-    case "default":
-    default:
-      return "Default";
-  }
-};
+const results = ref<IOffersListTableRow[]>(generateOffersData(35));
+
 const currentPage = ref(1);
 const rowsPerPage = ref(10);
 
@@ -209,6 +177,7 @@ const previousPage = () => {
         font-family: "Source Sans Pro", sans-serif !important;
         padding: 0.5rem;
         text-align: center;
+        font-size: 1.5rem;
       }
 
       tbody tr:nth-child(2n) {

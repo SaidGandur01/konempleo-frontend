@@ -1,4 +1,4 @@
-export interface ITableRow {
+export interface ICandidatesTableRow {
   icon: string;
   ranking: number;
   nombre: string;

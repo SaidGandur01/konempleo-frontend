@@ -116,14 +116,14 @@
 
 <script lang="ts" setup>
 import { generateCandidatesData } from "~/utils/helpers/candidates-generator.helper";
-import type { ITableRow } from "~/utils/interfaces";
+import type { ICandidatesTableRow } from "~/utils/interfaces";
 interface ITableProps {
   offerName: string;
 }
 const props = withDefaults(defineProps<ITableProps>(), {
   offerName: "",
 });
-const results = ref<ITableRow[]>(generateCandidatesData(35));
+const results = ref<ICandidatesTableRow[]>(generateCandidatesData(50));
 const getStatusText = (
   status: "success" | "pending" | "danger" | "info" | "default"
 ): string => {
@@ -219,6 +219,7 @@ watch(
         font-family: "Source Sans Pro", sans-serif !important;
         padding: 0.5rem;
         text-align: center;
+        font-size: 1.5rem;
       }
 
       tbody tr:nth-child(2n) {

@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker";
-import type { ITableRow } from "../interfaces";
+import type { ICandidatesTableRow } from "../interfaces";
 
 const getWhatsAppStatus = ():
   | "success"
@@ -30,8 +30,8 @@ const getTusDatosStatus = ():
     | "default";
 };
 
-export const generateCandidatesData = (numRows: number): ITableRow[] => {
-  const data: ITableRow[] = [];
+export const generateCandidatesData = (numRows: number): ICandidatesTableRow[] => {
+  const data: ICandidatesTableRow[] = [];
 
   for (let i = 0; i < numRows; i++) {
     data.push({
