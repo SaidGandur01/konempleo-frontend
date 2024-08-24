@@ -77,12 +77,51 @@
         <CoreDropdown
           :list-options="shiftListData"
           label="Horario"
-          placeholder="Seleccione un opción"
+          placeholder="Seleccione una opción"
           @select="(data) => handleOnInput('shift', data)"
         />
         <span v-if="form.shift.length < 1" class="error-message">{{
           shiftError
         }}</span>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="form-field">
+        <CoreRangeSlider
+          label="Rango salarial"
+          @drag-end="onHandleRangeSelection"
+        />
+      </div>
+      <div class="form-field">
+        <CoreDropdown
+          :list-options="locationListData"
+          label="Ciudad"
+          placeholder="Seleccione una ciudad"
+          @select="(data) => handleOnInput('location', data)"
+        />
+        <span v-if="!form.location" class="error-message">{{
+          locationError
+        }}</span>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="form-field">
+        <CoreDropdown
+          :list-options="genderListData"
+          label="Género"
+          placeholder="Seleccione una opción"
+          @select="(data) => handleOnInput('gender', data)"
+        />
+        <span v-if="!form.gender" class="error-message">{{ genderError }}</span>
+      </div>
+      <div class="form-field">
+        <CoreDropdown
+          :list-options="ageListData"
+          label="Edad"
+          placeholder="Seleccione una opción"
+          @select="(data) => handleOnInput('age', data)"
+        />
+        <span v-if="!form.age" class="error-message">{{ ageError }}</span>
       </div>
     </div>
     <div class="form-group">
@@ -114,21 +153,12 @@
         <CoreDropdown
           :list-options="educationListData"
           label="Educación Mínima"
-          placeholder="Seleccione un opción"
+          placeholder="Seleccione una opción"
           @select="(data) => handleOnInput('education', data)"
         />
         <span v-if="!form.education" class="error-message">{{
           educationError
         }}</span>
-      </div>
-      <div class="form-field">
-        <CoreDropdown
-          :list-options="genderListData"
-          label="Género"
-          placeholder="Seleccione un opción"
-          @select="(data) => handleOnInput('gender', data)"
-        />
-        <span v-if="!form.gender" class="error-message">{{ genderError }}</span>
       </div>
     </div>
     <div class="form-group">
@@ -178,14 +208,6 @@
     </div>
     <div class="form-group">
       <div class="form-field">
-        <CoreRangeSlider
-          label="Rango salarial"
-          @drag-end="onHandleRangeSelection"
-        />
-      </div>
-    </div>
-    <div class="form-group">
-      <div class="form-field">
         <CoreDropdown
           :list-options="skillListData"
           label="Habilidades"
@@ -209,6 +231,7 @@
   </div>
 </template>
 <script lang="ts" setup>
+import { ageListData } from "~/data/age/age";
 import { contractTypeListData } from "~/data/contract-type/contract-type";
 import { educationListData } from "~/data/education/education";
 import { expertiseAreaListData } from "~/data/expertise-area/expertise-area";
@@ -226,13 +249,14 @@ interface ICreateOfferForm {
   max_positions: number;
   contract_type: string;
   shift: string;
+  range_salary: number[];
+  gender: string;
+  age: string;
   location: string;
   position: string;
   education: string;
-  gender: string;
   skill: string;
   profesional_experience_years: number;
-  range_salary: number[];
   work_condition: string;
   work_duration_average: number;
 }
@@ -243,13 +267,14 @@ const form = ref<ICreateOfferForm>({
   max_positions: 1,
   contract_type: "",
   shift: "",
+  range_salary: [0, 0],
+  gender: "",
+  age: "",
   location: "",
   position: "",
   education: "",
-  gender: "",
   skill: "",
   profesional_experience_years: 0,
-  range_salary: [0, 0],
   work_condition: "",
   work_duration_average: 0,
 });
@@ -260,9 +285,10 @@ const maxPositionsError = ref<string>("");
 const contractTypeError = ref<string>("");
 const shiftError = ref<string>("");
 const locationError = ref<string>("");
+const genderError = ref<string>("");
+const ageError = ref<string>("");
 const positionError = ref<string>("");
 const educationError = ref<string>("");
-const genderError = ref<string>("");
 const profesionalExperienceError = ref<string>("");
 const workConditionError = ref<string>("");
 const workDurationAverageError = ref<string>("");
@@ -307,17 +333,23 @@ const validateErrorsForm = (keyField: string, value: string): void => {
         ? "Seleccione un tipo de contrato"
         : "";
       break;
+    case "shift":
+      shiftError.value = !value.length ? "Selecciona un opción" : "";
+      break;
     case "location":
       locationError.value = !value.length ? "Selecciona una ciudad" : "";
+      break;
+    case "gender":
+      genderError.value = !value.length ? "Selecciona una opción" : "";
+      break;
+    case "age":
+      ageError.value = !value.length ? "Selecciona una opción" : "";
       break;
     case "position":
       positionError.value = !value.length ? "Selecciona un cargo" : "";
       break;
     case "education":
-      educationError.value = !value.length ? "Selecciona un opción" : "";
-      break;
-    case "gender":
-      genderError.value = !value.length ? "Selecciona un opción" : "";
+      educationError.value = !value.length ? "Selecciona una opción" : "";
       break;
     case "profesional_experience_years":
       profesionalExperienceError.value =
@@ -326,7 +358,7 @@ const validateErrorsForm = (keyField: string, value: string): void => {
           : "";
       break;
     case "work_condition":
-      workConditionError.value = !value.length ? "Selecciona un opción" : "";
+      workConditionError.value = !value.length ? "Selecciona una opción" : "";
       break;
     case "work_duration_average":
       workDurationAverageError.value =
@@ -334,11 +366,8 @@ const validateErrorsForm = (keyField: string, value: string): void => {
           ? "Inserta un valor válido"
           : "";
       break;
-    case "shift":
-      shiftError.value = !value.length ? "Selecciona un opción" : "";
-      break;
     case "skill":
-      skillError.value = !value.length ? "Selecciona un opción" : "";
+      skillError.value = !value.length ? "Selecciona una opción" : "";
       break;
     default:
       break;
@@ -357,10 +386,12 @@ const validateForm = (): void => {
     maxPositionsError.value === "";
   const isContractTypeValid =
     form.value.contract_type && contractTypeError.value === "";
+  const isShiftValid = form.value.shift && shiftError.value === "";
   const isLocationValid = form.value.location && locationError.value === "";
+  const isGenderValid = form.value.gender && genderError.value === "";
+  const isAgeValid = form.value.age && ageError.value === "";
   const isPositionValid = form.value.position && positionError.value === "";
   const isEducationValid = form.value.education && educationError.value === "";
-  const isGenderValid = form.value.gender && genderError.value === "";
 
   const isProfessionalExperienceValid =
     !isNaN(Number(form.value.profesional_experience_years)) &&
@@ -372,7 +403,6 @@ const validateForm = (): void => {
     !isNaN(Number(form.value.work_duration_average)) &&
     Number(form.value.work_duration_average) > 0 &&
     workDurationAverageError.value === "";
-  const isShiftValid = form.value.shift && shiftError.value === "";
   const isSkillValid = form.value.skill && skillError.value === "";
 
   disableButton.value = !(
@@ -381,14 +411,15 @@ const validateForm = (): void => {
     isExpertiseAreaValid &&
     isMaxPositionsValid &&
     isContractTypeValid &&
+    isShiftValid &&
     isLocationValid &&
+    isGenderValid &&
+    isAgeValid &&
     isPositionValid &&
     isEducationValid &&
-    isGenderValid &&
     isProfessionalExperienceValid &&
     isWorkConditionValid &&
     isWorkDurationAverageValid &&
-    isShiftValid &&
     isSkillValid
   );
 };
