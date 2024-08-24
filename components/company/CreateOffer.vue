@@ -127,15 +127,52 @@
     <div class="form-group">
       <div class="form-field">
         <CoreDropdown
-          :list-options="locationListData"
-          label="Ubicación"
-          placeholder="Seleccione una ciudad"
-          @select="(data) => handleOnInput('location', data)"
+          :list-options="workTypeListData"
+          label="Tipo de trabajo"
+          placeholder="Seleccione una opción"
+          @select="(data) => handleOnInput('work_type', data)"
         />
-        <span v-if="!form.location" class="error-message">{{
-          locationError
+        <span v-if="!form.work_type" class="error-message">{{
+          workTypeError
         }}</span>
       </div>
+      <div class="form-field">
+        <CoreDropdown
+          :list-options="militaryServiceBookListData"
+          label="Libreta militar"
+          placeholder="Seleccione una opción"
+          @select="(data) => handleOnInput('military_service_book', data)"
+        />
+        <span v-if="!form.military_service_book" class="error-message">{{
+          militaryServiceBookError
+        }}</span>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="form-field">
+        <CoreDropdown
+          :list-options="drivingLicenseListData"
+          label="Licencia de Conducción"
+          placeholder="Seleccione una opción"
+          @select="(data) => handleOnInput('driving_license', data)"
+        />
+        <span v-if="!form.driving_license" class="error-message">{{
+          drivingLicenseError
+        }}</span>
+      </div>
+      <div class="form-field">
+        <CoreDropdown
+          :list-options="disabilityListData"
+          label="Discapacidad"
+          placeholder="Seleccione una opción"
+          @select="(data) => handleOnInput('disability', data)"
+        />
+        <span v-if="!form.disability" class="error-message">{{
+          disabilityError
+        }}</span>
+      </div>
+    </div>
+    <div class="form-group">
       <div class="form-field">
         <CoreDropdown
           :list-options="positionListData"
@@ -233,14 +270,18 @@
 <script lang="ts" setup>
 import { ageListData } from "~/data/age/age";
 import { contractTypeListData } from "~/data/contract-type/contract-type";
+import { disabilityListData } from "~/data/disability/disability";
+import { drivingLicenseListData } from "~/data/driving-license/driving-license";
 import { educationListData } from "~/data/education/education";
 import { expertiseAreaListData } from "~/data/expertise-area/expertise-area";
 import { genderListData } from "~/data/gender/gender";
 import { locationListData } from "~/data/locations/locations";
+import { militaryServiceBookListData } from "~/data/military-service-book/military-service-book";
 import { positionListData } from "~/data/positions/positions";
 import { shiftListData } from "~/data/shift/shifts";
 import { skillListData } from "~/data/skills/skills";
 import { workConditionsListData } from "~/data/work-conditions/work-conditions";
+import { workTypeListData } from "~/data/work-type/work-type";
 
 interface ICreateOfferForm {
   offer_name: string;
@@ -252,6 +293,10 @@ interface ICreateOfferForm {
   range_salary: number[];
   gender: string;
   age: string;
+  work_type: string;
+  military_service_book: string;
+  driving_license: string;
+  disability: string;
   location: string;
   position: string;
   education: string;
@@ -270,6 +315,10 @@ const form = ref<ICreateOfferForm>({
   range_salary: [0, 0],
   gender: "",
   age: "",
+  work_type: "",
+  military_service_book: "",
+  driving_license: "",
+  disability: "",
   location: "",
   position: "",
   education: "",
@@ -287,6 +336,11 @@ const shiftError = ref<string>("");
 const locationError = ref<string>("");
 const genderError = ref<string>("");
 const ageError = ref<string>("");
+const workTypeError = ref<string>("");
+const militaryServiceBookError = ref<string>("");
+const drivingLicenseError = ref<string>("");
+const disabilityError = ref<string>("");
+
 const positionError = ref<string>("");
 const educationError = ref<string>("");
 const profesionalExperienceError = ref<string>("");
@@ -345,6 +399,20 @@ const validateErrorsForm = (keyField: string, value: string): void => {
     case "age":
       ageError.value = !value.length ? "Selecciona una opción" : "";
       break;
+    case "work_type":
+      workTypeError.value = !value.length ? "Selecciona una opción" : "";
+      break;
+    case "military_service_book":
+      militaryServiceBookError.value = !value.length
+        ? "Selecciona una opción"
+        : "";
+      break;
+    case "driving_license":
+      drivingLicenseError.value = !value.length ? "Selecciona una opción" : "";
+      break;
+    case "disability":
+      disabilityError.value = !value.length ? "Selecciona una opción" : "";
+      break;
     case "position":
       positionError.value = !value.length ? "Selecciona un cargo" : "";
       break;
@@ -390,6 +458,13 @@ const validateForm = (): void => {
   const isLocationValid = form.value.location && locationError.value === "";
   const isGenderValid = form.value.gender && genderError.value === "";
   const isAgeValid = form.value.age && ageError.value === "";
+  const isWorkTypeValid = form.value.work_type && workTypeError.value === "";
+  const isMilitaryServiceBookValid =
+    form.value.military_service_book && militaryServiceBookError.value === "";
+  const isDrivingLicenseValid =
+    form.value.driving_license && drivingLicenseError.value === "";
+  const isDisabilityValid =
+    form.value.disability && disabilityError.value === "";
   const isPositionValid = form.value.position && positionError.value === "";
   const isEducationValid = form.value.education && educationError.value === "";
 
@@ -415,6 +490,10 @@ const validateForm = (): void => {
     isLocationValid &&
     isGenderValid &&
     isAgeValid &&
+    isWorkTypeValid &&
+    isMilitaryServiceBookValid &&
+    isDrivingLicenseValid &&
+    isDisabilityValid &&
     isPositionValid &&
     isEducationValid &&
     isProfessionalExperienceValid &&
