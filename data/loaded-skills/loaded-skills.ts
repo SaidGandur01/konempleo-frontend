@@ -1,4 +1,4 @@
-export const skillListData: Array<{ key: string; value: string }> = [
+export const loadedSkillListData: Array<{ key: string; value: string }> = [
   { key: "1", value: "Habilidad 1" },
   { key: "2", value: "Habilidad 2" },
   { key: "3", value: "Habilidad 3" },

@@ -229,21 +229,32 @@
     <div class="form-group">
       <div class="form-field">
         <CoreDropdown
-          :list-options="skillListData"
-          label="Habilidades"
-          placeholder="Habilidades necesarias para un cargo"
+          :list-options="loadedSkillListData"
+          label="Habilidades asociadas al cargo"
+          placeholder="Habilidades asociadas al cargo"
           max-height="100px"
-          @select="(data) => handleOnInput('skill', data)"
+          @select="(data) => handleOnInput('loaded_skill', data)"
         />
-        <span v-if="form.skill.length < 1" class="error-message">{{
-          skillError
+        <span v-if="form.loaded_skill.length < 1" class="error-message">{{
+          loadedSkillsError
         }}</span>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="form-field">
+        <CoreDynamicInputFields
+          id="skills-list"
+          v-model:fields="form.skill"
+          label="Habilidades necesarias para un cargo"
+          required
+          placeholder="Campo de Texto para agregar habilidades específicas o especiales"
+        />
       </div>
     </div>
     <div class="button">
       <CoreButton
         size="sm"
-        label="Guardar"
+        label="Crear oferta"
         :disabled="false"
         @click="onCreateOffer"
       />
@@ -260,11 +271,11 @@ import { expertiseAreaListData } from "~/data/expertise-area/expertise-area";
 import { genderListData } from "~/data/gender/gender";
 import { locationListData } from "~/data/locations/locations";
 import { militaryServiceBookListData } from "~/data/military-service-book/military-service-book";
-import { positionTypeListData } from "~/data/position-type/position-type";
 import { positionListData } from "~/data/positions/positions";
+import { positionTypeListData } from "~/data/position-type/position-type";
 import { shiftListData } from "~/data/shift/shifts";
-import { skillListData } from "~/data/skills/skills";
 import { workTypeListData } from "~/data/work-type/work-type";
+import { loadedSkillListData } from "~/data/loaded-skills/loaded-skills";
 
 interface ICreateOfferForm {
   offer_name: string;
@@ -284,7 +295,8 @@ interface ICreateOfferForm {
   position: string;
   position_type: string;
   education: string;
-  skill: string;
+  loaded_skill: string;
+  skill: [''],
   profesional_experience_years: number;
 }
 const form = ref<ICreateOfferForm>({
@@ -305,8 +317,9 @@ const form = ref<ICreateOfferForm>({
   position: "",
   position_type: "",
   education: "",
-  skill: "",
-  profesional_experience_years: 0
+  loaded_skill: "",
+  skill: [''],
+  profesional_experience_years: 0,
 });
 const offerNameError = ref<string>("");
 const dutiesError = ref<string>("");
@@ -325,7 +338,7 @@ const positionTypeError = ref<string>("");
 const positionError = ref<string>("");
 const educationError = ref<string>("");
 const profesionalExperienceError = ref<string>("");
-const skillError = ref<string>("");
+const loadedSkillsError = ref<string>("");
 const disableButton = ref<boolean>(true);
 
 const onHandleRangeSelection = (data: { min: number; max: number }): void => {
@@ -349,8 +362,7 @@ const validateErrorsForm = (keyField: string, value: string): void => {
       offerNameError.value = value.length < 3 ? "Inserta un nombre válido" : "";
       break;
     case "duties":
-      dutiesError.value =
-        value.length < 3 ? "Inserta un valor válido" : "";
+      dutiesError.value = value.length < 3 ? "Inserta un valor válido" : "";
       break;
     case "expertise_area":
       expertiseAreaError.value = !value.length ? "Selecciona un área" : "";
@@ -404,8 +416,8 @@ const validateErrorsForm = (keyField: string, value: string): void => {
           ? "Inserta un valor válido"
           : "";
       break;
-    case "skill":
-      skillError.value = !value.length ? "Selecciona una opción" : "";
+    case "loaded_skill":
+      loadedSkillsError.value = !value.length ? "Selecciona una opción" : "";
       break;
     default:
       break;
@@ -442,7 +454,8 @@ const validateForm = (): void => {
     !isNaN(Number(form.value.profesional_experience_years)) &&
     Number(form.value.profesional_experience_years) > 0 &&
     profesionalExperienceError.value === "";
-  const isSkillValid = form.value.skill && skillError.value === "";
+  const isLoadedSkillValid =
+    form.value.loaded_skill && loadedSkillsError.value === "";
 
   disableButton.value = !(
     isOfferNameValid &&
@@ -461,7 +474,7 @@ const validateForm = (): void => {
     isPositionValid &&
     isEducationValid &&
     isProfessionalExperienceValid &&
-    isSkillValid
+    isLoadedSkillValid
   );
 };
 const onCreateOffer = async (): Promise<void> => {

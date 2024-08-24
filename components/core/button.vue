@@ -1,8 +1,22 @@
 <template>
   <div :class="buttonContainerClasses">
     <button :class="classes" :disabled="disabledRef" @click="onHandleClick">
-      <span v-if="!isLoading">{{ label }}</span>
-      <span v-else>
+      <span v-if="!isLoading && label">{{ label }}</span>
+      <span v-if="!isLoading && hasPlusIcon">
+        <font-awesome-icon
+        class="icon"
+        :icon="[iconPlusTagOne, iconPlusTagTwo]"
+        size="lg"
+      />
+    </span>
+      <span v-if="!isLoading && hasMinusIcon">
+        <font-awesome-icon
+        class="icon"
+        :icon="[iconMinusTagOne, iconMinusTagTwo]"
+        size="lg"
+      />
+      </span>
+      <span v-if="isLoading">
         <font-awesome-icon :icon="['fas', 'circle-notch']" spin />
       </span>
     </button>
@@ -10,7 +24,7 @@
 </template>
 <script lang="ts" setup>
 type TButton = "neutral" | "submit" | "null";
-type TSizeButton = "sm" | "md" | "lg";
+type TSizeButton = "sm" | "md" | "lg" | "custom";
 interface IButtonProps {
   label: string;
   type: TButton;
@@ -19,6 +33,12 @@ interface IButtonProps {
   size?: TSizeButton;
   makeSmallerInMobile?: boolean;
   timeButtonSpinner?: number;
+  hasPlusIcon?: boolean;
+  iconPlusTagOne?: string;
+  iconPlusTagTwo?: string;
+  hasMinusIcon?: boolean;
+  iconMinusTagOne?: string;
+  iconMinusTagTwo?: string;
 }
 interface IButtonEmits {
   (event: "click"): void;
@@ -31,6 +51,12 @@ const props = withDefaults(defineProps<IButtonProps>(), {
   size: "md",
   makeSmallerInMobile: false,
   timeButtonSpinner: 0,
+  hasPlusIcon: false,
+  hasMinusIcon: false,
+  iconPlusTagOne: 'fas',
+  iconPlusTagTwo: 'plus',
+  iconMinusTagOne: 'fas',
+  iconMinusTagTwo: 'minus'
 });
 
 const disabledRef = ref<boolean>(props.disabled);
@@ -48,6 +74,7 @@ const classes = computed(() => ({
   "core-button--submit": props.type === "submit",
   "core-button--sm": props.size === "sm",
   "core-button--lg": props.size === "lg",
+  "core-button--custom": props.size === "custom",
   "core-button--make-smaller": props.makeSmallerInMobile,
 }));
 
@@ -109,6 +136,11 @@ $submit-color: #004d80;
 
     &--sm {
       padding: 0.7rem 1.7rem;
+      min-width: fit-content;
+    }
+
+    &--custom {
+      padding: 1rem 1.3rem;
       min-width: fit-content;
     }
 

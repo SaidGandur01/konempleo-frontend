@@ -175,7 +175,7 @@ watch(
     }
 
     &:focus {
-      border-color: var(--color-neutral-border);
+      border-color: #D1D5DC;
       outline: 1px var(--color-brand-neutral-400) solid;
       background: var(--background-input-field);
     }
