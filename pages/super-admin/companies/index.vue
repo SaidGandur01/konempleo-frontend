@@ -1,23 +1,23 @@
 <template>
-  <div class="admin-content">
+  <div class="super-admin-content">
     <div class="slide-wrapper">
-      <AdminSlidePanel />
+      <SuperSlidePanel />
     </div>
     <div class="company-container">
       <div class="content">
         <h2>Lista de Empresas</h2>
-        <CoreResultsCompaniesTable />
+        <CoreResultsSuperCompaniesTable />
       </div>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
 definePageMeta({
-  middleware: ["protected", "admin-guard"],
+  middleware: ["protected", "super-admin"],
 });
 </script>
 <style lang="scss" scoped>
-.admin-content {
+.super-admin-content {
   min-height: 100vh;
   display: flex;
 
