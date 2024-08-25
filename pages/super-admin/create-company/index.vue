@@ -5,7 +5,7 @@
     </div>
     <div class="create-company-container">
       <div class="content">
-        <h2>Crear Empresa</h2>
+        <SuperCreateCompany />
       </div>
     </div>
   </div>

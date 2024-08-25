@@ -43,7 +43,7 @@
         <CoreDropdown
           :list-options="dataList"
           label="Seleccione un rol"
-          placeholder="Habilidades asociadas al cargo"
+          :placeholder="currentRole === EUser.COMPANY ? 'company' : ''"
           @select="onHandleRol"
         />
       </div>
@@ -99,7 +99,6 @@ const handleOnInput = (keyField: string, value: string): void => {
 const validateErrorsForm = (keyField: string, value: string): void => {
   switch (keyField) {
     case "email":
-      // eslint-disable-next-line no-useless-escape
       if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value)) {
         emailError.value = "Enter a valid email";
       }
@@ -118,7 +117,6 @@ const validateForm = (): void => {
   disableButton.value =
     form.value.password === "" ||
     form.value.password.length < 3 ||
-    // eslint-disable-next-line no-useless-escape
     !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(form.value.email);
 };
 
