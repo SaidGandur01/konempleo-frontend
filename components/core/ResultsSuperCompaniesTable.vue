@@ -77,23 +77,34 @@
             <td>{{ result.mail }}</td>
             <td>{{ result.koe_user }}</td>
             <td>{{ result.assigned_offers }}</td>
-            <td class="actions">
-              <font-awesome-icon
-                class="icon"
-                :icon="['fas', 'pen-to-square']"
-                :style="{ color: '#00CC88' }"
-              />
-              <font-awesome-icon
-                class="icon"
-                :icon="['fas', 'eye']"
-                :style="{ color: '#5C60F5' }"
-                @click="onHandleCompanySelected(result.id)"
-              />
-              <font-awesome-icon
-                class="icon"
-                :icon="['fas', 'trash']"
-                :style="{ color: '#FE3366' }"
-              />
+            <td>
+              <div class="actions">
+                <div class="tooltip">
+                  <font-awesome-icon
+                    class="icon"
+                    :icon="['fas', 'pen-to-square']"
+                    :style="{ color: '#00CC88' }"
+                  />
+                  <span class="tooltiptext">Edit</span>
+                </div>
+                <div class="tooltip">
+                  <font-awesome-icon
+                    class="icon"
+                    :icon="['fas', 'eye']"
+                    :style="{ color: '#5C60F5' }"
+                    @click="onHandleCompanySelected(result.id)"
+                  />
+                  <span class="tooltiptext">View</span>
+                </div>
+                <div class="tooltip">
+                  <font-awesome-icon
+                    class="icon"
+                    :icon="['fas', 'trash']"
+                    :style="{ color: '#FE3366' }"
+                  />
+                  <span class="tooltiptext">Delete</span>
+                </div>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -259,6 +270,33 @@ const previousPage = () => {
         align-items: center;
         justify-content: center;
         gap: 2rem;
+
+        .tooltip {
+          position: relative;
+          display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+          visibility: hidden;
+          width: 80px;
+          background-color: #333;
+          color: #fff;
+          text-align: center;
+          border-radius: 6px;
+          padding: 5px 0;
+          position: absolute;
+          z-index: 1;
+          top: 100%;
+          right: 50%;
+          margin-left: -40px;
+          opacity: 0;
+          transition: opacity 0.3s;
+        }
+
+        .tooltip:hover .tooltiptext {
+          visibility: visible;
+          opacity: 1;
+        }
 
         .icon {
           cursor: pointer;

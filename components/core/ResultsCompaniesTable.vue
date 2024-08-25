@@ -73,13 +73,18 @@
             <td>{{ result.granted_offers }}</td>
             <td>{{ result.associated_user }}</td>
             <td>{{ result.mail }}</td>
-            <td class="actions">
-              <font-awesome-icon
-                class="icon"
-                :icon="['fas', 'eye']"
-                :style="{ color: '#5C60F5' }"
-                @click="onHandleCompanySelected(result.id)"
-              />
+            <td>
+              <div class="actions">
+                <div class="tooltip">
+                  <font-awesome-icon
+                    class="icon"
+                    :icon="['fas', 'eye']"
+                    :style="{ color: '#5C60F5' }"
+                    @click="onHandleCompanySelected(result.id)"
+                  />
+                  <span class="tooltiptext">View</span>
+                </div>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -110,9 +115,9 @@ const currentPage = ref(1);
 const rowsPerPage = ref(10);
 
 const onHandleCompanySelected = (companyId: number): void => {
-  console.log('company id: ', companyId)
+  console.log("company id: ", companyId);
   navigateTo(`/admin/offer-details/${companyId}`);
-}
+};
 // Computed property to calculate the total number of pages
 const totalPages = computed(() => {
   return Math.ceil(results.value.length / rowsPerPage.value);
@@ -243,6 +248,33 @@ const previousPage = () => {
         align-items: center;
         justify-content: center;
         gap: 2rem;
+
+        .tooltip {
+          position: relative;
+          display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+          visibility: hidden;
+          width: 80px;
+          background-color: #333;
+          color: #fff;
+          text-align: center;
+          border-radius: 6px;
+          padding: 5px 0;
+          position: absolute;
+          z-index: 1;
+          top: 100%;
+          right: 50%;
+          margin-left: -40px;
+          opacity: 0;
+          transition: opacity 0.3s;
+        }
+
+        .tooltip:hover .tooltiptext {
+          visibility: visible;
+          opacity: 1;
+        }
 
         .icon {
           cursor: pointer;
