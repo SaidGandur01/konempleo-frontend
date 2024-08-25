@@ -4,9 +4,9 @@
       <AdminSlidePanel />
     </div>
     <div class="board-container">
-      <div class="content box-shadow-2xl">
+      <div class="content">
         <h2>Lista de Empresas</h2>
-        <CoreRsultsCompaniesTable />
+        <CoreResultsCompaniesTable />
       </div>
     </div>
   </div>
@@ -25,18 +25,21 @@ definePageMeta({
     width: 20%;
   }
   .board-container {
-    flex: 1;
-    padding: 7rem;
-    display: flex;
-    justify-content: flex-start;
     align-items: center;
-    flex-direction: column;
-    gap: 2rem;
     background-color: var(--background-color-primary);
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 2rem;
+    height: 100vh;
+    justify-content: flex-start;
+    overflow-y: scroll;
+    padding: 7rem;
 
     .content {
       display: flex;
       flex-direction: column;
+      border: 1px solid #d1d5dc;
       gap: 3rem;
       width: 100%;
       padding: 2rem;

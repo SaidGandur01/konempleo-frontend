@@ -14,14 +14,14 @@
           <span>Lista de Empresas</span>
         </NuxtLink>
       </li>
-      <li :class="{ 'active-item': isActive('/admin/create-company') }">
-        <NuxtLink to="/admin/create-company" class="item-field">
+      <li :class="{ 'active-item': isActive('/admin/offer-details') }">
+        <NuxtLink to="/admin/offer-details" class="item-field">
           <font-awesome-icon
             class="icon"
             :icon="['fas', 'building']"
             size="xl"
           />
-          <span>Gestionar Empresa</span>
+          <span>Ofertas por Empresa</span>
         </NuxtLink>
       </li>
     </ul>
