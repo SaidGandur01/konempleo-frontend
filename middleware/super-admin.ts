@@ -4,18 +4,18 @@ import { EUser } from "~/utils/enum";
 export default defineNuxtRouteMiddleware(async () => {
   const userStore = useUserStore();
   const userRole = userStore.getUserRole();
-  console.log('admin guard: ', userRole)
+  console.log('super admin guard: ', userRole)
 
   if (!userRole) {
     userStore.reset()
     return navigateTo('/login')
   }
 
-  if(userRole !== EUser.ADMIN) {
+  if(userRole !== EUser.SUPER_ADMIN) {
     if (userRole === EUser.COMPANY) {
       return navigateTo('/company/create-offer')
     } else {
-      return navigateTo('/super-admin')
+      return navigateTo('/admin/board')
     }
   }
 });

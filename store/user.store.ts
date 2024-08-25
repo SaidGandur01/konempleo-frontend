@@ -4,7 +4,7 @@ import type { IUser } from "~/utils/interfaces";
 
 const defaultState: IUser = {
   isAuthenticated: true,
-  role: EUser.COMPANY
+  role: null
 };
 
 export const useUserStore = defineStore("user-store", {
@@ -12,14 +12,28 @@ export const useUserStore = defineStore("user-store", {
   actions: {
     setUserRole(role: EUser): void {
       this.role = role;
-      if(role === EUser.ADMIN) {
-        navigateTo('/admin')
-      } else {
-        navigateTo('/company/create-offer')
+      localStorage.setItem('user_role', role)
+      switch (this.role) {
+        case EUser.ADMIN:
+          navigateTo('/admin/board')
+          break;
+        case EUser.COMPANY:
+          navigateTo('/company/create-offer')
+          break;
+        case EUser.SUPER_ADMIN:
+          navigateTo('/company/create-offer')
+          break;
+        default:
+          navigateTo('/company/create-offer')
+          break;
       }
     },
     getUserRole(): EUser | null {
-      return this.role;
+      const roleFromLocal = localStorage.getItem('user_role') as EUser
+      if (!this.role || !roleFromLocal) {
+        this.reset()
+      }
+      return this.role || roleFromLocal;
     },
     setUserAuthentication(isUserAuthenticated: boolean): void {
       this.isAuthenticated = isUserAuthenticated;

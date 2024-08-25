@@ -39,6 +39,14 @@
           passwordError
         }}</span>
       </div>
+      <div class="form-field">
+        <CoreDropdown
+          :list-options="dataList"
+          label="Seleccione un rol"
+          placeholder="Habilidades asociadas al cargo"
+          @select="onHandleRol"
+        />
+      </div>
       <div class="button">
         <CoreButton
           size="sm"
@@ -64,12 +72,21 @@ const form = ref<ILoginForm>({
   email: "saidtestone@testone.com",
   password: "123",
 });
+const dataList: Array<{ key: string; value: EUser }> = [
+  { key: 'company', value: EUser.COMPANY },
+  { key: 'admin', value: EUser.ADMIN },
+  { key: 'super_admin', value: EUser.SUPER_ADMIN }
+];
+
 const emailError = ref<string>("");
 const passwordError = ref<string>("");
 const disableButton = ref<boolean>(true);
+const currentRole = ref<EUser>(EUser.COMPANY)
 // const isLoading = ref<boolean>(false);
 const userStore = useUserStore();
-
+const onHandleRol = (data: string): void => {
+  currentRole.value = data as EUser
+}
 const handleOnInput = (keyField: string, value: string): void => {
   form.value = {
     ...form.value,
@@ -117,11 +134,10 @@ const handleOnLogin = async (): Promise<void> => {
   }
 
   console.log({
-    form: form.value,
-    formData: formData.toString(),
+    currentRole: currentRole.value
   });
 
-  userStore.setUserRole(EUser.COMPANY)
+  userStore.setUserRole(currentRole.value)
   // const headers = {
   //   accept: "application/json",
   //   "Content-Type": "application/x-www-form-urlencoded",
