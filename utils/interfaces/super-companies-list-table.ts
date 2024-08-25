@@ -8,4 +8,5 @@ export interface ISuperCompaniesListTableRow {
   associated_user: string;
   mail: string;
   koe_user: string;
+  assigned_offers: number;
 };

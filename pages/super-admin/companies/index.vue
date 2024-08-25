@@ -22,7 +22,7 @@ definePageMeta({
   display: flex;
 
   .slide-wrapper {
-    width: 20%;
+    width: 15%;
   }
   .company-container {
     align-items: center;
@@ -34,7 +34,7 @@ definePageMeta({
     height: 100vh;
     justify-content: flex-start;
     overflow-y: scroll;
-    padding: 7rem;
+    padding: 5rem 5rem;
 
     .content {
       display: flex;

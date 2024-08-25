@@ -14,6 +14,16 @@
           <span>Lista de Empresas</span>
         </NuxtLink>
       </li>
+      <li :class="{ 'active-item': isActive('/super-admin/offer-details') }">
+        <NuxtLink to="/super-admin/offer-details" class="item-field">
+          <font-awesome-icon
+            class="icon"
+            :icon="['fas', 'building']"
+            size="xl"
+          />
+          <span>Ofertas por empresa</span>
+        </NuxtLink>
+      </li>
     </ul>
     <div class="bottom-actions">
       <CoreButton

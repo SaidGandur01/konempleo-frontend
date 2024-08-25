@@ -16,7 +16,8 @@ export const generateSuperCompaniesData = (
       granted_offers: faker.datatype.number({ min: 0, max: 50 }),
       associated_user: faker.name.fullName(),
       mail: faker.internet.email(),
-      koe_user: faker.internet.email()
+      koe_user: faker.internet.email(),
+      assigned_offers: 50
     });
   }
 

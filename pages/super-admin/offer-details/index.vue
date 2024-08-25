@@ -1,7 +1,7 @@
 <template>
-  <div class="admin-content">
+  <div class="super-admin-content">
     <div class="slide-wrapper">
-      <AdminSlidePanel />
+      <SuperSlidePanel />
     </div>
     <div class="create-company-container">
       <div class="content">
@@ -19,7 +19,7 @@
             companyNameError
           }}</span>
         </div>
-        <CoreResultsCompanyOffersTable :company-name="currentSelection" />
+        <CoreResultsSuperCompanyOffersTable :company-name="currentSelection" />
       </div>
     </div>
   </div>
@@ -28,8 +28,8 @@
 import { companiesListData } from "~/data/companies/companies-list";
 
 definePageMeta({
-  middleware: ["protected", "admin-guard"],
-  path: "/admin/offer-details/:id?",
+  middleware: ["protected", "super-admin"],
+  path: "/super-admin/offer-details/:id?",
 });
 interface ICompanyForm {
   company_name: string;
@@ -69,12 +69,12 @@ onMounted(() => {
 });
 </script>
 <style lang="scss" scoped>
-.admin-content {
+.super-admin-content {
   min-height: 100vh;
   display: flex;
 
   .slide-wrapper {
-    width: 20%;
+    width: 15%;
   }
   .create-company-container {
     align-items: center;
@@ -86,7 +86,7 @@ onMounted(() => {
     height: 100vh;
     justify-content: flex-start;
     overflow-y: scroll;
-    padding: 7rem;
+    padding: 7rem 5rem;
 
     .content {
       display: flex;

@@ -1,7 +1,7 @@
 <template>
   <div class="results-table">
     <div
-      v-if="paginatedResults && paginatedResults.length"
+      v-if="companyName && paginatedResults && paginatedResults.length"
       class="table-wrapper"
     >
       <div class="kpi-section">
@@ -46,16 +46,15 @@
       <table>
         <thead>
           <tr>
-            <th>Logo</th>
-            <th>Nombre Empresa</th>
-            <th>Procesos Activos</th>
-            <th>CV Cargados</th>
-            <th>Ofertas Otorgadas</th>
-            <th>Usuario Asociado</th>
-            <th>Mail</th>
-            <th>Usuario KONEMPLEO</th>
-            <th>Ofertas asignadas</th>
-            <th>Actions</th>
+            <th>Icon</th>
+            <th>#</th>
+            <th>Nombre Oferta</th>
+            <th>Candidatos</th>
+            <th>Contactados</th>
+            <th>ECG</th>
+            <th>Exactitud</th>
+            <th>Score</th>
+            <th>CVS Asignados</th>
           </tr>
         </thead>
         <tbody>
@@ -69,32 +68,14 @@
                 />
               </div>
             </td>
-            <td>{{ result.company_name }}</td>
-            <td>{{ result.active_process }}</td>
-            <td>{{ result.cv_loaded }}</td>
-            <td>{{ result.granted_offers }}</td>
-            <td>{{ result.associated_user }}</td>
-            <td>{{ result.mail }}</td>
-            <td>{{ result.koe_user }}</td>
-            <td>{{ result.assigned_offers }}</td>
-            <td class="actions">
-              <font-awesome-icon
-                class="icon"
-                :icon="['fas', 'pen-to-square']"
-                :style="{ color: '#00CC88' }"
-              />
-              <font-awesome-icon
-                class="icon"
-                :icon="['fas', 'eye']"
-                :style="{ color: '#5C60F5' }"
-                @click="onHandleCompanySelected(result.id)"
-              />
-              <font-awesome-icon
-                class="icon"
-                :icon="['fas', 'trash']"
-                :style="{ color: '#FE3366' }"
-              />
-            </td>
+            <td class="ranking">{{ result.number }}</td>
+            <td>{{ result.offer_name }}</td>
+            <td>{{ result.candidates }}</td>
+            <td>{{ result.contacted }}</td>
+            <td>{{ result.ecg }}</td>
+            <td>{{ result.accuracy }}</td>
+            <td>{{ result.score }}</td>
+            <td>{{ result.assigned_cvs }}</td>
           </tr>
         </tbody>
       </table>
@@ -115,20 +96,20 @@
 </template>
 
 <script lang="ts" setup>
-import { generateSuperCompaniesData } from "~/utils/helpers/super-companies-generator.helper";
-import type { ISuperCompaniesListTableRow } from "~/utils/interfaces";
+import { generateSuperOffersData } from "~/utils/helpers/super-offers-list-generator.helper";
+import type { ISuperOffersListTableRow } from "~/utils/interfaces";
 
-const results = ref<ISuperCompaniesListTableRow[]>(
-  generateSuperCompaniesData(35)
-);
+interface ITableProps {
+  companyName: string;
+}
+const props = withDefaults(defineProps<ITableProps>(), {
+  companyName: "",
+});
+const results = ref<ISuperOffersListTableRow[]>(generateSuperOffersData(35));
 
 const currentPage = ref(1);
 const rowsPerPage = ref(10);
 
-const onHandleCompanySelected = (companyId: number): void => {
-  console.log("company id: ", companyId);
-  navigateTo(`/super-admin/offer-details/${companyId}`);
-};
 // Computed property to calculate the total number of pages
 const totalPages = computed(() => {
   return Math.ceil(results.value.length / rowsPerPage.value);
@@ -152,6 +133,12 @@ const previousPage = () => {
     currentPage.value--;
   }
 };
+watch(
+  () => props.companyName,
+  (newValue: string) => {
+    console.log("new value: ", newValue);
+  }
+);
 </script>
 
 <style lang="scss" scoped>
