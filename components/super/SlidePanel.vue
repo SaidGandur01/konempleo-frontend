@@ -24,6 +24,16 @@
           <span>Ofertas por empresa</span>
         </NuxtLink>
       </li>
+      <li :class="{ 'active-item': isActive('/super-admin/create-company') }">
+        <NuxtLink to="/super-admin/create-company" class="item-field">
+          <font-awesome-icon
+            class="icon"
+            :icon="['fas', 'house-flag']"
+            size="xl"
+          />
+          <span>Crear Empresa</span>
+        </NuxtLink>
+      </li>
     </ul>
     <div class="bottom-actions">
       <CoreButton

@@ -3,7 +3,7 @@
     <div class="slide-wrapper">
       <SuperSlidePanel />
     </div>
-    <div class="create-company-container">
+    <div class="company-offers-container">
       <div class="content">
         <h2>Ofertas por empresa</h2>
         <div class="form-field">
@@ -76,7 +76,7 @@ onMounted(() => {
   .slide-wrapper {
     width: 15%;
   }
-  .create-company-container {
+  .company-offers-container {
     align-items: center;
     background-color: var(--background-color-primary);
     display: flex;
