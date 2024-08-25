@@ -1,4 +1,5 @@
 export interface IOffersListTableRow {
+  id: number;
   icon: string;
   number: number;
   offer_name: string;

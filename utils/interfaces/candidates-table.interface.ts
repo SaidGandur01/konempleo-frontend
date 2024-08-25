@@ -1,4 +1,5 @@
 export interface ICandidatesTableRow {
+  id: number;
   icon: string;
   ranking: number;
   nombre: string;

@@ -35,6 +35,7 @@ export const generateCandidatesData = (numRows: number): ICandidatesTableRow[] =
 
   for (let i = 0; i < numRows; i++) {
     data.push({
+      id: i + 1,
       icon: faker.image.avatar(),
       ranking: i + 1,
       nombre: faker.name.fullName(),

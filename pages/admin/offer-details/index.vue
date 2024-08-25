@@ -10,14 +10,16 @@
           <CoreDropdown
             :list-options="companiesListData"
             label="Seleccione una empresa"
-            placeholder="Seleccione una opción"
+            :placeholder="
+              offerIdFromUrl ? `Company ${offerIdFromUrl}` : 'Seleccione una opción'
+            "
             @select="(data) => handleOnInput('company_name', data)"
           />
           <span v-if="form.company_name.length < 1" class="error-message">{{
             companyNameError
           }}</span>
         </div>
-        <CoreResultsCompanyOffersTable :company-name="currentSelection"/>
+        <CoreResultsCompanyOffersTable :company-name="currentSelection" />
       </div>
     </div>
   </div>
@@ -26,6 +28,7 @@
 import { companiesListData } from "~/data/companies/companies-list";
 
 definePageMeta({
+  path: "/admin/offer-details/:id?",
   middleware: ["protected", "admin-guard"],
 });
 interface ICompanyForm {
@@ -36,11 +39,13 @@ const form = ref<ICompanyForm>({
 });
 const companyNameError = ref<string>("");
 const currentSelection = ref<string>("");
+const offerIdFromUrl = ref<string>("");
 const handleOnInput = (keyField: string, value: string): void => {
   form.value = {
     ...form.value,
     [keyField]: value,
   };
+  offerIdFromUrl.value = ''
   currentSelection.value = value;
   validateErrorsForm(keyField, value);
 };
@@ -53,6 +58,15 @@ const validateErrorsForm = (keyField: string, value: string): void => {
       break;
   }
 };
+
+onMounted(() => {
+  const route = useRoute();
+  const offerId = route.params.id || null;
+  if (offerId) {
+    offerIdFromUrl.value = offerId[0];
+    currentSelection.value = companiesListData[0].value;
+  }
+});
 </script>
 <style lang="scss" scoped>
 .admin-content {

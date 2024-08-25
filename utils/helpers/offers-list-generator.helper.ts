@@ -8,6 +8,7 @@ export const generateOffersData = (numRows: number): IOffersListTableRow[] => {
 
   for (let i = 0; i < numRows; i++) {
     data.push({
+      id: i + 1,
       icon: faker.image.avatar(),
       number: i + 1,
       offer_name: faker.helpers.arrayElement(offerNames),

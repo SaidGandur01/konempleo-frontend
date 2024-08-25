@@ -8,6 +8,7 @@ export const generateCompaniesData = (
 
   for (let i = 0; i < numRows; i++) {
     data.push({
+      id: i + 1,
       logo: faker.image.avatar(),
       company_name: `company ${i + 1}`,
       active_process: faker.datatype.number({ min: 10, max: 50 }),

@@ -49,7 +49,7 @@ const onHandleLogout = (): void => {
 };
 
 const isActive = (path: string): boolean => {
-  return route.path === path;
+  return route.path.startsWith(path);
 };
 
 </script>

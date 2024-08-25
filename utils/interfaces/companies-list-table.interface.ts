@@ -1,4 +1,5 @@
 export interface ICompaniesListTableRow {
+  id: number;
   logo: string;
   company_name: string;
   active_process: number;

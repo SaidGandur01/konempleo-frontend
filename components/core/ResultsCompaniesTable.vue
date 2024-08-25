@@ -78,6 +78,7 @@
                 class="icon"
                 :icon="['fas', 'eye']"
                 :style="{ color: '#5C60F5' }"
+                @click="onHandleCompanySelected(result.id)"
               />
             </td>
           </tr>
@@ -108,6 +109,10 @@ const results = ref<ICompaniesListTableRow[]>(generateCompaniesData(35));
 const currentPage = ref(1);
 const rowsPerPage = ref(10);
 
+const onHandleCompanySelected = (companyId: number): void => {
+  console.log('company id: ', companyId)
+  navigateTo(`/admin/offer-details/${companyId}`);
+}
 // Computed property to calculate the total number of pages
 const totalPages = computed(() => {
   return Math.ceil(results.value.length / rowsPerPage.value);
