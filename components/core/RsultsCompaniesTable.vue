@@ -46,14 +46,13 @@
       <table>
         <thead>
           <tr>
-            <th>Icon</th>
-            <th>#</th>
-            <th>Nombre Oferta</th>
-            <th>Candidatos</th>
-            <th>Contactados</th>
-            <th>ECG</th>
-            <th>Exactitud</th>
-            <th>Score</th>
+            <th>Logo</th>
+            <th>Nombre Empresa</th>
+            <th>Procesos Activos</th>
+            <th>CV Cargados</th>
+            <th>Ofertas Otorgadas</th>
+            <th>Usuario Asociado</th>
+            <th>Mail</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -68,23 +67,17 @@
                 />
               </div>
             </td>
-            <td class="ranking">{{ result.number }}</td>
-            <td>{{ result.offer_name }}</td>
-            <td>{{ result.candidates }}</td>
-            <td>{{ result.contacted }}</td>
-            <td>{{ result.ecg }}</td>
-            <td>{{ result.accuracy }}</td>
-            <td>{{ result.score }}</td>
+            <td>{{ result.company_name }}</td>
+            <td>{{ result.active_process }}</td>
+            <td>{{ result.cv_loaded }}</td>
+            <td>{{ result.granted_offers }}</td>
+            <td>{{ result.associated_user }}</td>
+            <td>{{ result.mail }}</td>
             <td class="actions">
               <font-awesome-icon
                 class="icon"
-                :icon="['fas', 'pen-to-square']"
+                :icon="['fas', 'eye']"
                 :style="{ color: '#5C60F5' }"
-              />
-              <font-awesome-icon
-                class="icon"
-                :icon="['fas', 'trash']"
-                :style="{ color: '#FE3366' }"
               />
             </td>
           </tr>
@@ -107,10 +100,10 @@
 </template>
 
 <script lang="ts" setup>
-import { generateOffersData } from "~/utils/helpers/offers-list-generator.helper";
-import type { IOffersListTableRow } from "~/utils/interfaces";
+import { generateCompaniesData } from "~/utils/helpers/companies-generator.helper";
+import type { ICompaniesListTableRow } from "~/utils/interfaces";
 
-const results = ref<IOffersListTableRow[]>(generateOffersData(35));
+const results = ref<ICompaniesListTableRow[]>(generateCompaniesData(35));
 
 const currentPage = ref(1);
 const rowsPerPage = ref(10);

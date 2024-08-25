@@ -15,7 +15,7 @@ export default defineNuxtRouteMiddleware(async () => {
     if (userRole === EUser.COMPANY) {
       return navigateTo('/company/create-offer')
     } else {
-      return navigateTo('/admin/board')
+      return navigateTo('/admin/companies')
     }
   }
 });

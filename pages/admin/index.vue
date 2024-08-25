@@ -3,6 +3,6 @@ definePageMeta({
   middleware: ["protected", "admin-guard"],
 });
 onBeforeMount(() => {
-  navigateTo('/admin/board')
+  navigateTo('/admin/companies')
 })
 </script>

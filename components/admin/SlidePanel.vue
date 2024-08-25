@@ -4,14 +4,14 @@
       <img :src="logo" alt="logo">
     </div>
     <ul>
-      <li :class="{ 'active-item': isActive('/admin/board') }">
-        <NuxtLink to="/admin/board" class="item-field">
+      <li :class="{ 'active-item': isActive('/admin/companies') }">
+        <NuxtLink to="/admin/companies" class="item-field">
           <font-awesome-icon
             class="icon"
             :icon="['fas', 'list-check']"
             size="xl"
           />
-          <span>Gestionar Empresas</span>
+          <span>Lista de Empresas</span>
         </NuxtLink>
       </li>
       <li :class="{ 'active-item': isActive('/admin/create-company') }">
@@ -21,7 +21,7 @@
             :icon="['fas', 'building']"
             size="xl"
           />
-          <span>Crear Empresa</span>
+          <span>Gestionar Empresa</span>
         </NuxtLink>
       </li>
     </ul>
@@ -103,7 +103,7 @@ const isActive = (path: string): boolean => {
       }
 
       &.active-item {
-        background-color: #ec6b62;
+        background-color: var(--color-brand);
         border-radius: 1rem;
       }
     }

@@ -13,7 +13,7 @@ export default defineNuxtRouteMiddleware(async () => {
 
   if(userRole !== EUser.COMPANY) {
     if (userRole === EUser.ADMIN) {
-      return navigateTo('/admin/board')
+      return navigateTo('/admin/companies')
     } else {
       return navigateTo('/super-admin')
     }

@@ -267,6 +267,7 @@ watch(
         background-color: darken($color: #f5f9fc, $amount: 5%);
         border-radius: 50%;
         position: relative;
+        margin: 0 auto;
 
         .icon {
           position: absolute;
