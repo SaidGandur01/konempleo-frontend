@@ -30,7 +30,7 @@ export const useUserStore = defineStore("user-store", {
     },
     getUserRole(): EUser | null {
       const roleFromLocal = localStorage.getItem('user_role') as EUser
-      if (!this.role || !roleFromLocal) {
+      if (!roleFromLocal) {
         this.reset()
       }
       return this.role || roleFromLocal;
@@ -45,6 +45,7 @@ export const useUserStore = defineStore("user-store", {
       return this.role === EUser.ADMIN;
     },
     reset(): void {
+      localStorage.removeItem("user_role");
       navigateTo("/login");
       Object.assign(this, defaultState);
     },

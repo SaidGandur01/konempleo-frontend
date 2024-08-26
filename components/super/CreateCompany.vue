@@ -101,7 +101,7 @@
           <CoreButton
             size="sm"
             label="Crear Empresa"
-            :disabled="disableButton"
+            :disabled="false"
             @click="onCreateCompany"
           />
         </div>
@@ -127,6 +127,7 @@
 </template>
 <script lang="ts" setup>
 import { konEmpleoContactListData } from "~/data/konempleo-contacts/konempleo-contacts";
+import { useHelperStore } from "~/store/helper.store";
 
 interface ICreateCompanyForm {
   company_name: string;
@@ -156,6 +157,9 @@ const companyOffersError = ref<string>("");
 
 const disableButton = ref<boolean>(true);
 const imageSrc = ref<string | null>(null);
+const helperStore = useHelperStore()
+const { $toast } = useNuxtApp();
+
 const previewImage = (event: Event) => {
   const input = event.target as HTMLInputElement;
   if (input.files && input.files[0]) {
@@ -170,6 +174,11 @@ const previewImage = (event: Event) => {
 };
 const onCreateCompany = (): void => {
   console.log("form: ", form.value);
+  helperStore.renderToastMessage(
+    $toast,
+    false,
+    { success: 'Empresa creada exitosamente' }
+  );
 };
 const handleOnInput = (keyField: string, value: string): void => {
   form.value = {
@@ -253,9 +262,15 @@ const validateForm = (): void => {
     width: 100%;
     padding-bottom: 2rem;
 
+    .first-column {
+      width: 60%;
+    }
+    .second-column {
+      width: 40%;
+    }
+
     .first-column,
     .second-column {
-      width: 50%;
       display: flex;
       flex-direction: column;
       gap: 3rem;

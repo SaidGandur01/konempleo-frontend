@@ -273,3 +273,15 @@ a:visited {
   display: inline-block;
   border-radius: 50%;
 }
+
+@media (max-width: 576px) {
+  .Toastify__toast-container {
+    width: 90% !important;
+    top: 3% !important;
+    left: 100% !important;
+    transform: translate(-100%, -3%) !important;
+  }
+  .Toastify__toast {
+    margin-bottom: 1rem !important;
+  }
+}

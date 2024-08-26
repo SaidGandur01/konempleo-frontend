@@ -51,7 +51,7 @@
         <CoreButton
           size="sm"
           label="Crear Usuario"
-          :disabled="disableButton"
+          :disabled="false"
           @click="onCreateUser"
         />
       </div>
@@ -60,6 +60,7 @@
 </template>
 <script lang="ts" setup>
 import { companiesToAssignUserListData } from "~/data/companies/companies-to-assign-user";
+import { useHelperStore } from "~/store/helper.store";
 
 interface ICreateUserForm {
   name: string;
@@ -77,9 +78,16 @@ const emailError = ref<string>("");
 const companiesError = ref<string>("");
 
 const disableButton = ref<boolean>(true);
+const helperStore = useHelperStore()
+const { $toast } = useNuxtApp();
 
 const onCreateUser = (): void => {
   console.log("form: ", form.value);
+  helperStore.renderToastMessage(
+    $toast,
+    false,
+    { success: 'Usuario creado exitosamente' }
+  );
 };
 const handleOnInput = (keyField: string, value: string): void => {
   form.value = {
