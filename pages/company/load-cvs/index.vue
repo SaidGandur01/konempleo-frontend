@@ -49,7 +49,6 @@ const form = ref<ICreateOfferForm>({
 });
 const offerNameError = ref<string>("");
 const disabledButton = ref<boolean>(true);
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const files = ref<any>([]);
 
 const handleOnInput = (keyField: string, value: string): void => {
@@ -75,7 +74,6 @@ const validateForm = (): void => {
 
   disabledButton.value = !(isOfferNameValid && isFilesEmpty);
 };
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const onHandleFiles = (inputFiles: any): void => {
   console.log("fileS: ", inputFiles);
   files.value = inputFiles;

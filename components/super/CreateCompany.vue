@@ -101,13 +101,26 @@
           <CoreButton
             size="sm"
             label="Crear Empresa"
-            :disabled="disableButton"
+            :disabled="false"
             @click="onCreateCompany"
           />
         </div>
       </div>
-      <div class="second-column">
-
+      <div class="second-column upload-logo">
+        <div class="image-upload-container">
+          <input
+            id="imageUpload"
+            type="file"
+            accept="image/*"
+            @change="previewImage"
+          >
+          <label for="imageUpload" class="image-upload-label">
+            <div id="imagePreview" class="image-preview">
+              <img v-if="imageSrc" :src="imageSrc" alt="Logo Preview" >
+              <span v-else>Upload Logo</span>
+            </div>
+          </label>
+        </div>
       </div>
     </div>
   </div>
@@ -122,6 +135,7 @@ interface ICreateCompanyForm {
   user_company_email: string;
   konempleo_contact: string;
   company_offers: number;
+  company_logo?: File | null;
 }
 const form = ref<ICreateCompanyForm>({
   company_name: "",
@@ -130,6 +144,7 @@ const form = ref<ICreateCompanyForm>({
   user_company_email: "",
   konempleo_contact: "",
   company_offers: 5,
+  company_logo: null,
 });
 
 const companyNameError = ref<string>("");
@@ -140,9 +155,22 @@ const konEmpleoContactError = ref<string>("");
 const companyOffersError = ref<string>("");
 
 const disableButton = ref<boolean>(true);
+const imageSrc = ref<string | null>(null);
+const previewImage = (event: Event) => {
+  const input = event.target as HTMLInputElement;
+  if (input.files && input.files[0]) {
+    const file = input.files[0];
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      imageSrc.value = e.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+    form.value.company_logo = file;
+  }
+};
 const onCreateCompany = (): void => {
-  console.log('form: ', form.value)
-}
+  console.log("form: ", form.value);
+};
 const handleOnInput = (keyField: string, value: string): void => {
   form.value = {
     ...form.value,
@@ -234,6 +262,58 @@ const validateForm = (): void => {
     }
 
     .second-column {
+      .image-upload-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        width: 250px;
+        height: 250px;
+        margin: 0 auto;
+      }
+
+      #imageUpload {
+        display: none;
+      }
+
+      .image-upload-label {
+        cursor: pointer;
+      }
+
+      .image-preview {
+        width: 250px;
+        height: 250px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        border: 6px dashed #d1d5dc;
+        transition: border-color 0.3s;
+        position: relative;
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: center;
+          border-radius: 50%;
+        }
+
+        span {
+          color: #999;
+          font-size: 2rem;
+          transition: color 0.3s;
+        }
+
+        &:hover {
+          border-color: var(--color-brand);
+
+          span {
+            color: var(--color-brand);
+          }
+        }
+      }
     }
   }
 

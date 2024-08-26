@@ -28,7 +28,6 @@ import FilePondPluginImagePreview from "filepond-plugin-image-preview";
 import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
 
 interface IUploadFileEmit {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (event: "emitfile", value: any): void;
 }
 const emit = defineEmits<IUploadFileEmit>();
@@ -36,7 +35,6 @@ const FilePond = vueFilePond(
   FilePondPluginFileValidateType,
   FilePondPluginImagePreview
 );
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const pond = ref<any>(null);
 const labelIdleContent = computed(
   () => `
