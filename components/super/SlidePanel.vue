@@ -34,6 +34,16 @@
           <span>Crear Empresa</span>
         </NuxtLink>
       </li>
+      <li :class="{ 'active-item': isActive('/super-admin/create-user') }">
+        <NuxtLink to="/super-admin/create-user" class="item-field">
+          <font-awesome-icon
+            class="icon"
+            :icon="['fas', 'users']"
+            size="xl"
+          />
+          <span>Crear Usuario</span>
+        </NuxtLink>
+      </li>
     </ul>
     <div class="bottom-actions">
       <CoreButton

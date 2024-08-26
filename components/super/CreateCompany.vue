@@ -101,7 +101,7 @@
           <CoreButton
             size="sm"
             label="Crear Empresa"
-            :disabled="false"
+            :disabled="disableButton"
             @click="onCreateCompany"
           />
         </div>
