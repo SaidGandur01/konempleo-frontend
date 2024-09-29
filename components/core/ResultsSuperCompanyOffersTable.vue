@@ -71,7 +71,7 @@
               </div>
             </td>
             <td class="ranking">{{ result.number }}</td>
-            <td>{{ result.offer_name }}</td>
+            <td style="cursor: pointer;" @click="onHandleOffer">{{ result.offer_name }}</td>
             <td>{{ result.candidates }}</td>
             <td>{{ result.contacted }}</td>
             <td>{{ result.ecg }}</td>
@@ -136,6 +136,11 @@ const previousPage = () => {
   if (currentPage.value > 1) {
     currentPage.value--;
   }
+};
+
+const onHandleOffer = (): void => {
+  const randomNum = Math.floor(Math.random() * 3) + 1;
+  navigateTo(`/super-admin/offers/${randomNum}`);
 };
 watch(
   () => props.companyName,

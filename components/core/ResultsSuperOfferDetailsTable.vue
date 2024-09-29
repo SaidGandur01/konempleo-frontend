@@ -52,71 +52,34 @@
       <table>
         <thead>
           <tr>
-            <th>Icon</th>
             <th>Ranking</th>
             <th>Nombre</th>
-            <th>WhatsApp</th>
-            <th>Tus Datos</th>
-            <th>Movil</th>
+            <th>Cédula</th>
+            <th>Ciudad</th>
+            <th>Habilidades encontradas</th>
+            <th>Género</th>
+            <th>Móvil</th>
             <th>Mail</th>
             <th>Score</th>
-            <th>Contratado</th>
-            <th>Actions</th>
+            <th>Experiencia (en años)</th>
+            <th>Tiempo promedio en cada trabajo</th>
+            <th>Nivel Educativo</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="(result, index) in paginatedResults" :key="index">
-            <td>
-              <div class="avatar">
-                <font-awesome-icon
-                  class="icon"
-                  :icon="['fas', 'user-tie']"
-                  size="lg"
-                />
-              </div>
-            </td>
-            <td class="ranking">{{ result.ranking }}</td>
-            <td>{{ result.nombre }}</td>
-            <td>
-              <div class="whatsapp-wrapper">
-                <span :class="'status-' + result.whatsapp" />
-                <span class="text-info">{{
-                  getStatusText(result.whatsapp)
-                }}</span>
-              </div>
-            </td>
-            <td>
-              <div class="tus-datos-wrapper">
-                <span :class="'status-' + result.tusDatos" />
-                <span class="text-info">{{
-                  getStatusText(result.whatsapp)
-                }}</span>
-              </div>
-            </td>
-            <td>{{ result.movil }}</td>
+            <td class="ranking">{{ result.id }}</td>
+            <td>{{ result.name }}</td>
+            <td>{{ result.dni }}</td>
+            <td>{{ result.city }}</td>
+            <td>{{ result.skills.join(', ') }}</td>
+            <td>{{ result.gender }}</td>
+            <td>{{ result.phone }}</td>
             <td>{{ result.mail }}</td>
             <td>{{ result.score }}</td>
-            <td>{{ result.contratado }}</td>
-            <td>
-              <div class="actions">
-                <div class="tooltip">
-                  <font-awesome-icon
-                    class="icon"
-                     :icon="['fas', 'eye']"
-                    :style="{ color: '#5C60F5' }"
-                  />
-                  <span class="tooltiptext">Ver</span>
-                </div>
-                <div class="tooltip">
-                  <font-awesome-icon
-                    class="icon"
-                    :icon="['fas', 'trash']"
-                    :style="{ color: '#FE3366' }"
-                  />
-                  <span class="tooltiptext">Delete</span>
-                </div>
-              </div>
-            </td>
+            <td>{{ result.average_experience_in_years }}</td>
+            <td>{{ result.average_time_per_job }}</td>
+            <td>{{ result.education_level }}</td>
           </tr>
         </tbody>
       </table>
@@ -137,32 +100,15 @@
 </template>
 
 <script lang="ts" setup>
-import { generateCandidatesData } from "~/utils/helpers/candidates-generator.helper";
-import type { ICandidatesTableRow } from "~/utils/interfaces";
+import { generateSuperCandidatesData } from "~/utils/helpers/super-candidates-generator.helper";
+import type { ISuperCandidatesTableRow } from "~/utils/interfaces";
 interface ITableProps {
   offerName: string;
 }
 const props = withDefaults(defineProps<ITableProps>(), {
   offerName: "",
 });
-const results = ref<ICandidatesTableRow[]>(generateCandidatesData(50));
-const getStatusText = (
-  status: "success" | "pending" | "danger" | "info" | "default"
-): string => {
-  switch (status) {
-    case "success":
-      return "Done";
-    case "pending":
-      return "In progress";
-    case "danger":
-      return "Error";
-    case "info":
-      return "Information";
-    case "default":
-    default:
-      return "Default";
-  }
-};
+const results = ref<ISuperCandidatesTableRow[]>(generateSuperCandidatesData(50));
 const currentPage = ref(1);
 const rowsPerPage = ref(10);
 
@@ -298,42 +244,41 @@ watch(
           margin-top: 2px;
         }
       }
+      .tooltip {
+        position: relative;
+        display: inline-block;
+      }
+
+      .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 80px;
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px 0;
+        position: absolute;
+        z-index: 1;
+        top: 100%;
+        right: 50%;
+        margin-left: -40px;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      .tooltip:hover .tooltiptext {
+        visibility: visible;
+        opacity: 1;
+      }
+
+      .icon {
+        cursor: pointer;
+      }
       .actions {
         display: flex;
         align-items: center;
         justify-content: center;
         gap: 2rem;
-
-        .tooltip {
-          position: relative;
-          display: inline-block;
-        }
-
-        .tooltip .tooltiptext {
-          visibility: hidden;
-          width: 80px;
-          background-color: #333;
-          color: #fff;
-          text-align: center;
-          border-radius: 6px;
-          padding: 5px 0;
-          position: absolute;
-          z-index: 1;
-          top: 100%;
-          right: 50%;
-          margin-left: -40px;
-          opacity: 0;
-          transition: opacity 0.3s;
-        }
-
-        .tooltip:hover .tooltiptext {
-          visibility: visible;
-          opacity: 1;
-        }
-
-        .icon {
-          cursor: pointer;
-        }
       }
     }
   }

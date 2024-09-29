@@ -45,6 +45,7 @@ export const generateCandidatesData = (numRows: number): ICandidatesTableRow[] =
       mail: faker.internet.email(),
       score: faker.datatype.number({ min: 0, max: 10 }).toFixed(1),
       contratado: faker.datatype.boolean() ? "OK" : "N/A",
+      comments: faker.lorem.sentence(),
     });
   }
 

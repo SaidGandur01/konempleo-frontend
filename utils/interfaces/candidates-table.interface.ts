@@ -9,4 +9,5 @@ export interface ICandidatesTableRow {
   mail: string;
   score: number | string;
   contratado: string;
+  comments: string;
 };

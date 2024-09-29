@@ -24,6 +24,16 @@
           <span>Ofertas por empresa</span>
         </NuxtLink>
       </li>
+      <li :class="{ 'active-item': isActive('/super-admin/offers') }">
+        <NuxtLink to="/super-admin/offers" class="item-field">
+          <font-awesome-icon
+            class="icon"
+            :icon="['fas', 'list-check']"
+            size="xl"
+          />
+          <span>Lista de ofertas</span>
+        </NuxtLink>
+      </li>
       <li :class="{ 'active-item': isActive('/super-admin/create-company') }">
         <NuxtLink to="/super-admin/create-company" class="item-field">
           <font-awesome-icon
