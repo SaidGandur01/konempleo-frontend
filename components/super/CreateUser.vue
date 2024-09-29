@@ -47,6 +47,17 @@
           companiesError
         }}</span>
       </div>
+      <div class="form-field">
+        <CoreDropdown
+          :list-options="rolListData"
+          label="Rol"
+          placeholder="Seleccione una opción"
+          @select="(data) => handleOnInput('rol', data)"
+        />
+        <span v-if="!form.rol" class="error-message">{{
+          rolError
+        }}</span>
+      </div>
       <div class="button">
         <CoreButton
           size="sm"
@@ -60,22 +71,26 @@
 </template>
 <script lang="ts" setup>
 import { companiesToAssignUserListData } from "~/data/companies/companies-to-assign-user";
+import { rolListData } from "~/data/rol/rol";
 import { useHelperStore } from "~/store/helper.store";
 
 interface ICreateUserForm {
   name: string;
   email: string;
   companies: string;
+  rol: string;
 }
 const form = ref<ICreateUserForm>({
   name: "",
   email: "",
   companies: "",
+  rol: "",
 });
 
 const nameError = ref<string>("");
 const emailError = ref<string>("");
 const companiesError = ref<string>("");
+const rolError = ref<string>("");
 
 const disableButton = ref<boolean>(true);
 const helperStore = useHelperStore()
@@ -88,6 +103,9 @@ const onCreateUser = (): void => {
     false,
     { success: 'Usuario creado exitosamente' }
   );
+  setTimeout(() => {
+    navigateTo("/super-admin/users");
+  }, 1500);
 };
 const handleOnInput = (keyField: string, value: string): void => {
   form.value = {
@@ -110,6 +128,9 @@ const validateErrorsForm = (keyField: string, value: string): void => {
     case "companies":
       companiesError.value = !value.length ? "Selecciona una opción" : "";
       break;
+    case "rol":
+      rolError.value = !value.length ? "Selecciona una opción" : "";
+      break;
     default:
       break;
   }
@@ -117,11 +138,13 @@ const validateErrorsForm = (keyField: string, value: string): void => {
 const validateForm = (): void => {
   const isNameValid = form.value.name.length >= 3 && nameError.value === "";
   const isCompaniesValid = form.value.companies && companiesError.value === "";
+  const isRolValid = form.value.rol && rolError.value === "";
 
   disableButton.value = !(
     isNameValid &&
     /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(form.value.email) &&
-    isCompaniesValid
+    isCompaniesValid &&
+    isRolValid
   );
 };
 </script>

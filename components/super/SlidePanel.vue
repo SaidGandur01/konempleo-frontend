@@ -44,6 +44,16 @@
           <span>Crear Usuario</span>
         </NuxtLink>
       </li>
+      <li :class="{ 'active-item': isActive('/super-admin/users') }">
+        <NuxtLink to="/super-admin/users" class="item-field">
+          <font-awesome-icon
+            class="icon"
+            :icon="['fas', 'people-group']"
+            size="xl"
+          />
+          <span>Lista de usuarios</span>
+        </NuxtLink>
+      </li>
     </ul>
     <div class="bottom-actions">
       <CoreButton
