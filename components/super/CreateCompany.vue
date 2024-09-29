@@ -34,6 +34,30 @@
             id="sector-id"
             name="text"
             min-length="2"
+            label="Numero de Documento"
+            placeholder=""
+            required
+            type="text"
+            @input="(data) => handleOnInput('document_number', data)"
+          />
+          <span v-if="form.document_number.length < 3" class="error-message">{{
+            documentNumberError
+          }}</span>
+        </div>
+        <div class="form-field">
+          <CoreDropdown
+            :list-options="cityListData"
+            label="Ciudad"
+            placeholder="Seleccione una ciudad"
+            @select="(data) => handleOnInput('city', data)"
+          />
+          <span v-if="!form.city" class="error-message">{{ cityError }}</span>
+        </div>
+        <div class="form-field">
+          <CoreInput
+            id="sector-id"
+            name="text"
+            min-length="2"
             label="Sector"
             placeholder="Nombre del Sector"
             required
@@ -43,6 +67,15 @@
           <span v-if="form.sector.length < 3" class="error-message">{{
             sectorError
           }}</span>
+        </div>
+        <div class="form-field">
+          <CoreDropdown
+            :list-options="employessRangeListData"
+            label="Número de empleados"
+            placeholder="Seleccione un rango"
+            @select="(data) => handleOnInput('city', data)"
+          />
+          <span v-if="!form.city" class="error-message">{{ cityError }}</span>
         </div>
         <div class="form-field">
           <CoreInput
@@ -80,6 +113,23 @@
             "
             class="error-message"
             >{{ userCompanyEmailError }}</span
+          >
+        </div>
+        <div class="form-field">
+          <CoreInput
+            id="user-company-name-id"
+            name="text"
+            min-length="2"
+            label="Teléfono usuario Empresa"
+            placeholder=""
+            required
+            type="number"
+            @input="(data) => handleOnInput('user_company_phone', data)"
+          />
+          <span
+            v-if="form.user_company_phone.length < 3"
+            class="error-message"
+            >{{ userCompanyPhoneError }}</span
           >
         </div>
         <div class="form-field">
@@ -124,10 +174,10 @@
             type="file"
             accept="image/*"
             @change="previewImage"
-          >
+          />
           <label for="imageUpload" class="image-upload-label">
             <div id="imagePreview" class="image-preview">
-              <img v-if="imageSrc" :src="imageSrc" alt="Logo Preview" >
+              <img v-if="imageSrc" :src="imageSrc" alt="Logo Preview" />
               <span v-else>Upload Logo</span>
             </div>
           </label>
@@ -137,7 +187,9 @@
   </div>
 </template>
 <script lang="ts" setup>
+import { cityListData } from "~/data/city/city";
 import { companyDocumentTypeListData } from "~/data/document-type-company/document-type-company";
+import { employessRangeListData } from "~/data/employess-range/employess-range";
 import { konEmpleoContactListData } from "~/data/konempleo-contacts/konempleo-contacts";
 import { useHelperStore } from "~/store/helper.store";
 
@@ -147,6 +199,9 @@ interface ICreateCompanyForm {
   user_company_name: string;
   user_company_email: string;
   konempleo_contact: string;
+  document_number: string;
+  city: string;
+  user_company_phone: string;
   company_document_type: string;
   company_offers: number;
   company_logo?: File | null;
@@ -157,6 +212,9 @@ const form = ref<ICreateCompanyForm>({
   user_company_name: "",
   user_company_email: "",
   company_document_type: "",
+  document_number: "",
+  city: "",
+  user_company_phone: "",
   konempleo_contact: "",
   company_offers: 5,
   company_logo: null,
@@ -169,10 +227,13 @@ const userCompanyEmailError = ref<string>("");
 const konEmpleoContactError = ref<string>("");
 const companyOffersError = ref<string>("");
 const companyDocumentTypeError = ref<string>("");
+const documentNumberError = ref<string>("");
+const cityError = ref<string>("");
+const userCompanyPhoneError = ref<string>("");
 
 const disableButton = ref<boolean>(true);
 const imageSrc = ref<string | null>(null);
-const helperStore = useHelperStore()
+const helperStore = useHelperStore();
 const { $toast } = useNuxtApp();
 
 const previewImage = (event: Event) => {
@@ -189,14 +250,12 @@ const previewImage = (event: Event) => {
 };
 const onCreateCompany = (): void => {
   console.log("form: ", form.value);
-  helperStore.renderToastMessage(
-    $toast,
-    false,
-    { success: 'Empresa creada exitosamente' }
-  );
+  helperStore.renderToastMessage($toast, false, {
+    success: "Empresa creada exitosamente",
+  });
   setTimeout(() => {
     navigateTo("/super-admin/companies");
-  }, 3500);
+  }, 1500);
 };
 const handleOnInput = (keyField: string, value: string): void => {
   form.value = {
@@ -215,6 +274,14 @@ const validateErrorsForm = (keyField: string, value: string): void => {
     case "sector":
       sectorError.value = value.length < 3 ? "Inserta un sector válido" : "";
       break;
+    case "document_number":
+      documentNumberError.value =
+        value.length < 3 ? "Inserta un valor válido" : "";
+      break;
+    case "user_company_phone":
+      userCompanyPhoneError.value =
+        value.length < 3 ? "Inserta un valor válido" : "";
+      break;
     case "user_company_name":
       userCompanyNameError.value =
         value.length < 3 ? "Inserta un username válido" : "";
@@ -228,6 +295,9 @@ const validateErrorsForm = (keyField: string, value: string): void => {
       konEmpleoContactError.value = !value.length
         ? "Selecciona una opción"
         : "";
+      break;
+    case "city":
+      cityError.value = !value.length ? "Selecciona una opción" : "";
       break;
     case "company_document_type":
       companyDocumentTypeError.value = !value.length
@@ -249,11 +319,16 @@ const validateForm = (): void => {
     form.value.company_name.length >= 3 && companyNameError.value === "";
   const isSectorValid =
     form.value.sector.length >= 3 && sectorError.value === "";
+  const isDocumentNumberValid =
+    form.value.document_number.length >= 3 && documentNumberError.value === "";
+  const isUserCompanyPhoneValid =
+    form.value.user_company_phone.length >= 3 && userCompanyPhoneError.value === "";
   const isUserCompanyNameValid =
     form.value.user_company_name.length >= 3 &&
     userCompanyNameError.value === "";
   const isKonEmpleoContactValid =
     form.value.konempleo_contact && konEmpleoContactError.value === "";
+  const isCityValid = form.value.city && cityError.value === "";
   const isCompanyDocumentTypeValid =
     form.value.company_document_type && companyDocumentTypeError.value === "";
   const isCompanyOffersValid =
@@ -270,7 +345,10 @@ const validateForm = (): void => {
     ) &&
     isKonEmpleoContactValid &&
     isCompanyOffersValid &&
-    isCompanyDocumentTypeValid
+    isCompanyDocumentTypeValid &&
+    isDocumentNumberValid &&
+    isCityValid &&
+    isUserCompanyPhoneValid
   );
 };
 </script>
