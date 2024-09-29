@@ -1,7 +1,7 @@
 <template>
   <div class="results-table">
     <div
-      v-if="paginatedResults && paginatedResults.length"
+      v-if="offerName && paginatedResults && paginatedResults.length"
       class="table-wrapper"
     >
       <div class="kpi-section">
@@ -46,55 +46,26 @@
       <table>
         <thead>
           <tr>
-            <th>Icon</th>
             <th>#</th>
             <th>Nombre Oferta</th>
             <th>Candidatos</th>
             <th>Contactados</th>
-            <th>ECG</th>
-            <th>Exactitud</th>
-            <th>Score</th>
-            <th>Actions</th>
+            <th>Tus datos</th>
+            <th>CV Asignadas</th>
+            <th>Mensaje WP</th>
+            <th>Cierre de oferta</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="(result, index) in paginatedResults" :key="index">
-            <td>
-              <div class="avatar">
-                <font-awesome-icon
-                  class="icon"
-                  :icon="['fas', 'user-tie']"
-                  size="lg"
-                />
-              </div>
-            </td>
             <td class="ranking">{{ result.number }}</td>
             <td>{{ result.offer_name }}</td>
             <td>{{ result.candidates }}</td>
             <td>{{ result.contacted }}</td>
-            <td>{{ result.ecg }}</td>
-            <td>{{ result.accuracy }}</td>
             <td>{{ result.tus_datos }}</td>
-            <td>
-              <div class="actions">
-                <div class="tooltip">
-                  <font-awesome-icon
-                    class="icon"
-                    :icon="['fas', 'pen-to-square']"
-                    :style="{ color: '#5C60F5' }"
-                  />
-                  <span class="tooltiptext">Edit</span>
-                </div>
-                <div class="tooltip">
-                  <font-awesome-icon
-                    class="icon"
-                    :icon="['fas', 'trash']"
-                    :style="{ color: '#FE3366' }"
-                  />
-                  <span class="tooltiptext">Delete</span>
-                </div>
-              </div>
-            </td>
+            <td>{{ result.cv_assigned }}</td>
+            <td>{{ result.whatsapp_message }}</td>
+            <td>{{ result.offer_closed }}</td>
           </tr>
         </tbody>
       </table>
@@ -115,10 +86,17 @@
 </template>
 
 <script lang="ts" setup>
-import { generateOffersData } from "~/utils/helpers/offers-list-generator.helper";
-import type { IOffersListTableRow } from "~/utils/interfaces";
+import { generateCompanyAdminOffersListData } from "~/utils/helpers/company-admin-offers-list.helper";
+import type { ICompanyAdminOffersListTableRow } from "~/utils/interfaces";
 
-const results = ref<IOffersListTableRow[]>(generateOffersData(35));
+interface ITableProps {
+  offerName: string;
+}
+const props = withDefaults(defineProps<ITableProps>(), {
+  offerName: "",
+});
+
+const results = ref<ICompanyAdminOffersListTableRow[]>(generateCompanyAdminOffersListData(35));
 
 const currentPage = ref(1);
 const rowsPerPage = ref(10);
@@ -146,6 +124,12 @@ const previousPage = () => {
     currentPage.value--;
   }
 };
+watch(
+  () => props.offerName,
+  (newValue: string) => {
+    console.log("new value: ", newValue);
+  }
+);
 </script>
 
 <style lang="scss" scoped>

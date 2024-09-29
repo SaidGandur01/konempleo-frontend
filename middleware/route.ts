@@ -9,10 +9,12 @@ export default defineNuxtRouteMiddleware(async () => {
   switch (userRole) {
     case EUser.ADMIN:
       return navigateTo("/admin/companies");
+    case EUser.ADMIN_COMPANY:
+      return navigateTo("/company-admin/offers");
     case EUser.COMPANY:
       return navigateTo("/company/create-offer");
     case EUser.SUPER_ADMIN:
-      return navigateTo("/company/create-offer");
+      return navigateTo("/super-admin/companies");
     default:
       return navigateTo("/company/create-offer");
   }
