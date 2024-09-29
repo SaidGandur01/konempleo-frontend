@@ -19,6 +19,17 @@
           }}</span>
         </div>
         <div class="form-field">
+          <CoreDropdown
+            :list-options="companyDocumentTypeListData"
+            label="Tipo de Documento"
+            placeholder="Seleccione una opción"
+            @select="(data) => handleOnInput('company_document_type', data)"
+          />
+          <span v-if="!form.company_document_type" class="error-message">{{
+            companyDocumentTypeError
+          }}</span>
+        </div>
+        <div class="form-field">
           <CoreInput
             id="sector-id"
             name="text"
@@ -126,6 +137,7 @@
   </div>
 </template>
 <script lang="ts" setup>
+import { companyDocumentTypeListData } from "~/data/document-type-company/document-type-company";
 import { konEmpleoContactListData } from "~/data/konempleo-contacts/konempleo-contacts";
 import { useHelperStore } from "~/store/helper.store";
 
@@ -135,6 +147,7 @@ interface ICreateCompanyForm {
   user_company_name: string;
   user_company_email: string;
   konempleo_contact: string;
+  company_document_type: string;
   company_offers: number;
   company_logo?: File | null;
 }
@@ -143,6 +156,7 @@ const form = ref<ICreateCompanyForm>({
   sector: "",
   user_company_name: "",
   user_company_email: "",
+  company_document_type: "",
   konempleo_contact: "",
   company_offers: 5,
   company_logo: null,
@@ -154,6 +168,7 @@ const userCompanyNameError = ref<string>("");
 const userCompanyEmailError = ref<string>("");
 const konEmpleoContactError = ref<string>("");
 const companyOffersError = ref<string>("");
+const companyDocumentTypeError = ref<string>("");
 
 const disableButton = ref<boolean>(true);
 const imageSrc = ref<string | null>(null);
@@ -179,6 +194,9 @@ const onCreateCompany = (): void => {
     false,
     { success: 'Empresa creada exitosamente' }
   );
+  setTimeout(() => {
+    navigateTo("/super-admin/companies");
+  }, 3500);
 };
 const handleOnInput = (keyField: string, value: string): void => {
   form.value = {
@@ -211,6 +229,11 @@ const validateErrorsForm = (keyField: string, value: string): void => {
         ? "Selecciona una opción"
         : "";
       break;
+    case "company_document_type":
+      companyDocumentTypeError.value = !value.length
+        ? "Selecciona una opción"
+        : "";
+      break;
     case "company_offers":
       companyOffersError.value =
         isNaN(Number(value)) || Number(value) < 1
@@ -231,6 +254,8 @@ const validateForm = (): void => {
     userCompanyNameError.value === "";
   const isKonEmpleoContactValid =
     form.value.konempleo_contact && konEmpleoContactError.value === "";
+  const isCompanyDocumentTypeValid =
+    form.value.company_document_type && companyDocumentTypeError.value === "";
   const isCompanyOffersValid =
     !isNaN(Number(form.value.company_offers)) &&
     Number(form.value.company_offers) >= 1 &&
@@ -244,7 +269,8 @@ const validateForm = (): void => {
       form.value.user_company_email
     ) &&
     isKonEmpleoContactValid &&
-    isCompanyOffersValid
+    isCompanyOffersValid &&
+    isCompanyDocumentTypeValid
   );
 };
 </script>
