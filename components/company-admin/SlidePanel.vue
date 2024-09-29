@@ -14,6 +14,16 @@
           <span>Lista de ofertas</span>
         </NuxtLink>
       </li>
+      <li :class="{ 'active-item': isActive('/company-admin/create-offer') }">
+        <NuxtLink to="/company-admin/create-offer" class="item-field">
+          <font-awesome-icon
+            class="icon"
+            :icon="['fas', 'list-check']"
+            size="xl"
+          />
+          <span>Crear oferta</span>
+        </NuxtLink>
+      </li>
     </ul>
     <div class="bottom-actions">
       <CoreButton
