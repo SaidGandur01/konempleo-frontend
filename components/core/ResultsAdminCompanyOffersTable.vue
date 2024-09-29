@@ -1,45 +1,39 @@
 <template>
   <div class="results-table">
     <div
-      v-if="offerName && paginatedResults && paginatedResults.length"
+      v-if="companyName && paginatedResults && paginatedResults.length"
       class="table-wrapper"
     >
       <div class="kpi-section">
         <CoreKpiWrapper
-          title-one="Budget"
-          title-two="$750.90"
-          :has-icon="true"
-          icon-tag-one="fas"
-          icon-tag-two="money-bills"
-          icon-color="#ff579a"
-          :has-increased="true"
-          description-one="30%"
-          description-two="Since last month"
-          type="success"
-        />
-        <CoreKpiWrapper
-          title-two="35"
-          title-two-children="(35%)"
+          title-two="20"
           :title-two-font-size="true"
-          description-one="Candidatos Aptos"
+          description-two="Ofertas creadas"
         />
         <CoreKpiWrapper
-          title-two="10"
-          title-two-children="(28%)"
-          :title-two-font-size="true"
-          description-one="Candidatos Contactados"
-        />
-        <CoreKpiWrapper
-          title-one="Total hours"
-          title-two="1400"
+          title-two="135"
           :has-icon="true"
+          :title-two-font-size="true"
           icon-tag-one="fas"
-          icon-tag-two="hippo"
+          icon-tag-two="chart-column"
           icon-color="#5C60F5"
-          :has-decreased="true"
-          description-one="-10%"
-          description-two="Since last month"
-          type="danger"
+          description-one="Candidatos Analizados"
+        />
+        <CoreKpiWrapper
+          title-two="15%"
+          title-two-children="(11%)"
+          :title-two-font-size="true"
+          description-one="EGC"
+          description-one-children="Efectividad General de Contacto"
+        />
+        <CoreKpiWrapper
+          title-two="83%"
+          :has-icon="true"
+          :title-two-font-size="true"
+          icon-tag-one="fas"
+          icon-tag-two="chart-line"
+          icon-color="#5C60F5"
+          description-one="Exactitud Meta K"
         />
         <CoreKpiWrapper
           title-two="5%"
@@ -52,71 +46,24 @@
       <table>
         <thead>
           <tr>
-            <th>Icon</th>
-            <th>Ranking</th>
-            <th>Nombre</th>
-            <th>WhatsApp</th>
-            <th>Tus Datos</th>
-            <th>Movil</th>
-            <th>Mail</th>
-            <th>Score</th>
-            <th>Contratado</th>
-            <th>Actions</th>
+            <th>#</th>
+            <th>Nombre Oferta</th>
+            <th>Candidatos</th>
+            <th>Contactados</th>
+            <th>ECG</th>
+            <th>Exactitud</th>
+            <th>Tus datos</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="(result, index) in paginatedResults" :key="index">
-            <td>
-              <div class="avatar">
-                <font-awesome-icon
-                  class="icon"
-                  :icon="['fas', 'user-tie']"
-                  size="lg"
-                />
-              </div>
-            </td>
-            <td class="ranking">{{ result.ranking }}</td>
-            <td>{{ result.nombre }}</td>
-            <td>
-              <div class="whatsapp-wrapper">
-                <span :class="'status-' + result.whatsapp" />
-                <span class="text-info">{{
-                  getStatusText(result.whatsapp)
-                }}</span>
-              </div>
-            </td>
-            <td>
-              <div class="tus-datos-wrapper">
-                <span :class="'status-' + result.tusDatos" />
-                <span class="text-info">{{
-                  getStatusText(result.whatsapp)
-                }}</span>
-              </div>
-            </td>
-            <td>{{ result.movil }}</td>
-            <td>{{ result.mail }}</td>
-            <td>{{ result.score }}</td>
-            <td>{{ result.contratado }}</td>
-            <td>
-              <div class="actions">
-                <div class="tooltip">
-                  <font-awesome-icon
-                    class="icon"
-                     :icon="['fas', 'eye']"
-                    :style="{ color: '#5C60F5' }"
-                  />
-                  <span class="tooltiptext">Ver</span>
-                </div>
-                <div class="tooltip">
-                  <font-awesome-icon
-                    class="icon"
-                    :icon="['fas', 'trash']"
-                    :style="{ color: '#FE3366' }"
-                  />
-                  <span class="tooltiptext">Delete</span>
-                </div>
-              </div>
-            </td>
+            <td class="ranking">{{ result.number }}</td>
+            <td style="cursor: pointer;" @click="onHandleOffer">{{ result.offer_name }}</td>
+            <td>{{ result.candidates }}</td>
+            <td>{{ result.contacted }}</td>
+            <td>{{ result.ecg }}</td>
+            <td>{{ result.accuracy }}</td>
+            <td>{{ result.tus_datos }}</td>
           </tr>
         </tbody>
       </table>
@@ -131,38 +78,23 @@
       </div>
     </div>
     <div v-else class="no-data">
-      <span>No existen datos para mostrar</span>
+      <span>No hay ofertas asociadas a esta empresa</span>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { generateCandidatesData } from "~/utils/helpers/candidates-generator.helper";
-import type { ICandidatesTableRow } from "~/utils/interfaces";
+import { generateOffersData } from "~/utils/helpers/offers-list-generator.helper";
+import type { IOffersListTableRow } from "~/utils/interfaces";
+
 interface ITableProps {
-  offerName: string;
+  companyName: string;
 }
 const props = withDefaults(defineProps<ITableProps>(), {
-  offerName: "",
+  companyName: "",
 });
-const results = ref<ICandidatesTableRow[]>(generateCandidatesData(50));
-const getStatusText = (
-  status: "success" | "pending" | "danger" | "info" | "default"
-): string => {
-  switch (status) {
-    case "success":
-      return "Done";
-    case "pending":
-      return "In progress";
-    case "danger":
-      return "Error";
-    case "info":
-      return "Information";
-    case "default":
-    default:
-      return "Default";
-  }
-};
+const results = ref<IOffersListTableRow[]>(generateOffersData(35));
+
 const currentPage = ref(1);
 const rowsPerPage = ref(10);
 
@@ -189,9 +121,12 @@ const previousPage = () => {
     currentPage.value--;
   }
 };
-
+const onHandleOffer = (): void => {
+  const randomNum = Math.floor(Math.random() * 3) + 1;
+  navigateTo(`/admin/offers/${randomNum}`);
+};
 watch(
-  () => props.offerName,
+  () => props.companyName,
   (newValue: string) => {
     console.log("new value: ", newValue);
   }
@@ -303,33 +238,6 @@ watch(
         align-items: center;
         justify-content: center;
         gap: 2rem;
-
-        .tooltip {
-          position: relative;
-          display: inline-block;
-        }
-
-        .tooltip .tooltiptext {
-          visibility: hidden;
-          width: 80px;
-          background-color: #333;
-          color: #fff;
-          text-align: center;
-          border-radius: 6px;
-          padding: 5px 0;
-          position: absolute;
-          z-index: 1;
-          top: 100%;
-          right: 50%;
-          margin-left: -40px;
-          opacity: 0;
-          transition: opacity 0.3s;
-        }
-
-        .tooltip:hover .tooltiptext {
-          visibility: visible;
-          opacity: 1;
-        }
 
         .icon {
           cursor: pointer;

@@ -1,39 +1,45 @@
 <template>
   <div class="results-table">
     <div
-      v-if="companyName && paginatedResults && paginatedResults.length"
+      v-if="offerName && paginatedResults && paginatedResults.length"
       class="table-wrapper"
     >
       <div class="kpi-section">
         <CoreKpiWrapper
-          title-two="20"
-          :title-two-font-size="true"
-          description-two="Ofertas creadas"
-        />
-        <CoreKpiWrapper
-          title-two="135"
+          title-one="Budget"
+          title-two="$750.90"
           :has-icon="true"
-          :title-two-font-size="true"
           icon-tag-one="fas"
-          icon-tag-two="chart-column"
-          icon-color="#5C60F5"
-          description-one="Candidatos Analizados"
+          icon-tag-two="money-bills"
+          icon-color="#ff579a"
+          :has-increased="true"
+          description-one="30%"
+          description-two="Since last month"
+          type="success"
         />
         <CoreKpiWrapper
-          title-two="15%"
-          title-two-children="(11%)"
+          title-two="35"
+          title-two-children="(35%)"
           :title-two-font-size="true"
-          description-one="EGC"
-          description-one-children="Efectividad General de Contacto"
+          description-one="Candidatos Aptos"
         />
         <CoreKpiWrapper
-          title-two="83%"
+          title-two="10"
+          title-two-children="(28%)"
+          :title-two-font-size="true"
+          description-one="Candidatos Contactados"
+        />
+        <CoreKpiWrapper
+          title-one="Total hours"
+          title-two="1400"
           :has-icon="true"
-          :title-two-font-size="true"
           icon-tag-one="fas"
-          icon-tag-two="chart-line"
+          icon-tag-two="hippo"
           icon-color="#5C60F5"
-          description-one="Exactitud Meta K"
+          :has-decreased="true"
+          description-one="-10%"
+          description-two="Since last month"
+          type="danger"
         />
         <CoreKpiWrapper
           title-two="5%"
@@ -46,34 +52,22 @@
       <table>
         <thead>
           <tr>
-            <th>Icon</th>
-            <th>#</th>
-            <th>Nombre Oferta</th>
-            <th>Candidatos</th>
-            <th>Contactados</th>
-            <th>ECG</th>
-            <th>Exactitud</th>
+            <th>Ranking</th>
+            <th>Nombre</th>
+            <th>Movil</th>
+            <th>Mail</th>
             <th>Score</th>
+            <th>Contratado</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="(result, index) in paginatedResults" :key="index">
-            <td>
-              <div class="avatar">
-                <font-awesome-icon
-                  class="icon"
-                  :icon="['fas', 'user-tie']"
-                  size="lg"
-                />
-              </div>
-            </td>
-            <td class="ranking">{{ result.number }}</td>
-            <td>{{ result.offer_name }}</td>
-            <td>{{ result.candidates }}</td>
-            <td>{{ result.contacted }}</td>
-            <td>{{ result.ecg }}</td>
-            <td>{{ result.accuracy }}</td>
+            <td class="ranking">{{ result.ranking }}</td>
+            <td>{{ result.nombre }}</td>
+            <td>{{ result.movil }}</td>
+            <td>{{ result.mail }}</td>
             <td>{{ result.score }}</td>
+            <td>{{ result.contratado }}</td>
           </tr>
         </tbody>
       </table>
@@ -88,23 +82,21 @@
       </div>
     </div>
     <div v-else class="no-data">
-      <span>No hay ofertas asociadas a esta empresa</span>
+      <span>No existen datos para mostrar</span>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { generateOffersData } from "~/utils/helpers/offers-list-generator.helper";
-import type { IOffersListTableRow } from "~/utils/interfaces";
-
+import { generateCandidatesData } from "~/utils/helpers/candidates-generator.helper";
+import type { ICandidatesTableRow } from "~/utils/interfaces";
 interface ITableProps {
-  companyName: string;
+  offerName: string;
 }
 const props = withDefaults(defineProps<ITableProps>(), {
-  companyName: "",
+  offerName: "",
 });
-const results = ref<IOffersListTableRow[]>(generateOffersData(35));
-
+const results = ref<ICandidatesTableRow[]>(generateCandidatesData(50));
 const currentPage = ref(1);
 const rowsPerPage = ref(10);
 
@@ -131,8 +123,9 @@ const previousPage = () => {
     currentPage.value--;
   }
 };
+
 watch(
-  () => props.companyName,
+  () => props.offerName,
   (newValue: string) => {
     console.log("new value: ", newValue);
   }
@@ -244,6 +237,33 @@ watch(
         align-items: center;
         justify-content: center;
         gap: 2rem;
+
+        .tooltip {
+          position: relative;
+          display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+          visibility: hidden;
+          width: 80px;
+          background-color: #333;
+          color: #fff;
+          text-align: center;
+          border-radius: 6px;
+          padding: 5px 0;
+          position: absolute;
+          z-index: 1;
+          top: 100%;
+          right: 50%;
+          margin-left: -40px;
+          opacity: 0;
+          transition: opacity 0.3s;
+        }
+
+        .tooltip:hover .tooltiptext {
+          visibility: visible;
+          opacity: 1;
+        }
 
         .icon {
           cursor: pointer;

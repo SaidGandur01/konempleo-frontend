@@ -3,10 +3,9 @@
     <div class="slide-wrapper">
       <AdminSlidePanel />
     </div>
-    <div class="company-container">
+    <div class="create-company-container">
       <div class="content">
-        <h2>Lista de Empresas</h2>
-        <CoreResultsAdminCompaniesTable />
+        <AdminCreateCompany />
       </div>
     </div>
   </div>
@@ -22,9 +21,9 @@ definePageMeta({
   display: flex;
 
   .slide-wrapper {
-    width: 20%;
+    width: 15%;
   }
-  .company-container {
+  .create-company-container {
     align-items: center;
     background-color: var(--background-color-primary);
     display: flex;
@@ -34,7 +33,7 @@ definePageMeta({
     height: 100vh;
     justify-content: flex-start;
     overflow-y: scroll;
-    padding: 7rem;
+    padding: 7rem 5rem;
 
     .content {
       display: flex;

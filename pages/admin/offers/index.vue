@@ -3,41 +3,41 @@
     <div class="slide-wrapper">
       <AdminSlidePanel />
     </div>
-    <div class="create-company-container">
+    <div class="offers-container">
       <div class="content">
-        <h2>Ofertas por empresa</h2>
+        <h2>Lista de ofertas</h2>
         <div class="form-field">
           <CoreDropdown
-            :list-options="companiesListData"
-            label="Seleccione una empresa"
+            :list-options="offerListData"
+            label="Seleccione una oferta"
             :placeholder="
-              offerIdFromUrl ? `Company ${offerIdFromUrl}` : 'Seleccione una opción'
+              offerIdFromUrl ? `Oferta ${offerIdFromUrl}` : 'Seleccione una opción'
             "
-            @select="(data) => handleOnInput('company_name', data)"
+            @select="(data) => handleOnInput('offer_name', data)"
           />
-          <span v-if="form.company_name.length < 1" class="error-message">{{
-            companyNameError
+          <span v-if="form.offer_name.length < 1" class="error-message">{{
+            offerNameError
           }}</span>
         </div>
-        <CoreResultsAdminCompanyOffersTable :company-name="currentSelection" />
+        <CoreResultsAdminOfferDetailsTable :offer-name="currentSelection" />
       </div>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-import { companiesListData } from "~/data/companies/companies-list";
+import { offerListData } from "~/data/offer/offer";
 
 definePageMeta({
   middleware: ["protected", "admin-guard"],
-  path: "/admin/offer-details/:id?",
+  path: "/admin/offers/:id?",
 });
 interface ICompanyForm {
-  company_name: string;
+  offer_name: string;
 }
 const form = ref<ICompanyForm>({
-  company_name: "",
+  offer_name: "",
 });
-const companyNameError = ref<string>("");
+const offerNameError = ref<string>("");
 const currentSelection = ref<string>("");
 const offerIdFromUrl = ref<string>("");
 const handleOnInput = (keyField: string, value: string): void => {
@@ -47,12 +47,13 @@ const handleOnInput = (keyField: string, value: string): void => {
   };
   offerIdFromUrl.value = ''
   currentSelection.value = value;
+  console.log({value: currentSelection.value})
   validateErrorsForm(keyField, value);
 };
 const validateErrorsForm = (keyField: string, value: string): void => {
   switch (keyField) {
-    case "company_name":
-      companyNameError.value = !value.length ? "Selecciona un opción" : "";
+    case "offer_name":
+      offerNameError.value = !value.length ? "Selecciona un opción" : "";
       break;
     default:
       break;
@@ -64,7 +65,7 @@ onMounted(() => {
   const offerId = route.params.id || null;
   if (offerId) {
     offerIdFromUrl.value = offerId[0];
-    currentSelection.value = companiesListData[0].value;
+    currentSelection.value = offerListData[0].value;
   }
 });
 </script>
@@ -74,9 +75,9 @@ onMounted(() => {
   display: flex;
 
   .slide-wrapper {
-    width: 20%;
+    width: 15%;
   }
-  .create-company-container {
+  .offers-container {
     align-items: center;
     background-color: var(--background-color-primary);
     display: flex;
@@ -86,7 +87,7 @@ onMounted(() => {
     height: 100vh;
     justify-content: flex-start;
     overflow-y: scroll;
-    padding: 7rem;
+    padding: 7rem 5rem;
 
     .content {
       display: flex;

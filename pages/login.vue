@@ -73,9 +73,10 @@ const form = ref<ILoginForm>({
   password: "123",
 });
 const dataList: Array<{ key: string; value: EUser }> = [
-  { key: 'company', value: EUser.COMPANY },
+  { key: 'super_admin', value: EUser.SUPER_ADMIN },
   { key: 'admin', value: EUser.ADMIN },
-  { key: 'super_admin', value: EUser.SUPER_ADMIN }
+  { key: 'company_admin', value: EUser.ADMIN_COMPANY },
+  { key: 'company', value: EUser.COMPANY },
 ];
 
 const emailError = ref<string>("");

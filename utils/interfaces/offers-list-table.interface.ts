@@ -7,5 +7,5 @@ export interface IOffersListTableRow {
   contacted: number;
   ecg: number | string;
   accuracy: number | string;
-  score: number | string;
+  tus_datos: number | string;
 };

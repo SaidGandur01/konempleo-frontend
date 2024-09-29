@@ -16,7 +16,7 @@ export const generateOffersData = (numRows: number): IOffersListTableRow[] => {
       contacted: faker.datatype.number({ min: 0, max: 100 }),
       ecg: faker.datatype.number({ min: 0, max: 100 }) + "%",
       accuracy: faker.datatype.number({ min: 0, max: 100 }) + "%",
-      score: faker.datatype.number({ min: 0, max: 10 }).toFixed(1),
+      tus_datos: faker.datatype.number({ min: 0, max: 10 }).toFixed(1),
     });
   }
 
