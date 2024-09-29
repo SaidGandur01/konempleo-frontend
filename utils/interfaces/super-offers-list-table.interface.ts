@@ -7,6 +7,8 @@ export interface ISuperOffersListTableRow {
   contacted: number;
   ecg: number | string;
   accuracy: number | string;
-  score: number | string;
+  tus_datos: string;
   assigned_cvs: number;
+  whatsapp_message: string;
+  offer_close: boolean;
 };

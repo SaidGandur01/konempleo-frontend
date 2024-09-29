@@ -48,13 +48,14 @@
           <tr>
             <th>Logo</th>
             <th>Nombre Empresa</th>
-            <th>Procesos Activos</th>
             <th>CV Cargados</th>
-            <th>Ofertas Otorgadas</th>
-            <th>Usuario Asociado</th>
+            <th>Ofertas Totales</th>
+            <th>Ofertas Activas</th>
+            <th>Ofertas Utilizadas</th>
             <th>Mail</th>
+            <th>Usuario Asociado</th>
             <th>Usuario KONEMPLEO</th>
-            <th>Ofertas asignadas</th>
+            <th>Status</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -70,13 +71,14 @@
               </div>
             </td>
             <td>{{ result.company_name }}</td>
-            <td>{{ result.active_process }}</td>
             <td>{{ result.cv_loaded }}</td>
-            <td>{{ result.granted_offers }}</td>
+            <td>{{ result.total_offers }}</td>
+            <td>{{ result.active_process }}</td>
+            <td>{{ result.used_offers }}</td>
             <td>{{ result.associated_user }}</td>
             <td>{{ result.mail }}</td>
             <td>{{ result.koe_user }}</td>
-            <td>{{ result.assigned_offers }}</td>
+            <td>{{ result.status }}</td>
             <td>
               <div class="actions">
                 <div class="tooltip">

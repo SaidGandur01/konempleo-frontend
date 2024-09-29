@@ -16,8 +16,10 @@ export const generateSuperOffersData = (numRows: number): ISuperOffersListTableR
       contacted: faker.datatype.number({ min: 0, max: 100 }),
       ecg: faker.datatype.number({ min: 0, max: 100 }) + "%",
       accuracy: faker.datatype.number({ min: 0, max: 100 }) + "%",
-      score: faker.datatype.number({ min: 0, max: 10 }).toFixed(1),
-      assigned_cvs: 50
+      tus_datos: faker.lorem.words(2),
+      assigned_cvs: 50,
+      whatsapp_message: faker.lorem.sentence(),
+      offer_close: faker.datatype.boolean(),
     });
   }
 

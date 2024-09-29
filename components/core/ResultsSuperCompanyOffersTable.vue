@@ -50,11 +50,13 @@
             <th>#</th>
             <th>Nombre Oferta</th>
             <th>Candidatos</th>
-            <th>Contactados</th>
+            <th>Contactados por Whatsapp</th>
             <th>ECG</th>
             <th>Exactitud</th>
-            <th>Score</th>
+            <th>Tus datos</th>
             <th>CVS Asignados</th>
+            <th>Mensaje WP</th>
+            <th>Cierre de oferta</th>
           </tr>
         </thead>
         <tbody>
@@ -74,8 +76,10 @@
             <td>{{ result.contacted }}</td>
             <td>{{ result.ecg }}</td>
             <td>{{ result.accuracy }}</td>
-            <td>{{ result.score }}</td>
+            <td>{{ result.tus_datos }}</td>
             <td>{{ result.assigned_cvs }}</td>
+            <td>{{ result.whatsapp_message }}</td>
+            <td>{{ result.offer_close }}</td>
           </tr>
         </tbody>
       </table>
