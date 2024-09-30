@@ -14,6 +14,16 @@
           <span>Lista de ofertas</span>
         </NuxtLink>
       </li>
+      <li :class="{ 'active-item': isActive('/company-admin/offer-details') }">
+        <NuxtLink to="/company-admin/offer-details" class="item-field">
+          <font-awesome-icon
+            class="icon"
+            :icon="['fas', 'chart-column']"
+            size="xl"
+          />
+          <span>Detalle de oferta</span>
+        </NuxtLink>
+      </li>
       <li :class="{ 'active-item': isActive('/company-admin/create-offer') }">
         <NuxtLink to="/company-admin/create-offer" class="item-field">
           <font-awesome-icon
@@ -22,6 +32,16 @@
             size="xl"
           />
           <span>Crear oferta</span>
+        </NuxtLink>
+      </li>
+      <li :class="{ 'active-item': isActive('/company-admin/load-cvs') }">
+        <NuxtLink to="/company-admin/load-cvs" class="item-field">
+          <font-awesome-icon
+            class="icon"
+            :icon="['far', 'file']"
+            size="xl"
+          />
+          <span>Carga CV's</span>
         </NuxtLink>
       </li>
     </ul>

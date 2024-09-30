@@ -6,19 +6,6 @@
     <div class="offers-container">
       <div class="content">
         <h2>Lista de ofertas</h2>
-        <div class="form-field">
-          <CoreDropdown
-            :list-options="offerListData"
-            label="Seleccione una oferta"
-            :placeholder="
-              offerIdFromUrl ? `Oferta ${offerIdFromUrl}` : 'Seleccione una opción'
-            "
-            @select="(data) => handleOnInput('offer_name', data)"
-          />
-          <span v-if="form.offer_name.length < 1" class="error-message">{{
-            offerNameError
-          }}</span>
-        </div>
         <CoreResultsCompanyAdminOffersTable :offer-name="currentSelection" />
       </div>
     </div>
@@ -31,34 +18,8 @@ definePageMeta({
   middleware: ["protected", "company-admin-guard"],
   path: "/company-admin/offers/:id?",
 });
-interface ICompanyForm {
-  offer_name: string;
-}
-const form = ref<ICompanyForm>({
-  offer_name: "",
-});
-const offerNameError = ref<string>("");
 const currentSelection = ref<string>("");
 const offerIdFromUrl = ref<string>("");
-const handleOnInput = (keyField: string, value: string): void => {
-  form.value = {
-    ...form.value,
-    [keyField]: value,
-  };
-  offerIdFromUrl.value = ''
-  currentSelection.value = value;
-  console.log({value: currentSelection.value})
-  validateErrorsForm(keyField, value);
-};
-const validateErrorsForm = (keyField: string, value: string): void => {
-  switch (keyField) {
-    case "offer_name":
-      offerNameError.value = !value.length ? "Selecciona un opción" : "";
-      break;
-    default:
-      break;
-  }
-};
 
 onMounted(() => {
   const route = useRoute();
