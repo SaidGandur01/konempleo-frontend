@@ -6,7 +6,7 @@
     <div class="offers-container">
       <div class="content">
         <h2>Lista de ofertas</h2>
-        <CoreResultsCompanyAdminOffersTable :offer-name="currentSelection" />
+        <CompanyAdminResultsOffersTable :offer-name="currentSelection" />
       </div>
     </div>
   </div>

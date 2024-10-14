@@ -6,7 +6,7 @@
     <div class="company-container">
       <div class="content">
         <h2>Lista de Empresas</h2>
-        <CoreResultsAdminCompaniesTable />
+        <AdminResultsCompaniesTable />
       </div>
     </div>
   </div>

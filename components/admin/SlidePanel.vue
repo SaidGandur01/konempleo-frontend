@@ -4,16 +4,6 @@
       <img :src="logo" alt="logo">
     </div>
     <ul>
-      <li :class="{ 'active-item': isActive('/admin/create-company') }">
-        <NuxtLink to="/admin/create-company" class="item-field">
-          <font-awesome-icon
-            class="icon"
-            :icon="['fas', 'house-flag']"
-            size="xl"
-          />
-          <span>Crear Empresa</span>
-        </NuxtLink>
-      </li>
       <li :class="{ 'active-item': isActive('/admin/companies') }">
         <NuxtLink to="/admin/companies" class="item-field">
           <font-awesome-icon
@@ -42,6 +32,16 @@
             size="xl"
           />
           <span>Lista de ofertas</span>
+        </NuxtLink>
+      </li>
+      <li :class="{ 'active-item': isActive('/admin/create-company') }">
+        <NuxtLink to="/admin/create-company" class="item-field">
+          <font-awesome-icon
+            class="icon"
+            :icon="['fas', 'house-flag']"
+            size="xl"
+          />
+          <span>Crear Empresa</span>
         </NuxtLink>
       </li>
     </ul>
