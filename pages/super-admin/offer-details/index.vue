@@ -19,7 +19,7 @@
             companyNameError
           }}</span>
         </div>
-        <CoreResultsSuperCompanyOffersTable :company-name="currentSelection" />
+        <SuperResultsCompanyOffersTable :company-name="currentSelection" />
       </div>
     </div>
   </div>

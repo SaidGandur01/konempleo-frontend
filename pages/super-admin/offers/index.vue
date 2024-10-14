@@ -19,7 +19,7 @@
             offerNameError
           }}</span>
         </div>
-        <CoreResultsSuperOfferDetailsTable :offer-name="currentSelection" />
+        <SuperResultsOfferDetailsTable :offer-name="currentSelection" />
       </div>
     </div>
   </div>

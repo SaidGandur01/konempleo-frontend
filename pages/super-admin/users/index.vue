@@ -6,7 +6,7 @@
     <div class="company-container">
       <div class="content">
         <h2>Lista de Usuarios</h2>
-        <CoreResultsSuperUsersTable />
+        <SuperResultsUsersTable />
       </div>
     </div>
   </div>

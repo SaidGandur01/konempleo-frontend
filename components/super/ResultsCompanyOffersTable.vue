@@ -46,7 +46,6 @@
       <table>
         <thead>
           <tr>
-            <th>Icon</th>
             <th>#</th>
             <th>Nombre Oferta</th>
             <th>Candidatos</th>
@@ -61,15 +60,6 @@
         </thead>
         <tbody>
           <tr v-for="(result, index) in paginatedResults" :key="index">
-            <td>
-              <div class="avatar">
-                <font-awesome-icon
-                  class="icon"
-                  :icon="['fas', 'user-tie']"
-                  size="lg"
-                />
-              </div>
-            </td>
             <td class="ranking">{{ result.number }}</td>
             <td style="cursor: pointer;" @click="onHandleOffer">{{ result.offer_name }}</td>
             <td>{{ result.candidates }}</td>
