@@ -1,36 +1,25 @@
 <template>
-  <div class="admin-content">
-    <div class="slide-wrapper">
-      <AdminSlidePanel />
+  <NuxtLayout name="admin">
+    <h2>Lista de ofertas</h2>
+    <div class="form-field">
+      <CoreDropdown
+        :list-options="offerListData"
+        label="Seleccione una oferta"
+        :placeholder="
+          offerIdFromUrl ? `Oferta ${offerIdFromUrl}` : 'Seleccione una opción'
+        "
+        @select="(data) => handleOnInput('offer_name', data)"
+      />
+      <span v-if="form.offer_name.length < 1" class="error-message">{{
+        offerNameError
+      }}</span>
     </div>
-    <div class="offers-container">
-      <div class="content">
-        <h2>Lista de ofertas</h2>
-        <div class="form-field">
-          <CoreDropdown
-            :list-options="offerListData"
-            label="Seleccione una oferta"
-            :placeholder="
-              offerIdFromUrl ? `Oferta ${offerIdFromUrl}` : 'Seleccione una opción'
-            "
-            @select="(data) => handleOnInput('offer_name', data)"
-          />
-          <span v-if="form.offer_name.length < 1" class="error-message">{{
-            offerNameError
-          }}</span>
-        </div>
-        <AdminResultsOfferDetailsTable :offer-name="currentSelection" />
-      </div>
-    </div>
-  </div>
+    <AdminResultsOfferDetailsTable :offer-name="currentSelection" />
+  </NuxtLayout>
 </template>
 <script lang="ts" setup>
 import { offerListData } from "~/data/offer/offer";
 
-definePageMeta({
-  middleware: ["protected", "admin-guard"],
-  path: "/admin/offers/:id?",
-});
 interface ICompanyForm {
   offer_name: string;
 }
@@ -45,9 +34,9 @@ const handleOnInput = (keyField: string, value: string): void => {
     ...form.value,
     [keyField]: value,
   };
-  offerIdFromUrl.value = ''
+  offerIdFromUrl.value = "";
   currentSelection.value = value;
-  console.log({value: currentSelection.value})
+  console.log({ value: currentSelection.value });
   validateErrorsForm(keyField, value);
 };
 const validateErrorsForm = (keyField: string, value: string): void => {
@@ -70,39 +59,7 @@ onMounted(() => {
 });
 </script>
 <style lang="scss" scoped>
-.admin-content {
-  min-height: 100vh;
-  display: flex;
-
-  .slide-wrapper {
-    width: 15%;
-  }
-  .offers-container {
-    align-items: center;
-    background-color: var(--background-color-primary);
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    gap: 2rem;
-    height: 100vh;
-    justify-content: flex-start;
-    overflow-y: scroll;
-    padding: 7rem 5rem;
-
-    .content {
-      display: flex;
-      flex-direction: column;
-      border: 1px solid #d1d5dc;
-      gap: 3rem;
-      width: 100%;
-      padding: 2rem;
-      border-radius: 1rem;
-      background-color: var(--background-color-secondary);
-
-      h2 {
-        font-size: 1.7rem;
-      }
-    }
-  }
+h2 {
+  font-size: 1.7rem;
 }
 </style>
