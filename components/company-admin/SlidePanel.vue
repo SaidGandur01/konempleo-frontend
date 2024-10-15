@@ -44,6 +44,26 @@
           <span>Carga CV's</span>
         </NuxtLink>
       </li>
+      <li :class="{ 'active-item': isActive('/company-admin/create-user') }">
+        <NuxtLink to="/company-admin/create-user" class="item-field">
+          <font-awesome-icon
+            class="icon"
+            :icon="['fas', 'users']"
+            size="xl"
+          />
+          <span>Crear Usuario</span>
+        </NuxtLink>
+      </li>
+      <li :class="{ 'active-item': isActive('/company-admin/users') }">
+        <NuxtLink to="/company-admin/users" class="item-field">
+          <font-awesome-icon
+            class="icon"
+            :icon="['fas', 'people-group']"
+            size="xl"
+          />
+          <span>Lista de usuarios</span>
+        </NuxtLink>
+      </li>
     </ul>
     <div class="bottom-actions">
       <CoreButton

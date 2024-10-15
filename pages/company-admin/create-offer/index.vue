@@ -31,7 +31,7 @@
         <div class="information">
           <CompanyAdminOfferWrapper />
           <CompanyPositionWrapper v-if="false" />
-          <CompanyAddSkills v-if="false" />
+          <CoreAddSkills v-if="false" />
         </div>
       </div>
     </div>
