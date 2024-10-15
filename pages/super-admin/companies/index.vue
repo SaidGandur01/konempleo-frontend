@@ -64,7 +64,7 @@ const onSlidePanelToggle = (value: boolean): void => {
       height: 100vh;
       justify-content: flex-start;
       overflow-y: scroll;
-      padding: 5rem 5rem;
+      padding: 5rem 5rem 15rem;
   
       .content {
         display: flex;
