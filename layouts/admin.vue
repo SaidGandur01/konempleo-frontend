@@ -62,7 +62,7 @@ const onSlidePanelToggle = (value: boolean): void => {
       height: 100vh;
       justify-content: flex-start;
       overflow-y: scroll;
-      padding: 7rem 7rem 15rem;
+      padding: 4rem 4rem 15rem;
 
       .content {
         display: flex;
@@ -73,10 +73,6 @@ const onSlidePanelToggle = (value: boolean): void => {
         padding: 2rem;
         border-radius: 1rem;
         background-color: var(--background-color-secondary);
-
-        h2 {
-          font-size: 1.7rem;
-        }
       }
     }
   }

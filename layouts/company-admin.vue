@@ -1,13 +1,13 @@
 <template>
-  <div class="super-admin-layout">
-    <div class="super-header">
-      <SuperHeader @toggle="(value: boolean) => onSlidePanelToggle(value)"/>
+  <div class="company-admin-wrapper">
+    <div class="company-admin-header">
+      <CompanyAdminHeader @toggle="(value: boolean) => onSlidePanelToggle(value)"/>
     </div>
-    <div class="super-admin-content">
+    <div class="company-admin-content">
       <div :class="['slide-wrapper', { expanded: isSlidePanelExpanded }]">
-        <SuperSlidePanel />
+        <CompanyAdminSlidePanel />
       </div>
-      <div class="company-container">
+      <div class="offers-container">
         <div class="content">
           <slot />
         </div>
@@ -16,27 +16,39 @@
   </div>
 </template>
 <script lang="ts" setup>
-definePageMeta({
-  middleware: ["protected", "super-admin"],
-});
+import { offerListData } from "~/data/offer/offer";
 
+definePageMeta({
+  middleware: ["protected", "company-admin-guard"]
+});
+const currentSelection = ref<string>("");
+const offerIdFromUrl = ref<string>("");
 const isSlidePanelExpanded = ref<boolean>(true)
 
 const onSlidePanelToggle = (value: boolean): void => {
   isSlidePanelExpanded.value = value;
 }
 
+onMounted(() => {
+  const route = useRoute();
+  const offerId = route.params.id || null;
+  if (offerId) {
+    offerIdFromUrl.value = offerId[0];
+    currentSelection.value = offerListData[0].value;
+  }
+});
 </script>
 <style lang="scss" scoped>
-.super-admin-layout {
+
+.company-admin-wrapper {
   width: 100%;
   height: 100vh;
   overflow: hidden;
-  .super-admin-content {
+  .company-admin-content {
     min-height: 100vh;
     display: flex;
   
-   .slide-wrapper {
+    .slide-wrapper {
       transition: transform 0.3s ease-in-out, flex-basis 0.3s ease-in-out;
       transform: translateX(0);
       flex: 0 0 15%;
@@ -52,13 +64,12 @@ const onSlidePanelToggle = (value: boolean): void => {
         transform: translateX(-100%);
       }
     }
-  
-    .company-container {
-      flex: 1;
+    .offers-container {
       align-items: center;
       background-color: var(--background-color-primary);
       display: flex;
       flex-direction: column;
+      flex: 1;
       gap: 2rem;
       height: 100vh;
       justify-content: flex-start;
