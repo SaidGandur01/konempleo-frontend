@@ -89,8 +89,9 @@
   box-sizing: border-box;
   text-decoration: none;
   outline: none;
+  font-family: ui-sans-serif, system-ui, -apple-system, "system-ui", "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   /* font-family: 'Source Sans Pro', sans-serif; */
-  font-family: "Avenir", sans-serif;
+  /* font-family: "Avenir", sans-serif; */
   -webkit-user-select: none; /* Safari */
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* IE 10+ and Edge */

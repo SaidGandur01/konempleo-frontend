@@ -78,9 +78,11 @@ const isActive = (path: string): boolean => {
   display: flex;
   flex-direction: column;
   background-color: var(--background-color-secondary);
-  font-family: "Avenir", sans-serif;
+  // font-family: "Avenir", sans-serif;
+  // font-family: 'Source Sans Pro', sans-serif;
+  font-family: ui-sans-serif, system-ui, -apple-system, "system-ui", "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   height: 100vh;
-  padding: 10rem 2rem 2rem 2rem;
+  padding: 4rem 2rem 2rem 2rem;
 
   .logo-wrapper {
     text-align: center;
@@ -116,7 +118,7 @@ const isActive = (path: string): boolean => {
         }
 
         span {
-          font-size: 1.8rem;
+          font-size: 1.5rem;
           margin-top: 5px;
           font-family: inherit;
         }
@@ -130,8 +132,7 @@ const isActive = (path: string): boolean => {
   }
 
   .bottom-actions {
-    margin-top: auto;
-    padding: 2rem;
+    margin-top: 7rem;
   }
 }
 </style>
