@@ -8,3 +8,5 @@ export * from "./super-offers-list-table.interface.js";
 export * from "./super-users-list-table.js";
 export * from "./user.interface.js";
 export * from "./company-admin-users-list-table.js";
+export * from './offers-list-table.interface.js';
+export * from './company-offers-list-table.interface.js';

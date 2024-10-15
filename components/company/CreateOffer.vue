@@ -190,17 +190,6 @@
           >{{ profesionalExperienceError }}</span
         >
       </div>
-      <div class="form-field">
-        <CoreDropdown
-          :list-options="positionListData"
-          label="Cargo"
-          placeholder="Seleccione un cargo"
-          @select="(data) => handleOnInput('position', data)"
-        />
-        <span v-if="!form.position" class="error-message">{{
-          positionError
-        }}</span>
-      </div>
     </div>
     <div class="form-group">
       <div class="form-field">
@@ -212,17 +201,6 @@
         />
         <span v-if="!form.education" class="error-message">{{
           educationError
-        }}</span>
-      </div>
-      <div class="form-field">
-        <CoreDropdown
-          :list-options="positionTypeListData"
-          label="Tipo de Cargo"
-          placeholder="Seleccione un tipo cargo"
-          @select="(data) => handleOnInput('position_type', data)"
-        />
-        <span v-if="!form.position_type" class="error-message">{{
-          positionTypeError
         }}</span>
       </div>
     </div>
@@ -251,6 +229,21 @@
         />
       </div>
     </div>
+    <div class="form-field">
+        <CoreInput
+          id="offer-id"
+          name="text"
+          min-length="2"
+          label="Preguntas filtro"
+          placeholder=""
+          required
+          type="text"
+          @input="(data) => handleOnInput('questions_filter', data)"
+        />
+        <span v-if="form.questions_filter.length < 3" class="error-message">{{
+          questionsFilterError
+        }}</span>
+      </div>
     <div class="button">
       <CoreButton
         size="sm"
@@ -271,8 +264,6 @@ import { expertiseAreaListData } from "~/data/expertise-area/expertise-area";
 import { genderListData } from "~/data/gender/gender";
 import { locationListData } from "~/data/locations/locations";
 import { militaryServiceBookListData } from "~/data/military-service-book/military-service-book";
-import { positionListData } from "~/data/positions/positions";
-import { positionTypeListData } from "~/data/position-type/position-type";
 import { shiftListData } from "~/data/shift/shifts";
 import { workTypeListData } from "~/data/work-type/work-type";
 import { loadedSkillListData } from "~/data/loaded-skills/loaded-skills";
@@ -292,12 +283,11 @@ interface ICreateOfferForm {
   driving_license: string;
   disability: string;
   location: string;
-  position: string;
-  position_type: string;
   education: string;
   loaded_skill: string;
   skill: [''],
   profesional_experience_years: number;
+  questions_filter: string;
 }
 const form = ref<ICreateOfferForm>({
   offer_name: "",
@@ -314,12 +304,11 @@ const form = ref<ICreateOfferForm>({
   driving_license: "",
   disability: "",
   location: "",
-  position: "",
-  position_type: "",
   education: "",
   loaded_skill: "",
   skill: [''],
   profesional_experience_years: 0,
+  questions_filter: "",
 });
 const offerNameError = ref<string>("");
 const dutiesError = ref<string>("");
@@ -334,12 +323,11 @@ const workTypeError = ref<string>("");
 const militaryServiceBookError = ref<string>("");
 const drivingLicenseError = ref<string>("");
 const disabilityError = ref<string>("");
-const positionTypeError = ref<string>("");
-const positionError = ref<string>("");
 const educationError = ref<string>("");
 const profesionalExperienceError = ref<string>("");
 const loadedSkillsError = ref<string>("");
 const disableButton = ref<boolean>(true);
+const questionsFilterError = ref<string>("");
 
 const onHandleRangeSelection = (data: { min: number; max: number }): void => {
   form.value = {
@@ -360,6 +348,9 @@ const validateErrorsForm = (keyField: string, value: string): void => {
   switch (keyField) {
     case "offer_name":
       offerNameError.value = value.length < 3 ? "Inserta un nombre válido" : "";
+      break;
+    case "questions_filter":
+      questionsFilterError.value = value.length < 3 ? "Inserta un valor válido" : "";
       break;
     case "duties":
       dutiesError.value = value.length < 3 ? "Inserta un valor válido" : "";
@@ -404,9 +395,6 @@ const validateErrorsForm = (keyField: string, value: string): void => {
     case "disability":
       disabilityError.value = !value.length ? "Selecciona una opción" : "";
       break;
-    case "position":
-      positionError.value = !value.length ? "Selecciona un cargo" : "";
-      break;
     case "education":
       educationError.value = !value.length ? "Selecciona una opción" : "";
       break;
@@ -426,6 +414,8 @@ const validateErrorsForm = (keyField: string, value: string): void => {
 const validateForm = (): void => {
   const isOfferNameValid =
     form.value.offer_name.length >= 3 && offerNameError.value === "";
+  const isQuestionsFilterValid =
+    form.value.questions_filter.length >= 3 && questionsFilterError.value === "";
   const isDutiesValid =
     form.value.duties.length >= 3 && dutiesError.value === "";
   const isExpertiseAreaValid =
@@ -447,7 +437,6 @@ const validateForm = (): void => {
     form.value.driving_license && drivingLicenseError.value === "";
   const isDisabilityValid =
     form.value.disability && disabilityError.value === "";
-  const isPositionValid = form.value.position && positionError.value === "";
   const isEducationValid = form.value.education && educationError.value === "";
 
   const isProfessionalExperienceValid =
@@ -471,10 +460,10 @@ const validateForm = (): void => {
     isMilitaryServiceBookValid &&
     isDrivingLicenseValid &&
     isDisabilityValid &&
-    isPositionValid &&
     isEducationValid &&
     isProfessionalExperienceValid &&
-    isLoadedSkillValid
+    isLoadedSkillValid &&
+    isQuestionsFilterValid
   );
 };
 const onCreateOffer = async (): Promise<void> => {

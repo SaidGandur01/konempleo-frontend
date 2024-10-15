@@ -4,6 +4,26 @@
       <img :src="logo" alt="logo">
     </div>
     <ul>
+      <li :class="{ 'active-item': isActive('/company/offer-list') }">
+        <NuxtLink to="/company/offer-list" class="item-field">
+          <font-awesome-icon
+            class="icon"
+            :icon="['fas', 'hippo']"
+            size="xl"
+          />
+          <span>Lista de ofertas</span>
+        </NuxtLink>
+      </li>
+      <li :class="{ 'active-item': isActive('/company/offer-details') }">
+        <NuxtLink to="/company/offer-details" class="item-field">
+          <font-awesome-icon
+            class="icon"
+            :icon="['fas', 'chart-column']"
+            size="xl"
+          />
+          <span>Detalle de oferta</span>
+        </NuxtLink>
+      </li>
       <li :class="{ 'active-item': isActive('/company/create-offer') }">
         <NuxtLink to="/company/create-offer" class="item-field">
           <font-awesome-icon
@@ -22,26 +42,6 @@
             size="xl"
           />
           <span>Carga CV's</span>
-        </NuxtLink>
-      </li>
-      <li :class="{ 'active-item': isActive('/company/offer-details') }">
-        <NuxtLink to="/company/offer-details" class="item-field">
-          <font-awesome-icon
-            class="icon"
-            :icon="['fas', 'chart-column']"
-            size="xl"
-          />
-          <span>Detalle de oferta</span>
-        </NuxtLink>
-      </li>
-      <li :class="{ 'active-item': isActive('/company/offer-list') }">
-        <NuxtLink to="/company/offer-list" class="item-field">
-          <font-awesome-icon
-            class="icon"
-            :icon="['fas', 'hippo']"
-            size="xl"
-          />
-          <span>Lista de ofertas</span>
         </NuxtLink>
       </li>
     </ul>

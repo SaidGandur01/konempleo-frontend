@@ -3,6 +3,6 @@ definePageMeta({
   middleware: ["protected", "company-guard"],
 });
 onBeforeMount(() => {
-  navigateTo('/company/create-offer')
+  navigateTo('/company/offer-list')
 })
 </script>

@@ -6,7 +6,7 @@
     <div class="offer-list-container">
       <div class="content">
         <h2>Lista de ofertas</h2>
-        <CoreResultsOffersTable />
+        <CompanyResultsOffersTable />
       </div>
     </div>
   </div>
