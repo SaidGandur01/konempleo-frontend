@@ -1,45 +1,30 @@
 <template>
-  <div class="company-content">
-    <div class="slide-wrapper">
-      <CompanySlidePanel />
+  <NuxtLayout name="company">
+    <h2>Cargar hojas de vida</h2>
+    <div class="form-field">
+      <CoreDropdown
+        :list-options="offerListData"
+        label="Nombre de la oferta"
+        placeholder="Seleccione una opción"
+        @select="(data) => handleOnInput('offer_name', data)"
+      />
+      <span v-if="form.offer_name.length < 1" class="error-message">{{
+        offerNameError
+      }}</span>
     </div>
-    <div class="load-cvs-container">
-      <!-- <div class="logo-wrapper">
-        <img :src="logo" alt="logo" />
-      </div> -->
-      <div class="content">
-        <h2>Cargar hojas de vida</h2>
-        <div class="form-field">
-          <CoreDropdown
-            :list-options="offerListData"
-            label="Nombre de la oferta"
-            placeholder="Seleccione una opción"
-            @select="(data) => handleOnInput('offer_name', data)"
-          />
-          <span v-if="form.offer_name.length < 1" class="error-message">{{
-            offerNameError
-          }}</span>
-        </div>
-        <CoreUploadFile @emitfile="onHandleFiles" />
-        <div class="button">
-          <CoreButton
-            size="sm"
-            label="Guardar"
-            :disabled="disabledButton"
-            @click="sendFiles"
-          />
-        </div>
-      </div>
+    <CoreUploadFile @emitfile="onHandleFiles" />
+    <div class="button">
+      <CoreButton
+        size="sm"
+        label="Guardar"
+        :disabled="disabledButton"
+        @click="sendFiles"
+      />
     </div>
-  </div>
+  </NuxtLayout>
 </template>
 <script lang="ts" setup>
 import { offerListData } from "~/data/offer/offer";
-// import logo from "~/public/images/logo.png";
-
-definePageMeta({
-  middleware: ["protected", "company-guard"],
-});
 
 interface ICreateOfferForm {
   offer_name: string;
@@ -86,47 +71,7 @@ function sendFiles() {
 }
 </script>
 <style lang="scss" scoped>
-.company-content {
-  min-height: 100vh;
-  display: flex;
-
-  .slide-wrapper {
-    width: 20%;
-  }
-  .load-cvs-container {
-    align-items: center;
-    background-color: var(--background-color-primary);
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    gap: 2rem;
-    height: 100vh;
-    justify-content: flex-start;
-    overflow-y: scroll;
-    padding: 7rem;
-
-    .logo-wrapper {
-      text-align: center;
-
-      img {
-        width: 50%;
-      }
-    }
-
-    .content {
-      background-color: var(--background-color-secondary);
-      border-radius: 1rem;
-      border: 1px solid #D1D5DC;
-      display: flex;
-      flex-direction: column;
-      gap: 3rem;
-      padding: 2rem;
-      width: 100%;
-
-      h2 {
-        font-size: 1.7rem;
-      }
-    }
-  }
+h2 {
+  font-size: 1.7rem;
 }
 </style>

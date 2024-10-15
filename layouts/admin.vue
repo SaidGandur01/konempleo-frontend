@@ -1,5 +1,5 @@
 <template>
-  <div class="admin-wrapper">
+  <div class="admin-layout">
     <div class="admin-header">
       <AdminHeader @toggle="(value: boolean) => onSlidePanelToggle(value)"/>
     </div>
@@ -27,7 +27,7 @@ const onSlidePanelToggle = (value: boolean): void => {
 }
 </script>
 <style lang="scss" scoped>
-.admin-wrapper {
+.admin-layout {
   width: 100%;
   height: 100vh;
   overflow: hidden;

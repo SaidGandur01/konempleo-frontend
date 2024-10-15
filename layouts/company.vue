@@ -1,13 +1,13 @@
 <template>
-  <div class="company-admin-layout">
-    <div class="company-admin-header">
-      <CompanyAdminHeader @toggle="(value: boolean) => onSlidePanelToggle(value)"/>
+  <div class="company-layout">
+    <div class="company-header">
+      <CompanyHeader @toggle="(value: boolean) => onSlidePanelToggle(value)"/>
     </div>
-    <div class="company-admin-content">
+    <div class="company-content">
       <div :class="['slide-wrapper', { expanded: isSlidePanelExpanded }]">
-        <CompanyAdminSlidePanel />
+        <CompanySlidePanel />
       </div>
-      <div class="offers-container">
+      <div class="offer-list-container">
         <div class="content">
           <slot />
         </div>
@@ -16,37 +16,24 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { offerListData } from "~/data/offer/offer";
-
 definePageMeta({
-  middleware: ["protected", "company-admin-guard"]
+  middleware: ["protected", "company-guard"],
 });
-const currentSelection = ref<string>("");
-const offerIdFromUrl = ref<string>("");
 const isSlidePanelExpanded = ref<boolean>(true)
 
 const onSlidePanelToggle = (value: boolean): void => {
   isSlidePanelExpanded.value = value;
 }
 
-onMounted(() => {
-  const route = useRoute();
-  const offerId = route.params.id || null;
-  if (offerId) {
-    offerIdFromUrl.value = offerId[0];
-    currentSelection.value = offerListData[0].value;
-  }
-});
 </script>
 <style lang="scss" scoped>
-.company-admin-layout {
+.company-layout {
   width: 100%;
   height: 100vh;
   overflow: hidden;
-  .company-admin-content {
+  .company-content {
     min-height: 100vh;
     display: flex;
-  
     .slide-wrapper {
       transition: transform 0.3s ease-in-out, flex-basis 0.3s ease-in-out;
       transform: translateX(0);
@@ -63,7 +50,7 @@ onMounted(() => {
         transform: translateX(-100%);
       }
     }
-    .offers-container {
+    .offer-list-container {
       align-items: center;
       background-color: var(--background-color-primary);
       display: flex;
@@ -78,7 +65,7 @@ onMounted(() => {
       .content {
         display: flex;
         flex-direction: column;
-        border: 1px solid #d1d5dc;
+        border: 1px solid #D1D5DC;
         gap: 3rem;
         width: 100%;
         padding: 2rem;

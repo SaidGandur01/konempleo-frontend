@@ -472,13 +472,10 @@ const onCreateOffer = async (): Promise<void> => {
 </script>
 <style lang="scss" scoped>
 .create-offer {
-  border: 1px solid #d1d5dc;
-  border-radius: 1rem;
   background-color: var(--background-color-secondary);
   display: flex;
   flex-direction: column;
   gap: 3.5rem;
-  padding: 2rem;
   width: 100%;
 
   h2 {
