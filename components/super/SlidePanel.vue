@@ -1,7 +1,7 @@
 <template>
   <div class="slide-panel">
     <div class="logo-wrapper">
-      <img :src="logo" alt="logo">
+      <img :src="kLogo" alt="logo">
     </div>
     <ul>
       <li :class="{ 'active-item': isActive('/super-admin/companies') }">
@@ -78,7 +78,7 @@
 </template>
 <script lang="ts" setup>
 import { useUserStore } from '~/store/user.store';
-import logo from "~/public/images/deepvoice-logo.png";
+import kLogo from '~/public/images/ke_logo_dark.png'
 
 const userStore = useUserStore()
 const route = useRoute()
@@ -109,9 +109,8 @@ const isActive = (path: string): boolean => {
     padding-bottom: 5rem;
 
     img {
-      width: 50%;
+      width: 45%;
       background: white;
-      border-radius: 50%;
     }
   }
 

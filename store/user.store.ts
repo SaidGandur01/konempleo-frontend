@@ -13,18 +13,20 @@ export const useUserStore = defineStore("user-store", {
     setUserRole(role: EUser): void {
       this.role = role;
       localStorage.setItem('user_role', role)
+
+      console.log('aca: ', this.role, role)
       switch (this.role) {
         case EUser.ADMIN:
           navigateTo('/admin/companies')
           break;
-        case EUser.COMPANY:
-          navigateTo('/company/offer-list')
+        case EUser.ADMIN_COMPANY:
+          navigateTo('/company-admin/offers')
           break;
         case EUser.SUPER_ADMIN:
-          navigateTo('/company/create-offer')
+          navigateTo('/super-admin/companies')
           break;
         default:
-          navigateTo('/company/create-offer')
+          navigateTo('/company/offer-list')
           break;
       }
     },

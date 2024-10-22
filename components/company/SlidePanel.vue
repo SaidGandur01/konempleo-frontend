@@ -89,9 +89,8 @@ const isActive = (path: string): boolean => {
     padding-bottom: 5rem;
 
     img {
-      width: 50%;
+      width: 45%;
       background: white;
-      border-radius: 50%;
     }
   }
 
