@@ -13,7 +13,7 @@
     </div>
     <div class="middle-section">
       <div class="logo">
-        <img src="https://konempleo.com/assets/logo-konempleo.png" alt="logo" >
+        <img :src="kLogo" alt="logo" >
       </div>
     </div>
     <div class="right-section">
@@ -27,6 +27,8 @@
   </div>
 </template>
 <script lang="ts" setup>
+import kLogo from "~/public/images/KE_solok.png";
+
 definePageMeta({
   middleware: ["protected", "super-admin"],
 });
@@ -67,8 +69,8 @@ const toggleMenu = (): void => {
   .middle-section {
     .logo {
       img {
-        margin-left: 8rem;
-        width: 50%;
+        width: 7%;
+        margin: 0 auto;
       }
     }
   }
