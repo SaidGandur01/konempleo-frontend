@@ -186,7 +186,7 @@ const previousPage = () => {
       border-spacing: 0;
       border-radius: 12px;
       overflow: hidden;
-      border: 1px darken($color: #f5f9fc, $amount: 10%) solid;
+      border: 1px darken($color: #F9FAFB, $amount: 10%) solid;
 
       thead th:nth-child(3),
       tbody td:nth-child(3) {
@@ -195,13 +195,13 @@ const previousPage = () => {
 
       tbody tr:first-child {
         td {
-          border-top: 1px darken($color: #f5f9fc, $amount: 10%) solid;
+          border-top: 1px darken($color: #F9FAFB, $amount: 10%) solid;
         }
       }
 
       tbody tr:not(:last-child) {
         td {
-          border-bottom: 1px darken($color: #f5f9fc, $amount: 10%) solid;
+          border-bottom: 1px darken($color: #F9FAFB, $amount: 10%) solid;
         }
       }
 
@@ -214,7 +214,7 @@ const previousPage = () => {
       }
 
       tbody tr:nth-child(2n) {
-        background-color: #f5f9fc; /* Adjust this color to your needs */
+        background-color: #F9FAFB;
       }
 
       th:first-child {
@@ -230,7 +230,7 @@ const previousPage = () => {
         border-bottom-right-radius: 12px;
       }
       th {
-        background-color: #f5f9fc;
+        background-color: #F9FAFB;
         font-weight: bold;
         padding: 1.5rem 2rem;
       }
@@ -241,7 +241,7 @@ const previousPage = () => {
       .avatar {
         height: 30px;
         width: 30px;
-        background-color: darken($color: #f5f9fc, $amount: 5%);
+        background-color: darken($color: #F9FAFB, $amount: 5%);
         border-radius: 50%;
         position: relative;
         margin: 0 auto;
