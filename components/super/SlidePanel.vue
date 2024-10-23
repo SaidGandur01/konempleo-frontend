@@ -122,7 +122,6 @@ const isActive = (path: string): boolean => {
       padding: 1.5rem 2rem;
       font-family: inherit;
       transition: transform 0.3s ease;
-      cursor: pointer;
 
       &:hover {
         background-color: var(--background-color-slide-panel-hover-item);
