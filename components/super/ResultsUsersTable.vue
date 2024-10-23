@@ -1,5 +1,11 @@
 <template>
   <div class="results-table">
+    <div class="search-container">
+        <CoreSearchBar
+          :min-length-search-criteria="2"
+          @input="onHandleUserSearch"
+        />
+      </div>
     <div
       v-if="paginatedResults && paginatedResults.length"
       class="table-wrapper"
@@ -81,6 +87,10 @@ const results = ref<ISuperUsersListTableRow[]>(
 const currentPage = ref(1);
 const rowsPerPage = ref(10);
 
+const onHandleUserSearch = (search: string): void => {
+  console.log('search value: ', search)
+};
+
 const onHandleCompanySelected = (companyId: number): void => {
   console.log("company id: ", companyId);
   navigateTo(`/super-admin/offer-details/${companyId}`);
@@ -112,6 +122,11 @@ const previousPage = () => {
 
 <style lang="scss" scoped>
 .results-table {
+  .search-container{
+    width: 30%;
+    padding-bottom: 2.5rem;
+    padding-left: 0.5rem;
+  }
   .table-wrapper {
     overflow-x: auto;
     width: 100%;

@@ -43,6 +43,13 @@
         />
       </div>
 
+      <div class="search-container">
+        <CoreSearchBar
+          :min-length-search-criteria="2"
+          @input="onHandleUserSearch"
+        />
+      </div>
+
       <table>
         <thead>
           <tr>
@@ -98,6 +105,10 @@ const results = ref<ICompanyOffersListTableRow[]>(generateCompanyOffersData(35))
 const currentPage = ref(1);
 const rowsPerPage = ref(10);
 
+const onHandleUserSearch = (search: string): void => {
+  console.log('search value: ', search)
+};
+
 // Computed property to calculate the total number of pages
 const totalPages = computed(() => {
   return Math.ceil(results.value.length / rowsPerPage.value);
@@ -131,6 +142,11 @@ const previousPage = () => {
     justify-content: space-between;
     gap: 2rem;
     margin-bottom: 5rem;
+  }
+  .search-container{
+    width: 30%;
+    padding-bottom: 2.5rem;
+    padding-left: 0.5rem;
   }
   .table-wrapper {
     overflow-x: auto;

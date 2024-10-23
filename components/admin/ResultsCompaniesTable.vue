@@ -43,6 +43,13 @@
         />
       </div>
 
+      <div class="search-container">
+        <CoreSearchBar
+          :min-length-search-criteria="2"
+          @input="onHandleUserSearch"
+        />
+      </div>
+
       <table>
         <thead>
           <tr>
@@ -118,6 +125,10 @@ const results = ref<ICompaniesListTableRow[]>(generateCompaniesData(35));
 const currentPage = ref(1);
 const rowsPerPage = ref(10);
 
+const onHandleUserSearch = (search: string): void => {
+  console.log('search value: ', search)
+};
+
 const onHandleCompanySelected = (companyId: number): void => {
   console.log("company id: ", companyId);
   navigateTo(`/admin/offer-details/${companyId}`);
@@ -155,6 +166,11 @@ const previousPage = () => {
     justify-content: space-between;
     gap: 2rem;
     margin-bottom: 5rem;
+  }
+  .search-container{
+    width: 30%;
+    padding-bottom: 2.5rem;
+    padding-left: 0.5rem;
   }
   .table-wrapper {
     overflow-x: auto;
