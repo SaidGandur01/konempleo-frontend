@@ -73,7 +73,6 @@ onMounted(() => {
       height: 100vh;
       justify-content: flex-start;
       overflow-y: scroll;
-      padding: 4rem 4rem 15rem;
   
       .content {
         display: flex;
@@ -81,8 +80,7 @@ onMounted(() => {
         border: 1px solid #d1d5dc;
         gap: 3rem;
         width: 100%;
-        padding: 2rem;
-        border-radius: 1rem;
+        padding: 2rem 2rem 15rem 2rem;
         background-color: var(--background-color-secondary);
       }
     }
