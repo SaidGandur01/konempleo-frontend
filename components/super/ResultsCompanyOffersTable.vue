@@ -196,7 +196,6 @@ watch(
 
       th,
       td {
-        font-family: "Source Sans Pro", sans-serif !important;
         padding: 0.5rem;
         text-align: center;
         font-size: 1.5rem;

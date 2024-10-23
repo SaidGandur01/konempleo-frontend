@@ -1,15 +1,11 @@
 <template>
   <div class="slide-panel">
-    <div class="logo-wrapper">
-      <img :src="kLogo" alt="logo">
-    </div>
     <ul>
       <li :class="{ 'active-item': isActive('/company/offer-list') }">
         <NuxtLink to="/company/offer-list" class="item-field">
           <font-awesome-icon
             class="icon"
             :icon="['fas', 'hippo']"
-            size="lg"
           />
           <span>Lista de ofertas</span>
         </NuxtLink>
@@ -19,7 +15,6 @@
           <font-awesome-icon
             class="icon"
             :icon="['fas', 'chart-column']"
-            size="lg"
           />
           <span>Detalle de oferta</span>
         </NuxtLink>
@@ -29,7 +24,6 @@
           <font-awesome-icon
             class="icon"
             :icon="['fas', 'user-tie']"
-            size="lg"
           />
           <span>Crear oferta</span>
         </NuxtLink>
@@ -39,7 +33,6 @@
           <font-awesome-icon
             class="icon"
             :icon="['far', 'file']"
-            size="lg"
           />
           <span>Carga CV's</span>
         </NuxtLink>
@@ -58,7 +51,6 @@
 </template>
 <script lang="ts" setup>
 import { useUserStore } from '~/store/user.store';
-import kLogo from '~/public/images/ke_logo_dark.png'
 
 const userStore = useUserStore()
 const route = useRoute()
@@ -78,9 +70,8 @@ const isActive = (path: string): boolean => {
   display: flex;
   flex-direction: column;
   background-color: var(--background-color-slide-panel);
-  font-family: ui-sans-serif, system-ui, -apple-system, "system-ui", "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   height: 100vh;
-  padding: 4rem 1rem 2rem 1rem;
+  padding: 1rem 1rem 2rem 1rem;
 
   .logo-wrapper {
     text-align: center;
@@ -95,12 +86,10 @@ const isActive = (path: string): boolean => {
   ul {
     list-style: none;
     padding: 0;
-    font-family: inherit;
 
     li {
       margin-bottom: 10px;
       padding: 1.5rem 2rem;
-      font-family: inherit;
       transition: transform 0.3s ease;
 
       &:hover {
@@ -112,7 +101,6 @@ const isActive = (path: string): boolean => {
         display: flex;
         align-items: center;
         gap: 1.5rem;
-        font-family: inherit;
         cursor: pointer;
         transition: transform 0.3s ease;
 
@@ -121,8 +109,6 @@ const isActive = (path: string): boolean => {
         }
 
         span {
-          font-size: 1.5rem;
-          font-family: inherit;
           white-space: nowrap;
         }
       }

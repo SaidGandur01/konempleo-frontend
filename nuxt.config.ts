@@ -27,7 +27,12 @@ export default defineNuxtConfig({
   compatibilityDate: "2024-04-03",
   devtools: { enabled: false },
   ssr: false,
-  modules: ["@nuxt/eslint", "@nuxtjs/google-fonts", "@pinia/nuxt"],
+  modules: [
+    "@nuxt/eslint",
+    "@nuxtjs/google-fonts",
+    "@pinia/nuxt",
+    "@nuxtjs/tailwindcss"
+  ],
   googleFonts: {
     families: {
       Roboto: {
@@ -40,6 +45,9 @@ export default defineNuxtConfig({
         wght: [100, 200, 300, 400, 500, 600, 700, 800, 900],
       },
       "Avenir": {
+        wght: [100, 200, 300, 400, 500, 600, 700, 800, 900],
+      },
+      "Inter": {
         wght: [100, 200, 300, 400, 500, 600, 700, 800, 900],
       }
     },

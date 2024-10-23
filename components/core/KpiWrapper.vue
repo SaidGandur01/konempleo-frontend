@@ -102,7 +102,6 @@ const contentClasses = computed(() => ({
       gap: 1rem;
 
       span {
-        font-family: "Source Sans Pro", sans-serif !important;
         letter-spacing: 0.5px;
       }
 
@@ -139,7 +138,6 @@ const contentClasses = computed(() => ({
     gap: 1rem;
 
     span {
-      font-family: "Source Sans Pro", sans-serif !important;
       letter-spacing: 0.5px;
     }
 
