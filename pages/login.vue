@@ -49,7 +49,7 @@
       </div>
       <div class="form-field">
         <label class="terms-and-conditions">
-          <input type="checkbox" @click="onHandleTermsAndConditions" >
+          <input v-model="acceptTerms" type="checkbox" @click="onHandleTermsAndConditions" >
           <a
             href="https://konempleo.com/legales"
             target="_blank"
@@ -63,7 +63,7 @@
         <CoreButton
           size="sm"
           label="Login"
-          :disabled="disableButton"
+          :disabled="false"
           @click="handleOnLogin"
         />
       </div>
@@ -95,7 +95,7 @@ const emailError = ref<string>("");
 const passwordError = ref<string>("");
 const disableButton = ref<boolean>(true);
 const currentRole = ref<EUser>(EUser.COMPANY);
-const acceptTerms = ref(false);
+const acceptTerms = ref(true);
 // const isLoading = ref<boolean>(false);
 const userStore = useUserStore();
 const onHandleRol = (data: string): void => {

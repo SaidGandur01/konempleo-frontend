@@ -111,10 +111,10 @@ $submit-color: #004d80;
     width: 100% !important;
   }
   .core-button {
-    background-color: #30C2DB;
+    background-color: #d6d9dd;
     border-radius: 1rem;
-    border: 1px solid darken($color: #30C2DB, $amount: 5%);
-    color: var(--color-text-900);
+    border: 1px solid darken($color: #d6d9dd, $amount: 5%);
+    color: var(--color-text-200);
     cursor: pointer;
     font-size: 1.6rem;
     font-weight: 400;
@@ -125,7 +125,7 @@ $submit-color: #004d80;
     width: 100%;
 
     &:hover {
-      background-color: darken($color: #30C2DB, $amount: 10%);
+      background-color: darken($color: #d6d9dd, $amount: 10%);
     }
 
     &[disabled] {

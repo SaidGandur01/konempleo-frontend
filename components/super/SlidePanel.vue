@@ -9,7 +9,7 @@
           <font-awesome-icon
             class="icon"
             :icon="['fas', 'list-check']"
-            size="xl"
+            size="lg"
           />
           <span>Lista de Empresas</span>
         </NuxtLink>
@@ -19,7 +19,7 @@
           <font-awesome-icon
             class="icon"
             :icon="['fas', 'building']"
-            size="xl"
+            size="lg"
           />
           <span>Ofertas por empresa</span>
         </NuxtLink>
@@ -29,7 +29,7 @@
           <font-awesome-icon
             class="icon"
             :icon="['fas', 'list-check']"
-            size="xl"
+            size="lg"
           />
           <span>Lista de ofertas</span>
         </NuxtLink>
@@ -39,7 +39,7 @@
           <font-awesome-icon
             class="icon"
             :icon="['fas', 'house-flag']"
-            size="xl"
+            size="lg"
           />
           <span>Crear Empresa</span>
         </NuxtLink>
@@ -49,7 +49,7 @@
           <font-awesome-icon
             class="icon"
             :icon="['fas', 'users']"
-            size="xl"
+            size="lg"
           />
           <span>Crear Usuario</span>
         </NuxtLink>
@@ -59,7 +59,7 @@
           <font-awesome-icon
             class="icon"
             :icon="['fas', 'people-group']"
-            size="xl"
+            size="lg"
           />
           <span>Lista de usuarios</span>
         </NuxtLink>
@@ -97,12 +97,10 @@ const isActive = (path: string): boolean => {
 .slide-panel {
   display: flex;
   flex-direction: column;
-  background-color: var(--background-color-secondary);
-  // font-family: "Avenir", sans-serif;
-  // font-family: 'Source Sans Pro', sans-serif;
+  background-color: var(--background-color-slide-panel);
   font-family: ui-sans-serif, system-ui, -apple-system, "system-ui", "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   height: 100vh;
-  padding: 4rem 2rem 2rem 2rem;
+  padding: 4rem 1rem 2rem 1rem;
 
   .logo-wrapper {
     text-align: center;
@@ -121,8 +119,15 @@ const isActive = (path: string): boolean => {
 
     li {
       margin-bottom: 10px;
-      padding: 2rem;
+      padding: 1.5rem 2rem;
       font-family: inherit;
+      transition: transform 0.3s ease;
+      cursor: pointer;
+
+      &:hover {
+        background-color: var(--background-color-slide-panel-hover-item);
+        border-radius: 1rem;
+      }
 
       .item-field {
         display: flex;
@@ -133,26 +138,30 @@ const isActive = (path: string): boolean => {
         transition: transform 0.3s ease;
 
         &:hover {
-          transform: scale(1.05);
+          transform: scale(1.02);
         }
 
         span {
           font-size: 1.5rem;
-          margin-top: 5px;
           font-family: inherit;
           white-space: nowrap;
         }
       }
 
       &.active-item {
-        background-color: var(--color-brand);
+        background-color: var(--background-color-slide-panel-hover-item);
         border-radius: 1rem;
       }
     }
   }
 
   .bottom-actions {
-    margin-top: 7rem;
+    position: fixed;
+    bottom: 15%;
+    margin: 0 auto;
+    width: 80%;
+    left: 0;
+    right: 0;
   }
 }
 </style>
