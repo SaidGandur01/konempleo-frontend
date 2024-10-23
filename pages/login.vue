@@ -47,11 +47,23 @@
           @select="onHandleRol"
         />
       </div>
+      <div class="form-field">
+        <label class="terms-and-conditions">
+          <input type="checkbox" @click="onHandleTermsAndConditions" >
+          <a
+            href="https://konempleo.com/legales"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+          Acepto términos y condiciones
+          </a>
+        </label>
+      </div>
       <div class="button">
         <CoreButton
           size="sm"
           label="Login"
-          :disabled="false"
+          :disabled="disableButton"
           @click="handleOnLogin"
         />
       </div>
@@ -60,7 +72,7 @@
 </template>
 <script lang="ts" setup>
 import { useUserStore } from "~/store/user.store";
-import kLogo from '~/public/images/ke_logo_dark.png'
+import kLogo from "~/public/images/ke_logo_dark.png";
 import { EUser } from "~/utils/enum";
 
 interface ILoginForm {
@@ -73,21 +85,22 @@ const form = ref<ILoginForm>({
   password: "123",
 });
 const dataList: Array<{ key: string; value: EUser }> = [
-  { key: 'super_admin', value: EUser.SUPER_ADMIN },
-  { key: 'admin', value: EUser.ADMIN },
-  { key: 'company_admin', value: EUser.ADMIN_COMPANY },
-  { key: 'company', value: EUser.COMPANY },
+  { key: "super_admin", value: EUser.SUPER_ADMIN },
+  { key: "admin", value: EUser.ADMIN },
+  { key: "company_admin", value: EUser.ADMIN_COMPANY },
+  { key: "company", value: EUser.COMPANY },
 ];
 
 const emailError = ref<string>("");
 const passwordError = ref<string>("");
 const disableButton = ref<boolean>(true);
-const currentRole = ref<EUser>(EUser.COMPANY)
+const currentRole = ref<EUser>(EUser.COMPANY);
+const acceptTerms = ref(false);
 // const isLoading = ref<boolean>(false);
 const userStore = useUserStore();
 const onHandleRol = (data: string): void => {
-  currentRole.value = data as EUser
-}
+  currentRole.value = data as EUser;
+};
 const handleOnInput = (keyField: string, value: string): void => {
   form.value = {
     ...form.value,
@@ -114,10 +127,16 @@ const validateErrorsForm = (keyField: string, value: string): void => {
   }
 };
 
+const onHandleTermsAndConditions = (): void => {
+  acceptTerms.value = !acceptTerms.value
+  validateForm()
+}
+
 const validateForm = (): void => {
   disableButton.value =
     form.value.password === "" ||
     form.value.password.length < 3 ||
+    !acceptTerms.value ||
     !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(form.value.email);
 };
 
@@ -133,10 +152,10 @@ const handleOnLogin = async (): Promise<void> => {
   }
 
   console.log({
-    currentRole: currentRole.value
+    currentRole: currentRole.value,
   });
 
-  userStore.setUserRole(currentRole.value)
+  userStore.setUserRole(currentRole.value);
   // const headers = {
   //   accept: "application/json",
   //   "Content-Type": "application/x-www-form-urlencoded",
@@ -185,6 +204,20 @@ const handleOnLogin = async (): Promise<void> => {
     background-color: var(--background-color-secondary);
 
     .form-field {
+      .terms-and-conditions {
+        display: flex;
+        align-items: center;
+
+        input {
+          margin-right: 1rem;
+        }
+        
+        a {
+          cursor: pointer;
+          color: var(--color-brand-info-525);
+          text-decoration: underline;
+        }
+      }
       .error-message {
         display: block;
         color: var(--color-text-900);
