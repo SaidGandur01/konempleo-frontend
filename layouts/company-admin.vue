@@ -1,11 +1,11 @@
 <template>
   <div class="company-admin-layout">
     <div class="company-admin-header">
-      <CompanyAdminHeader @toggle="(value: boolean) => onSlidePanelToggle(value)"/>
+      <CoreHeader @toggle="(value: boolean) => onSlidePanelToggle(value)" />
     </div>
     <div class="company-admin-content">
       <div :class="['slide-wrapper', { expanded: isSlidePanelExpanded }]">
-        <CompanyAdminSlidePanel />
+        <CoreSlidePanel />
       </div>
       <div class="offers-container">
         <div class="content">
@@ -19,15 +19,15 @@
 import { offerListData } from "~/data/offer/offer";
 
 definePageMeta({
-  middleware: ["protected", "company-admin-guard"]
+  middleware: ["protected", "company-admin-guard"],
 });
 const currentSelection = ref<string>("");
 const offerIdFromUrl = ref<string>("");
-const isSlidePanelExpanded = ref<boolean>(true)
+const isSlidePanelExpanded = ref<boolean>(true);
 
 const onSlidePanelToggle = (value: boolean): void => {
   isSlidePanelExpanded.value = value;
-}
+};
 
 onMounted(() => {
   const route = useRoute();
@@ -46,18 +46,20 @@ onMounted(() => {
   .company-admin-content {
     min-height: 100vh;
     display: flex;
-  
+
     .slide-wrapper {
-      transition: transform 0.3s ease-in-out, flex-basis 0.3s ease-in-out;
+      transition:
+        transform 0.3s ease-in-out,
+        flex-basis 0.3s ease-in-out;
       transform: translateX(0);
       flex: 0 0 15%;
       overflow: hidden;
-  
+
       &.expanded {
         flex: 0 0 15%;
         transform: translateX(0);
       }
-  
+
       &:not(.expanded) {
         flex: 0 0 0;
         transform: translateX(-100%);
@@ -73,7 +75,7 @@ onMounted(() => {
       height: 100vh;
       justify-content: flex-start;
       overflow-y: scroll;
-  
+
       .content {
         display: flex;
         flex-direction: column;

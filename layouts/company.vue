@@ -1,11 +1,11 @@
 <template>
   <div class="company-layout">
     <div class="company-header">
-      <CompanyHeader @toggle="(value: boolean) => onSlidePanelToggle(value)"/>
+      <CoreHeader @toggle="(value: boolean) => onSlidePanelToggle(value)" />
     </div>
     <div class="company-content">
       <div :class="['slide-wrapper', { expanded: isSlidePanelExpanded }]">
-        <CompanySlidePanel />
+        <CoreSlidePanel />
       </div>
       <div class="offer-list-container">
         <div class="content">
@@ -19,12 +19,11 @@
 definePageMeta({
   middleware: ["protected", "company-guard"],
 });
-const isSlidePanelExpanded = ref<boolean>(true)
+const isSlidePanelExpanded = ref<boolean>(true);
 
 const onSlidePanelToggle = (value: boolean): void => {
   isSlidePanelExpanded.value = value;
-}
-
+};
 </script>
 <style lang="scss" scoped>
 .company-layout {
@@ -35,16 +34,18 @@ const onSlidePanelToggle = (value: boolean): void => {
     min-height: 100vh;
     display: flex;
     .slide-wrapper {
-      transition: transform 0.3s ease-in-out, flex-basis 0.3s ease-in-out;
+      transition:
+        transform 0.3s ease-in-out,
+        flex-basis 0.3s ease-in-out;
       transform: translateX(0);
       flex: 0 0 15%;
       overflow: hidden;
-  
+
       &.expanded {
         flex: 0 0 15%;
         transform: translateX(0);
       }
-  
+
       &:not(.expanded) {
         flex: 0 0 0;
         transform: translateX(-100%);
@@ -60,11 +61,11 @@ const onSlidePanelToggle = (value: boolean): void => {
       height: 100vh;
       justify-content: flex-start;
       overflow-y: scroll;
-  
+
       .content {
         display: flex;
         flex-direction: column;
-        border: 1px solid #D1D5DC;
+        border: 1px solid #d1d5dc;
         gap: 3rem;
         width: 100%;
         padding: 2rem 2rem 15rem 2rem;

@@ -1,5 +1,5 @@
 <template>
-  <div class="super-admin-header">
+  <div class="header">
     <div class="left-section">
       <div class="menu">
         <font-awesome-icon
@@ -9,11 +9,13 @@
           @click="toggleMenu"
         />
       </div>
-      <span class="rol"><strong>SUPER</strong>ADMIN</span>
+      <span class="rol"
+        ><strong>{{ userHeaderText }}</strong></span
+      >
     </div>
     <div class="middle-section">
       <div class="logo">
-        <img :src="kLogo" alt="logo" >
+        <img :src="kLogo" alt="logo" />
       </div>
     </div>
     <div class="right-section">
@@ -21,6 +23,7 @@
         <font-awesome-icon class="icon" :icon="['fas', 'user-tie']" size="lg" />
       </div>
       <div class="name">
+        <!-- get the right user firstName lastName -->
         <span><strong>Marcelo</strong> Saldias</span>
       </div>
     </div>
@@ -28,24 +31,33 @@
 </template>
 <script lang="ts" setup>
 import kLogo from "~/public/images/KE_solok.png";
+import { useUserStore } from "~/store/user.store";
+import { getUserHeaderText } from "~/utils/helpers/common";
 
-definePageMeta({
-  middleware: ["protected", "super-admin"],
-});
 interface IEmits {
-  (event: 'toggle', value: boolean): void;
+  (event: "toggle", value: boolean): void;
 }
 
-const isMenuExpanded = ref<boolean>(true)
+const userStore = useUserStore();
+const role = userStore.getUserRole();
+
+definePageMeta({
+  middleware: ["protected", role],
+});
+
+const isMenuExpanded = ref<boolean>(true);
+
+const userHeaderText = getUserHeaderText(role);
+
 const emit = defineEmits<IEmits>();
 
 const toggleMenu = (): void => {
-  isMenuExpanded.value = !isMenuExpanded.value
-  emit('toggle', isMenuExpanded.value);
-}
+  isMenuExpanded.value = !isMenuExpanded.value;
+  emit("toggle", isMenuExpanded.value);
+};
 </script>
 <style lang="scss" scoped>
-.super-admin-header {
+.header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -56,13 +68,13 @@ const toggleMenu = (): void => {
   .left-section {
     display: flex;
     align-items: center;
-    justify-content: center;
     gap: 2rem;
     padding-left: 1rem;
+    width: 20%;
 
     .menu {
       .icon {
-        cursor: pointer
+        cursor: pointer;
       }
     }
   }
@@ -77,8 +89,9 @@ const toggleMenu = (): void => {
   .right-section {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-end;
     gap: 1rem;
+    width: 20%;
     .avatar {
       height: 30px;
       width: 30px;
