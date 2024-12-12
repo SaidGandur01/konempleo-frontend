@@ -8,7 +8,7 @@ export default defineNuxtRouteMiddleware(async () => {
 
   if (!userRole) {
     userStore.reset();
-    return navigateTo("/login");
+    return;
   }
 
   if (userRole !== EUser.COMPANY) {
