@@ -1,11 +1,11 @@
 <template>
   <div class="admin-layout">
     <div class="admin-header">
-      <AdminHeader @toggle="(value: boolean) => onSlidePanelToggle(value)"/>
+      <CoreHeader @toggle="(value: boolean) => onSlidePanelToggle(value)"/>
     </div>
     <div class="admin-content">
       <div :class="['slide-wrapper', { expanded: isSlidePanelExpanded }]">
-        <AdminSlidePanel />
+        <CoreSlidePanel />
       </div>
       <div class="company-container">
         <div class="content">

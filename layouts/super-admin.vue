@@ -1,11 +1,11 @@
 <template>
   <div class="super-admin-layout">
     <div class="super-header">
-      <SuperHeader @toggle="(value: boolean) => onSlidePanelToggle(value)"/>
+      <CoreHeader @toggle="(value: boolean) => onSlidePanelToggle(value)" />
     </div>
     <div class="super-admin-content">
       <div :class="['slide-wrapper', { expanded: isSlidePanelExpanded }]">
-        <SuperSlidePanel />
+        <CoreSlidePanel />
       </div>
       <div class="company-container">
         <div class="content">
@@ -20,12 +20,11 @@ definePageMeta({
   middleware: ["protected", "super-admin"],
 });
 
-const isSlidePanelExpanded = ref<boolean>(true)
+const isSlidePanelExpanded = ref<boolean>(true);
 
 const onSlidePanelToggle = (value: boolean): void => {
   isSlidePanelExpanded.value = value;
-}
-
+};
 </script>
 <style lang="scss" scoped>
 .super-admin-layout {
@@ -35,24 +34,26 @@ const onSlidePanelToggle = (value: boolean): void => {
   .super-admin-content {
     min-height: 100vh;
     display: flex;
-  
-   .slide-wrapper {
-      transition: transform 0.3s ease-in-out, flex-basis 0.3s ease-in-out;
+
+    .slide-wrapper {
+      transition:
+        transform 0.3s ease-in-out,
+        flex-basis 0.3s ease-in-out;
       transform: translateX(0);
       flex: 0 0 15%;
       overflow: hidden;
-  
+
       &.expanded {
         flex: 0 0 15%;
         transform: translateX(0);
       }
-  
+
       &:not(.expanded) {
         flex: 0 0 0;
         transform: translateX(-100%);
       }
     }
-  
+
     .company-container {
       flex: 1;
       align-items: center;
@@ -63,7 +64,7 @@ const onSlidePanelToggle = (value: boolean): void => {
       height: 100vh;
       justify-content: flex-start;
       overflow-y: scroll;
-  
+
       .content {
         display: flex;
         flex-direction: column;
