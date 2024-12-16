@@ -1,8 +1,5 @@
 <script lang="ts" setup>
 definePageMeta({
-  middleware: ["protected", "company-admin-guard"],
+  middleware: ["protected", "user-guard"],
 });
-onBeforeMount(() => {
-  navigateTo('/company-admin/offers')
-})
 </script>

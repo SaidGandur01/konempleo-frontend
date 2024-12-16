@@ -21,6 +21,7 @@
 import { offerListData } from "~/data/offer/offer";
 
 definePageMeta({
+  middleware: ["protected", "user-guard"],
   path: "/company-admin/offer-details/:id?",
 });
 

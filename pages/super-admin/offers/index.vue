@@ -21,7 +21,7 @@
 import { offerListData } from "~/data/offer/offer";
 
 definePageMeta({
-  middleware: ["protected", "super-admin"],
+  middleware: ["protected", 'user-guard'],
   path: "/super-admin/offers/:id?",
 });
 interface ICompanyForm {

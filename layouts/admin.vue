@@ -16,10 +16,6 @@
   </div>
 </template>
 <script lang="ts" setup>
-definePageMeta({
-  middleware: ["protected", "admin-guard"],
-});
-
 const isSlidePanelExpanded = ref<boolean>(true)
 
 const onSlidePanelToggle = (value: boolean): void => {

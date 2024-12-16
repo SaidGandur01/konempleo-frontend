@@ -20,6 +20,10 @@
 <script lang="ts" setup>
 import { companiesListData } from "~/data/companies/companies-list";
 
+definePageMeta({
+  middleware: ["protected", 'user-guard'],
+});
+
 interface ICompanyForm {
   company_name: string;
 }

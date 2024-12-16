@@ -20,8 +20,11 @@ const props = withDefaults(defineProps<ILinkProps>(), {
 });
 const route = useRoute()
 
-const isActive = (path: string): boolean => {
-  return route.path === path;
+
+const isActive = (path: string) => {
+  const currentRouteArr = route.path.split('/')
+  const uniqPath = path.split('/').at(-1) as string
+  return currentRouteArr.includes(uniqPath)
 };
 
 </script>

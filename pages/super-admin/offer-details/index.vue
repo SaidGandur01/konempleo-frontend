@@ -21,7 +21,7 @@
 import { companiesListData } from "~/data/companies/companies-list";
 
 definePageMeta({
-  middleware: ["protected", "super-admin"],
+  middleware: ["protected", 'user-guard'],
   path: "/super-admin/offer-details/:id?",
 });
 interface ICompanyForm {

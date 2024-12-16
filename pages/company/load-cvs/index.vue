@@ -21,10 +21,22 @@
         @click="sendFiles"
       />
     </div>
+    <div class="logo" @click="getCVsFromS3">
+      <img
+        class="size-40 rounded-full outline outline-offset-4 hover:bg-gray-200"
+        :src="kLogo"
+        alt="download CV's"
+      />
+    </div>
   </NuxtLayout>
 </template>
 <script lang="ts" setup>
 import { offerListData } from "~/data/offer/offer";
+import kLogo from "~/public/images/KE_solok.png";
+
+definePageMeta({
+  middleware: ["protected", "user-guard"],
+});
 
 interface ICreateOfferForm {
   offer_name: string;
@@ -65,6 +77,11 @@ const onHandleFiles = (inputFiles: any): void => {
   validateForm();
 };
 function sendFiles() {
+  // if (pond.value) {
+  //   pond.value.processFiles();  // This will trigger the file upload process
+  // }
+}
+function getCVsFromS3() {
   // if (pond.value) {
   //   pond.value.processFiles();  // This will trigger the file upload process
   // }

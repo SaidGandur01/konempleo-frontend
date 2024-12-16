@@ -18,6 +18,10 @@
 <script lang="ts" setup>
 import { offerListData } from "~/data/offer/offer";
 
+definePageMeta({
+  middleware: ["protected", "user-guard"],
+});
+
 interface ICreateOfferForm {
   offer_name: string;
 }

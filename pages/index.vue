@@ -4,6 +4,6 @@
 <script lang="ts" setup>
 import 'flowbite';
 definePageMeta({
-  middleware: ["protected", "route"],
+  middleware: ["protected", 'user-guard'],
 });
 </script>
