@@ -24,7 +24,7 @@
       </div>
       <div class="name">
         <!-- get the right user firstName lastName -->
-        <span><strong>Marcelo</strong> Saldias</span>
+        <span><strong>{{firstName}}</strong> {{lastName}}</span>
       </div>
     </div>
   </div>
@@ -34,20 +34,23 @@ import kLogo from "~/public/images/KE_solok.png";
 import { useUserStore } from "~/store/user.store";
 import { getUserHeaderText } from "~/utils/helpers/common";
 
+definePageMeta({
+  middleware: ["protected", 'user-guard'],
+});
 interface IEmits {
   (event: "toggle", value: boolean): void;
 }
 
 const userStore = useUserStore();
-const role = userStore.getUserRole();
+const role= userStore.getUserRole();
+const userName = userStore.getUserName().split(" ");
+const firstName = userName[0]
+const lastName = userName.at(-1)
+const userHeaderText = getUserHeaderText(role);
 
-definePageMeta({
-  middleware: ["protected", role],
-});
 
 const isMenuExpanded = ref<boolean>(true);
 
-const userHeaderText = getUserHeaderText(role);
 
 const emit = defineEmits<IEmits>();
 
@@ -105,6 +108,9 @@ const toggleMenu = (): void => {
         left: 50%;
         transform: translate(-50%, -50%);
       }
+    }
+    .name {
+      text-transform: capitalize;
     }
   }
 }

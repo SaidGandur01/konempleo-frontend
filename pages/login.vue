@@ -40,22 +40,18 @@
         }}</span>
       </div>
       <div class="form-field">
-        <CoreDropdown
-          :list-options="dataList"
-          label="Seleccione un rol"
-          :placeholder="currentRole === EUser.COMPANY ? 'company' : ''"
-          @select="onHandleRol"
-        />
-      </div>
-      <div class="form-field">
         <label class="terms-and-conditions">
-          <input v-model="acceptTerms" type="checkbox" @click="onHandleTermsAndConditions" >
+          <input
+            v-model="acceptTerms"
+            type="checkbox"
+            @click="onHandleTermsAndConditions"
+          />
           <a
             href="https://konempleo.com/legales"
             target="_blank"
             rel="noopener noreferrer"
           >
-          Acepto términos y condiciones
+            Acepto términos y condiciones
           </a>
         </label>
       </div>
@@ -63,7 +59,7 @@
         <CoreButton
           size="sm"
           label="Login"
-          :disabled="false"
+          :disabled="disableButton"
           @click="handleOnLogin"
         />
       </div>
@@ -73,7 +69,7 @@
 <script lang="ts" setup>
 import { useUserStore } from "~/store/user.store";
 import kLogo from "~/public/images/ke_logo_dark.png";
-import { EUser } from "~/utils/enum";
+const { $toast } = useNuxtApp();
 
 interface ILoginForm {
   email: string;
@@ -81,31 +77,23 @@ interface ILoginForm {
 }
 
 const form = ref<ILoginForm>({
-  email: "saidtestone@testone.com",
-  password: "123",
+  email: "",
+  password: "",
 });
-const dataList: Array<{ key: string; value: EUser }> = [
-  { key: "super_admin", value: EUser.SUPER_ADMIN },
-  { key: "admin", value: EUser.ADMIN },
-  { key: "company_admin", value: EUser.ADMIN_COMPANY },
-  { key: "company", value: EUser.COMPANY },
-];
 
 const emailError = ref<string>("");
 const passwordError = ref<string>("");
 const disableButton = ref<boolean>(true);
-const currentRole = ref<EUser>(EUser.COMPANY);
 const acceptTerms = ref(true);
 // const isLoading = ref<boolean>(false);
 const userStore = useUserStore();
-const onHandleRol = (data: string): void => {
-  currentRole.value = data as EUser;
-};
+
 const handleOnInput = (keyField: string, value: string): void => {
   form.value = {
     ...form.value,
     [keyField]: value,
   };
+  console.log("form said", form);
   validateErrorsForm(keyField, value);
   validateForm();
 };
@@ -128,9 +116,9 @@ const validateErrorsForm = (keyField: string, value: string): void => {
 };
 
 const onHandleTermsAndConditions = (): void => {
-  acceptTerms.value = !acceptTerms.value
-  validateForm()
-}
+  acceptTerms.value = !acceptTerms.value;
+  validateForm();
+};
 
 const validateForm = (): void => {
   disableButton.value =
@@ -151,28 +139,23 @@ const handleOnLogin = async (): Promise<void> => {
     formData.append(key, value as string);
   }
 
-  console.log({
-    currentRole: currentRole.value,
-  });
+  const params: fetchWrapperProps = {
+    method: EFetchMethods.POST,
+    path: "login",
+    body: formData.toString(),
+    headers: {
+      accept: "application/json",
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+  };
 
-  userStore.setUserRole(currentRole.value);
-  // const headers = {
-  //   accept: "application/json",
-  //   "Content-Type": "application/x-www-form-urlencoded",
-  // };
+  const { data: response, error } = await useFetchWrapper(params);
 
-  // const { data: response, error } = await useFetchWrapper(
-  //   EFetchMethods.POST,
-  //   "login",
-  //   formData.toString(),
-  //   headers,
-  // );
-
-  // if (error.value) {
-  //   assessmentStore.renderToast($toast, true);
-  // } else {
-  //   await assessmentStore.setUser(response.value.access_token);
-  // }
+  if (error.value) {
+    userStore.renderToast($toast, true, 'Invalid Credentials, Please try again');
+  } else {
+    userStore.setToken(response.value.access_token);
+  }
 };
 </script>
 <style lang="scss" scoped>
@@ -211,7 +194,7 @@ const handleOnLogin = async (): Promise<void> => {
         input {
           margin-right: 1rem;
         }
-        
+
         a {
           cursor: pointer;
           color: var(--color-brand-info-525);
@@ -220,7 +203,7 @@ const handleOnLogin = async (): Promise<void> => {
       }
       .error-message {
         display: block;
-        color: var(--color-text-900);
+        color: var(--color-brand-danger-600);
         margin: 1rem 0;
         font-size: 1.2rem;
         font-weight: 500;

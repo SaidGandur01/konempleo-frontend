@@ -1,6 +1,29 @@
 import { EUser } from "../enum";
 
-export const getUserHeaderText = (userRole: EUser) => {
+export const roleMapFromToken = (role: number) : EUser | null=>{
+
+  switch (role) {
+    case 1:
+      return EUser.SUPER_ADMIN
+    case 2:
+      return EUser.ADMIN
+    case 3:
+      return EUser.ADMIN_COMPANY
+    case 4:
+      return EUser.COMPANY
+    default:
+      return null
+  }
+}
+
+export const isValidToken = (token:any) => {
+  const currentTimeStamp = Math.floor(Date.now() / 1000);
+  const isExpired = currentTimeStamp > token.exp;
+  if (isExpired) return false;
+  return true
+}
+
+export const getUserHeaderText = (userRole: EUser | null) => {
   switch (userRole) {
     case EUser.SUPER_ADMIN:
       return "SUPER ADMIN";
