@@ -18,9 +18,6 @@
 <script lang="ts" setup>
 import { offerListData } from "~/data/offer/offer";
 
-definePageMeta({
-  middleware: ["protected", "company-admin-guard"],
-});
 const currentSelection = ref<string>("");
 const offerIdFromUrl = ref<string>("");
 const isSlidePanelExpanded = ref<boolean>(true);

@@ -4,7 +4,11 @@
     <AdminResultsCompaniesTable />
   </NuxtLayout>
 </template>
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+definePageMeta({
+  middleware: ["protected", 'user-guard'],
+});
+</script>
 <style lang="scss" scoped>
 h2 {
   font-size: 1.7rem;

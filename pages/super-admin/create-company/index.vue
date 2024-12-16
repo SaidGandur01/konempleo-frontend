@@ -5,7 +5,7 @@
 </template>
 <script lang="ts" setup>
 definePageMeta({
-  middleware: ["protected", "super-admin"],
+  middleware: ["protected", 'user-guard'],
 });
 </script>
 <style lang="scss" scoped></style>

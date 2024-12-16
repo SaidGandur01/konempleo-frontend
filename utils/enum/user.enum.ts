@@ -1,6 +1,6 @@
 export enum EUser {
-  SUPER_ADMIN = 'super_admin',
+  SUPER_ADMIN = 'super-admin',
   ADMIN = 'admin',
-  ADMIN_COMPANY = "company_admin",
+  ADMIN_COMPANY = "company-admin",
   COMPANY = 'company',
 }

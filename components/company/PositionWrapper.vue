@@ -9,7 +9,7 @@
 </template>
 <script lang="ts" setup>
 definePageMeta({
-  middleware: ["protected", "company-guard"],
+  middleware: ["protected", 'user-guard'],
 });
 </script>
 <style lang="scss" scoped>
