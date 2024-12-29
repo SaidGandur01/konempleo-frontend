@@ -49,7 +49,7 @@ const debouncedFn = useDebounceFn(
       inputValueEmit("input", "");
     }
   },
-  props.minLengthSearchCriteria === 2 ? 300 : 0,
+  props.minLengthSearchCriteria >= 1 ? 300 : 0,
   { maxWait: 5000 },
 );
 

@@ -4,7 +4,7 @@
       <img :src="kLogo" alt="logo" />
     </div>
     <div class="form-section box-shadow-2xl">
-      <h2>Inicio de sesión</h2>
+      <h2>Cambiar contraseña</h2>
       <div class="form-field">
         <CoreInput
           id="email"
@@ -26,48 +26,46 @@
       </div>
       <div class="form-field">
         <CoreInput
-          id="password"
-          name="password"
+          id="current_password"
+          name="current_password"
           min-length="2"
-          label="Password"
-          placeholder="Your password"
+          label="Current Password"
+          placeholder="Your Password"
           required
           type="password"
-          @input="(data) => handleOnInput('password', data)"
+          @input="(data) => handleOnInput('current_password', data)"
         />
-        <span v-if="form.password.length < 3" class="error-message">{{
-          passwordError
+        <span v-if="form.current_password.length < 3" class="error-message">{{
+          currentPasswordError
         }}</span>
       </div>
       <div class="form-field">
-        <label class="terms-and-conditions">
-          <input
-            v-model="acceptTerms"
-            type="checkbox"
-            @click="onHandleTermsAndConditions"
-          />
-          <a
-            href="https://konempleo.com/legales"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Acepto términos y condiciones
-          </a>
-        </label>
+        <CoreInput
+          id="new_password"
+          name="new_password"
+          min-length="2"
+          label="New Password"
+          placeholder="New password"
+          required
+          type="password"
+          @input="(data) => handleOnInput('new_password', data)"
+        />
+        <span v-if="form.new_password.length < 3" class="error-message">{{
+          newPasswordError
+        }}</span>
       </div>
       <div class="button">
         <CoreButton
           size="sm"
-          label="Login"
+          label="Update Password"
           :disabled="disableButton"
-          @click="handleOnLogin"
+          @click="handleOnUpdate"
         />
       </div>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-import { useUserStore } from "~/store/user.store";
 import kLogo from "~/public/images/ke_logo_dark.png";
 import { useHelperStore } from "~/store/helper.store";
 import { isValidEmail } from "~/utils/helpers/common";
@@ -75,20 +73,20 @@ const { $toast } = useNuxtApp();
 
 interface ILoginForm {
   email: string;
-  password: string;
+  current_password: string;
+  new_password: string;
 }
 
 const form = ref<ILoginForm>({
   email: "",
-  password: "",
+  current_password: "",
+  new_password: "",
 });
 
 const emailError = ref<string>("");
-const passwordError = ref<string>("");
+const currentPasswordError = ref<string>("");
+const newPasswordError = ref<string>("");
 const disableButton = ref<boolean>(true);
-const acceptTerms = ref(true);
-// const isLoading = ref<boolean>(false);
-const userStore = useUserStore();
 const helperStore = useHelperStore();
 
 const handleOnInput = (keyField: string, value: string): void => {
@@ -107,9 +105,14 @@ const validateErrorsForm = (keyField: string, value: string): void => {
         emailError.value = "Enter a valid email";
       }
       break;
-    case "password":
+    case "current_password":
       if (value.length < 3) {
-        passwordError.value = "Minimun lenght of 3";
+        currentPasswordError.value = "Minimun lenght of 3";
+      }
+      break;
+    case "new_password":
+      if (value.length < 3) {
+        newPasswordError.value = "Minimun lenght of 3";
       }
       break;
     default:
@@ -117,61 +120,42 @@ const validateErrorsForm = (keyField: string, value: string): void => {
   }
 };
 
-const onHandleTermsAndConditions = (): void => {
-  acceptTerms.value = !acceptTerms.value;
-  validateForm();
-};
-
 const validateForm = (): void => {
+  const isCurrentPasswordInvalid =
+    form.value.current_password.length < 3 && currentPasswordError.value !== "";
+  const isNewPasswordInvalid =
+    form.value.new_password.length < 3 && newPasswordError.value !== "";
+
   disableButton.value =
-    form.value.password === "" ||
-    form.value.password.length < 3 ||
-    !acceptTerms.value ||
+    isCurrentPasswordInvalid ||
+    isNewPasswordInvalid ||
     !isValidEmail(form.value.email);
 };
 
-const handleOnLogin = async (): Promise<void> => {
-  const payload: { username: string; password: string } = {
-    username: form.value.email,
-    password: form.value.password,
-  };
-  const formData = new URLSearchParams();
-
-  for (const [key, value] of Object.entries(payload)) {
-    formData.append(key, value as string);
-  }
-
+const handleOnUpdate = async (): Promise<void> => {
   const params: fetchWrapperProps = {
     method: EFetchMethods.POST,
-    path: "login",
-    body: formData.toString(),
+    path: "change-password",
+    body: form.value,
     headers: {
       accept: "application/json",
-      "Content-Type": "application/x-www-form-urlencoded",
     },
   };
 
   const { data: response, error } = await useFetchWrapper(params);
 
   if (error.value) {
-    if (
-      error.value.statusCode === 403 &&
-      error.value.data.detail ===
-        "You must change your password before continuing."
-    ) {
-      helperStore.renderToastMessage($toast, true, {
-        error: "You need to update your password, redirecting...",
-      });
-      setTimeout(() => {
-        navigateTo("/update-password");
-      }, 2000);
-    } else {
-      helperStore.renderToastMessage($toast, true, {
-        error: "Invalid Credentials, Please try again",
-      });
-    }
+    helperStore.renderToastMessage($toast, true, {
+      error: "Invalid Credentials, Please try again",
+    });
   } else {
-    userStore.setToken(response.value.access_token);
+    helperStore.renderToastMessage($toast, false, {
+      success: "Updated password successfully, please Login",
+    });
+    setTimeout(() => {
+      navigateTo("/login");
+    }, 2000);
+    console.log(response);
   }
 };
 </script>
