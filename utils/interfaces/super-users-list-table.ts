@@ -5,5 +5,5 @@ export interface ISuperUsersListTableRow {
   role: string;
   companies: string[];
   active: boolean;
-  phone: string
-};
+  phone: string;
+}

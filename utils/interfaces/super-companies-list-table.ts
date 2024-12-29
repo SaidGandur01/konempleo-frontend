@@ -14,6 +14,6 @@ export interface ISuperCompaniesListTableRow {
   sector: string;
   document: string;
   document_type: string;
-  city: string
-  employees: number
+  city: string;
+  employees: number;
 }

@@ -1,6 +1,6 @@
 <template>
   <NuxtLayout name="super-admin">
-    <SuperEditCompany :company-id="companyId"/>
+    <SuperEditCompany :company-id="companyId" />
   </NuxtLayout>
 </template>
 <script lang="ts" setup>
@@ -16,7 +16,4 @@ onMounted(() => {
 });
 </script>
 <style lang="scss" scoped>
-h2 {
-  font-size: 1.7rem;
-}
 </style>

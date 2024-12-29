@@ -80,6 +80,7 @@ interface IEditUserForm {
 interface IEditUserProps {
   userId: string;
 }
+
 const props = withDefaults(defineProps<IEditUserProps>(), {
   userId: "",
 });
@@ -88,7 +89,6 @@ const form = ref<IEditUserForm>({
   companies: undefined,
   phone: "",
 });
-
 const nameError = ref<string>("");
 const phoneError = ref<string>("");
 const companiesError = ref<string>("");
@@ -148,15 +148,18 @@ const validateForm = (): void => {
 };
 
 const onUpdateUser = async () => {
-  const mappedCompanies = currentUser.value.companies.reduce((acc: any, company: any) => {
-    acc.push(company.id);
-    return acc;
-  }, []);
+  const mappedCompanies = currentUser.value.companies.reduce(
+    (acc: any, company: any) => {
+      acc.push(company.id);
+      return acc;
+    },
+    []
+  );
   const user: any = {
     ...currentUser.value,
     fullname: form.value.fullname,
     phone: form.value.phone,
-    companies: mappedCompanies
+    companies: mappedCompanies,
   };
   if (isAdminOrSuper.value) {
     user.companies = form.value.companies;
@@ -214,7 +217,7 @@ const fetchCompanies = async () => {
   }
 };
 
-const fetchUserData = async (userId:number) => {
+const fetchUserData = async (userId: number) => {
   const params: fetchWrapperProps = {
     method: EFetchMethods.GET,
     path: `users/${userId}`,
@@ -231,7 +234,7 @@ const fetchUserData = async (userId:number) => {
     currentUser.value = undefined;
     isAdminOrSuper.value = false;
   } else {
-    const userData = data.value
+    const userData = data.value;
     isAdminOrSuper.value = userData.role === 1 || userData.role === 2;
     currentUser.value = userData;
   }

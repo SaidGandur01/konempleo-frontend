@@ -1,8 +1,5 @@
 <template>
   <div class="upload-wrapper">
-    <!-- <font-awesome-icon
-      class="icon"
-      :icon="['fas', 'cloud-arrow-up']" /> -->
     <file-pond
       ref="pond"
       name="file"
@@ -17,7 +14,6 @@
       @addfile="updateButtonState"
       @removefile="updateButtonState"
     />
-    <button v-if="false" @click="viewCurrentFiles">View Current Files</button>
   </div>
 </template>
 
@@ -51,19 +47,13 @@ const labelIdleContent = computed(
 `
 );
 
-function viewCurrentFiles() {
-  if (pond.value) {
-    const files = pond.value.getFiles();
-    console.log("Current files:", !files.length);
-  }
-}
-
 function updateButtonState() {
   if (pond.value) {
     const files = pond.value.getFiles().map((file:any)=>file.file)
     emit("emitfile", files);
   }
 }
+
 onMounted(() => {
   updateButtonState();
 });

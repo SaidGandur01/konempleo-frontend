@@ -82,7 +82,6 @@ const form = ref<ILoginForm>({
   email: "",
   password: "",
 });
-
 const emailError = ref<string>("");
 const passwordError = ref<string>("");
 const disableButton = ref<boolean>(true);

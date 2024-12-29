@@ -82,7 +82,6 @@ const form = ref<ILoginForm>({
   current_password: "",
   new_password: "",
 });
-
 const emailError = ref<string>("");
 const currentPasswordError = ref<string>("");
 const newPasswordError = ref<string>("");

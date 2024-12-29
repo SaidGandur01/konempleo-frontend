@@ -15,11 +15,12 @@ export const roleMapFromToken = (role: number): EUser | null => {
   }
 };
 
-export const isValidEmail = (value: any):boolean =>{
-  if(!value) return false
-  if(!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value)) return false
-  return true
-}
+export const isValidEmail = (value: any): boolean => {
+  if (!value) return false;
+  if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value))
+    return false;
+  return true;
+};
 
 export const getCreateCompanyPayload = (data: any) => {
   const formattedPayload = {
@@ -35,22 +36,25 @@ export const getCreateCompanyPayload = (data: any) => {
       phone: data.user_company_phone,
     },
     document: data.document_number,
-    availableoffers: data.company_offers, // same according to julian
-    totaloffers: data.company_offers, // same according to julian
+    availableoffers: data.company_offers,
+    totaloffers: data.company_offers,
     activeoffers: 0,
     document_type: data.company_document_type,
   };
   return formattedPayload;
 };
 
-export const getCreateUserPayload = (user: any, isRecruiter: boolean = false) => {
+export const getCreateUserPayload = (
+  user: any,
+  isRecruiter: boolean = false
+) => {
   if (isRecruiter) {
     return {
       email: user.email,
       fullname: user.name,
       phone: user.phone,
-      role: 4 
-    }
+      role: 4,
+    };
   }
   return {
     user_in: {
@@ -59,20 +63,34 @@ export const getCreateUserPayload = (user: any, isRecruiter: boolean = false) =>
       phone: user.phone,
       role: user.role,
     },
-    company_ids: user.companies
+    company_ids: user.companies,
   };
 };
 
-type TCompanyPUT = {company: any, KOEUserId: number, companyUser?:any, updateActive?: boolean, updateDeleted?: boolean,}
+type TCompanyPUT = {
+  company: any;
+  KOEUserId: number;
+  companyUser?: any;
+  updateActive?: boolean;
+  updateDeleted?: boolean;
+};
 
-export const getPUTCompanyPayload = ({company, updateActive, updateDeleted, KOEUserId, companyUser }: TCompanyPUT ) => {
+export const getPUTCompanyPayload = ({
+  company,
+  updateActive,
+  updateDeleted,
+  KOEUserId,
+  companyUser,
+}: TCompanyPUT) => {
   const payload = {
     name: company.name,
     sector: company.sector,
     document: company.document,
     document_type: company.document_type,
     city: company.city,
-    employees: Number(company.employees) ? company.employees : parseInt(company.employees.split("-")[1]),
+    employees: Number(company.employees)
+      ? company.employees
+      : parseInt(company.employees.split("-")[1]),
     availableoffers: company.availableoffers,
     totaloffers: company.totaloffers,
     konempleo_responsible: KOEUserId,
@@ -82,40 +100,44 @@ export const getPUTCompanyPayload = ({company, updateActive, updateDeleted, KOEU
       phone: companyUser?.phone || company.phone,
     },
     is_deleted: company.is_deleted,
-    active: company.active
+    active: company.active,
   };
-  if(updateActive){
-    payload.active = !company.active
-    return payload
-  } else if(updateDeleted) {
-    payload.is_deleted = !company.is_deleted
-    return payload
+  if (updateActive) {
+    payload.active = !company.active;
+    return payload;
+  } else if (updateDeleted) {
+    payload.is_deleted = !company.is_deleted;
+    return payload;
   }
 
-  return payload
+  return payload;
 };
 
-type TUsersPUT = {user: any, updateActive?: boolean, updateDeleted?: boolean,}
+type TUsersPUT = { user: any; updateActive?: boolean; updateDeleted?: boolean };
 
-export const getPUTUserPayload = ({user, updateActive, updateDeleted }: TUsersPUT ) => {
+export const getPUTUserPayload = ({
+  user,
+  updateActive,
+  updateDeleted,
+}: TUsersPUT) => {
   const payload = {
-    user_in:{
+    user_in: {
       fullname: user.fullname,
       phone: user.phone,
-      email:user.email,
+      email: user.email,
       is_deleted: user.is_deleted,
-      active: user.active
+      active: user.active,
     },
-    company_ids: user.companies
+    company_ids: user.companies,
   };
-  if(updateActive){
-    payload.user_in.active = !user.active
-    return payload
-  } else if(updateDeleted) {
-    payload.user_in.is_deleted = !user.is_deleted
-    return payload
+  if (updateActive) {
+    payload.user_in.active = !user.active;
+    return payload;
+  } else if (updateDeleted) {
+    payload.user_in.is_deleted = !user.is_deleted;
+    return payload;
   }
-  return payload
+  return payload;
 };
 
 export const isValidToken = (token: any) => {

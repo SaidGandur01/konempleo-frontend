@@ -11,4 +11,4 @@ export interface ISuperOffersListTableRow {
   assigned_cvs: number;
   whatsapp_message: string;
   active: boolean;
-};
+}

@@ -235,6 +235,7 @@ interface IEditCompanyForm {
 interface IEditCompanyProps {
   companyId: string;
 }
+
 const props = withDefaults(defineProps<IEditCompanyProps>(), {
   companyId: "",
 });
@@ -279,11 +280,12 @@ const onUpdateCompany = async () => {
     document_type: form.value.company_document_type,
     city: form.value.city,
     totaloffers: currentCompany.value.totaloffers + form.value.company_offers,
-    availableoffers: currentCompany.value.totaloffers + form.value.company_offers,
+    availableoffers:
+      currentCompany.value.totaloffers + form.value.company_offers,
     employees: form.value.employees,
     recruiter_name: "Logo user",
     recruiter_email: "logoUser@logousercompany.com",
-    phone: form.value.user_company_phone
+    phone: form.value.user_company_phone,
   };
 
   const params: fetchWrapperProps = {
@@ -292,7 +294,7 @@ const onUpdateCompany = async () => {
     body: JSON.stringify(
       getPUTCompanyPayload({
         company,
-        KOEUserId: Number(form.value.konempleo_contact)
+        KOEUserId: Number(form.value.konempleo_contact),
       })
     ),
     headers: {
@@ -354,15 +356,15 @@ onMounted(async () => {
   } else {
     const response = data.value
       .filter((user: any) => user.role === 2)
-      .reduce((acc, user) => {
+      .reduce((acc , user) => {
         acc.push({ key: user.id, value: user.fullname });
         return acc;
       }, []);
-    userDropdownOptions.value = response || [];
+    userDropdownOptions.value = response;
   }
 });
 
-const handleOnInput = (keyField: string, value: string): void => {
+const handleOnInput = (keyField: string, value: string | string[]): void => {
   form.value = {
     ...form.value,
     [keyField]: value,
@@ -371,7 +373,10 @@ const handleOnInput = (keyField: string, value: string): void => {
   validateForm();
 };
 
-const validateErrorsForm = (keyField: string, value: string): void => {
+const validateErrorsForm = (
+  keyField: string,
+  value: string | string[]
+): void => {
   switch (keyField) {
     case "company_name":
       companyNameError.value =
