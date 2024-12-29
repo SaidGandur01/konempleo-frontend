@@ -60,7 +60,7 @@ function viewCurrentFiles() {
 
 function updateButtonState() {
   if (pond.value) {
-    const files = pond.value.getFiles();
+    const files = pond.value.getFiles().map((file:any)=>file.file)
     emit("emitfile", files);
   }
 }

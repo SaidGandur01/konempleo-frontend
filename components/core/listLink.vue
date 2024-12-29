@@ -16,7 +16,7 @@ interface ILinkProps {
 const props = withDefaults(defineProps<ILinkProps>(), {
   label: "Link label",
   icons: () => [['fas', 'link-slash']],
-  redirect: "" // ask for default behavior
+  redirect: ""
 });
 const route = useRoute()
 
