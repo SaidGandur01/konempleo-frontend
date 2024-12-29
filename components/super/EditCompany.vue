@@ -279,12 +279,12 @@ const onUpdateCompany = async () => {
     document: form.value.document_number,
     document_type: form.value.company_document_type,
     city: form.value.city,
-    totaloffers: currentCompany.value.totaloffers + form.value.company_offers,
+    totaloffers: Number(currentCompany.value.totaloffers) + Number(form.value.company_offers),
     availableoffers:
-      currentCompany.value.totaloffers + form.value.company_offers,
+      Number(currentCompany.value.totaloffers) + Number(form.value.company_offers),
     employees: form.value.employees,
-    recruiter_name: "Logo user",
-    recruiter_email: "logoUser@logousercompany.com",
+    recruiter_name: form.value.user_company_name,
+    recruiter_email: form.value.user_company_email,
     phone: form.value.user_company_phone,
   };
 
