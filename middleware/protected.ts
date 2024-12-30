@@ -4,7 +4,6 @@ export default defineNuxtRouteMiddleware(async () => {
   const userStore = useUserStore();
   const isUserAuthenticated = userStore.isUserAuthenticated();
   if (!isUserAuthenticated) {
-    userStore.reset()
-    return;
+    return userStore.reset()
   }
 });

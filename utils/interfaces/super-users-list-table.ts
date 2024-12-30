@@ -1,7 +1,9 @@
 export interface ISuperUsersListTableRow {
   id: number;
-  user_name: string;
-  user_mail: string;
-  user_type: string;
+  fullname: string;
+  email: string;
+  role: string;
   companies: string[];
-};
+  active: boolean;
+  phone: string;
+}

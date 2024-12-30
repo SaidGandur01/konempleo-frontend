@@ -1,5 +1,8 @@
 <template>
-  <li :class="{ 'active-item': isActive(props.redirect) }" @click="$router.push(props.redirect)">
+  <li
+    :class="{ 'active-item': isActive(props.redirect) }"
+    @click="$router.push(props.redirect)"
+  >
     <a class="item-field">
       <font-awesome-icon class="icon" :icon="[...props.icons]" />
       <span>{{ label }}</span>
@@ -10,23 +13,21 @@
 interface ILinkProps {
   label: string;
   icons: string[];
-  redirect: string
+  redirect: string;
 }
 
 const props = withDefaults(defineProps<ILinkProps>(), {
   label: "Link label",
-  icons: () => [['fas', 'link-slash']],
-  redirect: "" // ask for default behavior
+  icons: () => ["fas", "link-slash"],
+  redirect: "",
 });
-const route = useRoute()
-
 
 const isActive = (path: string) => {
-  const currentRouteArr = route.path.split('/')
-  const uniqPath = path.split('/').at(-1) as string
-  return currentRouteArr.includes(uniqPath)
+  const route = useRoute();
+  const currentRouteArr = route.path.split("/");
+  const uniqPath = path.split("/").at(-1) as string;
+  return currentRouteArr.includes(uniqPath);
 };
-
 </script>
 <style lang="scss" scoped>
 li {

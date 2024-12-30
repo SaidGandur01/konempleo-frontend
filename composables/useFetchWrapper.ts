@@ -18,12 +18,12 @@ export const useFetchWrapper = async ({
   body,
   headers
 }: fetchWrapperProps): Promise<any> => {
-  const baseUrl = 'http://ec2-3-144-33-2.us-east-2.compute.amazonaws.com'; // hardcoded until server is deployed to grab it dynamically
+  const baseUrl = 'http://ec2-18-118-173-102.us-east-2.compute.amazonaws.com'; // hardcoded until server is deployed to grab it dynamically
   const url = `${baseUrl}/${path}`;
   const options = {
     method,
     body: body || null,
-    headers: headers || {},
+    headers: headers || {}
   };
 
   const response = await useFetch(url, options);

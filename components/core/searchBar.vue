@@ -16,7 +16,7 @@
         @blur="inputFocused = false"
         @focus="inputFocused = true"
         @input="debouncedFn()"
-      >
+      />
     </div>
   </div>
 </template>
@@ -28,13 +28,14 @@ interface SearchBarProps {
   placeHolder?: string;
   minLengthSearchCriteria: number;
 }
-
 interface HandleInputValueEmits {
   (event: "input", value: string): void;
   (event: "click"): void;
 }
+
 const inputFocused = ref<boolean>(false);
 const inputValueEmit = defineEmits<HandleInputValueEmits>();
+const inputValue = ref<string>("");
 const props = withDefaults(defineProps<SearchBarProps>(), {
   label: undefined,
   minLengthSearchCriteria: 2,
@@ -49,11 +50,9 @@ const debouncedFn = useDebounceFn(
       inputValueEmit("input", "");
     }
   },
-  props.minLengthSearchCriteria === 2 ? 300 : 0,
-  { maxWait: 5000 },
+  props.minLengthSearchCriteria >= 1 ? 300 : 0,
+  { maxWait: 5000 }
 );
-
-const inputValue = ref<string>("");
 
 const searchBarWrapper = computed(() => ({
   "search-bar--wrapper": true,
@@ -66,7 +65,7 @@ const searchBarWrapper = computed(() => ({
   display: flex;
   flex-direction: column;
   border-radius: 1rem;
-  border: 1px darken($color: #F9FAFB, $amount: 10%) solid;
+  border: 1px darken($color: #f9fafb, $amount: 10%) solid;
 
   label {
     color: var(--color-brand-neutral-400);
