@@ -1,9 +1,6 @@
 <template>
   <div class="results-table">
-    <div
-      v-if="companyName && paginatedResults && paginatedResults.length"
-      class="table-wrapper"
-    >
+    <div v-if="results && results.length" class="table-wrapper">
       <div class="kpi-section">
         <CoreKpiWrapper
           title-two="20"
@@ -42,89 +39,272 @@
           description-one="Efectividad Total"
         />
       </div>
-
       <div class="search-container">
         <CoreSearchBar
-          :min-length-search-criteria="2"
-          @input="onHandleUserSearch"
+          :min-length-search-criteria="1"
+          @input="onHandleOfferSearch"
         />
       </div>
-
-      <table>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Nombre Oferta</th>
-            <th>Candidatos</th>
-            <th>Contactados por Whatsapp</th>
-            <th>ECG</th>
-            <th>Exactitud</th>
-            <th>Tus datos</th>
-            <th>CVS Asignados</th>
-            <th>Mensaje WP</th>
-            <th>Cierre de oferta</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(result, index) in paginatedResults" :key="index">
-            <td class="ranking">{{ result.number }}</td>
-            <td style="cursor: pointer;" @click="onHandleOffer">{{ result.offer_name }}</td>
-            <td>{{ result.candidates }}</td>
-            <td>{{ result.contacted }}</td>
-            <td>{{ result.ecg }}</td>
-            <td>{{ result.accuracy }}</td>
-            <td>{{ result.tus_datos }}</td>
-            <td>{{ result.assigned_cvs }}</td>
-            <td>{{ result.whatsapp_message }}</td>
-            <td>{{ result.offer_close }}</td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="pagination">
-        <button :disabled="currentPage === 1" @click="previousPage">
-          Previous
-        </button>
-        <span>Page {{ currentPage }} of {{ totalPages }}</span>
-        <button :disabled="currentPage === totalPages" @click="nextPage">
-          Next
-        </button>
+      <div
+        v-if="paginatedResults && paginatedResults.length"
+        class="table-wrapper"
+      >
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nombre Oferta</th>
+              <th>Candidatos</th>
+              <th>Contactados por Whatsapp</th>
+              <th>ECG</th>
+              <th>Exactitud</th>
+              <th>Tus datos</th>
+              <th>CVS Asignados</th>
+              <th>Status</th>
+              <th>Cierre de oferta</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(result, index) in paginatedResults" :key="index">
+              <td class="ranking">{{ result.id }}</td>
+              <td style="cursor: pointer" @click="onHandleOffer(result.id)">
+                {{ result.name }}
+              </td>
+              <td>{{ result.vacants }}</td>
+              <td>{{ result.contacted }}</td>
+              <td>{{ result.ecg }}</td>
+              <td>{{ result.accuracy }}</td>
+              <td>{{ result.tus_datos }}</td>
+              <td>
+                {{ result.assigned_cvs }}
+                <div class="tooltip">
+                  <font-awesome-icon
+                    class="icon"
+                    :icon="['fas', 'circle-plus']"
+                    :style="{ color: '#5C60F5' }"
+                    @click="result.showCVInput = !result.showCVInput"
+                  />
+                  <span class="tooltiptext">Añadir</span>
+                </div>
+                <div v-if="result.showCVInput" class="input-wrapper">
+                  <div class="input-container">
+                    <input v-model="cvCount" class="input" type="number" />
+                    <font-awesome-icon
+                      class="icon"
+                      :icon="['fas', 'circle-plus']"
+                      :style="{ color: '#00CC88' }"
+                      size="lg"
+                      @click="onAddCVCount(result.id)"
+                    />
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div :class="['status', 'tooltip', { active: result.active }]">
+                  <span v-if="result.active" class="tooltiptext">Active</span>
+                  <span v-else class="tooltiptext">Inactive</span>
+                </div>
+              </td>
+              <td>
+                <div class="tooltip">
+                  <div v-if="result.active">
+                    <font-awesome-icon
+                      class="icon"
+                      :icon="['fas', 'circle-xmark']"
+                      size="lg"
+                      :style="{ color: '#dd2727' }"
+                      @click="onSuspendOffer(result.id)"
+                    />
+                    <span class="tooltiptext">Desactivar Oferta</span>
+                  </div>
+                  <div v-else>
+                    <font-awesome-icon
+                      :icon="['fas', 'circle-xmark']"
+                      size="lg"
+                      :style="{ color: '#725e6e' }"
+                    />
+                    <span class="tooltiptext">Offerta Inactiva</span>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pagination">
+          <button :disabled="currentPage === 1" @click="previousPage">
+            Previous
+          </button>
+          <span>Page {{ currentPage }} of {{ totalPages }}</span>
+          <button :disabled="currentPage === totalPages" @click="nextPage">
+            Next
+          </button>
+        </div>
       </div>
     </div>
-    <div v-else class="no-data">
+    <div v-if="results && results.length < 1" class="no-data">
       <span>No hay ofertas asociadas a esta empresa</span>
+    </div>
+    <div
+      v-if="results.length > 1 && paginatedResults.length < 1"
+      class="no-data"
+    >
+      <span>Ninguna Oferta hace match con tu busqueda</span>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { generateSuperOffersData } from "~/utils/helpers/super-offers-list-generator.helper";
 import type { ISuperOffersListTableRow } from "~/utils/interfaces";
+import { useUserStore } from "~/store/user.store";
+import { useHelperStore } from "~/store/helper.store";
 
-interface ITableProps {
-  companyName: string;
-}
-const props = withDefaults(defineProps<ITableProps>(), {
-  companyName: "",
-});
-const results = ref<ISuperOffersListTableRow[]>(generateSuperOffersData(35));
-
+const { $toast } = useNuxtApp();
+const helperStore = useHelperStore();
+const userStore = useUserStore();
+const token = userStore.getToken();
+const results = ref<ISuperOffersListTableRow[]>([]);
+const filteredResults = ref<ISuperOffersListTableRow[]>([]);
 const currentPage = ref(1);
 const rowsPerPage = ref(10);
+const cvCount = ref<number | null>(null);
 
-const onHandleUserSearch = (search: string): void => {
-  console.log('search value: ', search)
+interface ITableProps {
+  companyId: string;
+}
+const props = withDefaults(defineProps<ITableProps>(), {
+  companyId: "",
+});
+
+const fetchCompanyOffersDetails = async () => {
+  const params: fetchWrapperProps = {
+    method: EFetchMethods.GET,
+    path: `offers/company/details/${props.companyId}`,
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const { data, error } = await useFetchWrapper(params);
+  if (error.value) {
+    helperStore.renderToastMessage($toast, true, {
+      error: "something went wrong bringing offers for this Company",
+    });
+    results.value = [];
+  } else {
+    const mappedResponse = data.value.map((item) => {
+      return { ...item, showCVInput: false };
+    });
+    results.value = mappedResponse;
+    filteredResults.value = mappedResponse;
+  }
+};
+
+const onAddCVCount = async (offerId: number) => {
+  const index = results.value.findIndex((item) => item.id === offerId);
+  // close the tooltip
+  results.value[index] = {
+    ...results.value[index],
+    showCVInput: false,
+  };
+  if (cvCount.value) {
+    const [offer] = results.value.filter((item) => item.id === offerId);
+    const payload = {
+      assigned_cvs: Number(offer.assigned_cvs) + Number(cvCount),
+      active: offer.active,
+    };
+    const params: fetchWrapperProps = {
+      method: EFetchMethods.PUT,
+      path: `offers/${offerId}`,
+      body: JSON.stringify(payload),
+      headers: {
+        accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    const { data, error } = await useFetchWrapper(params);
+    if (error.value) {
+      helperStore.renderToastMessage($toast, true, {
+        error: "Something went wrong updating Offer",
+      });
+      cvCount.value = null
+    } else {
+      helperStore.renderToastMessage($toast, false, {
+        success: "Oferta actualizada correctamente",
+      });
+      cvCount.value = null
+      const updatedIndex = results.value.findIndex(
+        (item) => item.id === data.value.id
+      );
+      if (updatedIndex !== -1) {
+        results.value[updatedIndex] = {
+          ...results.value[updatedIndex],
+          assigned_cvs: data.value.assigned_cvs,
+        };
+      }
+    }
+  }
+};
+
+const onSuspendOffer = async (offerId: number) => {
+  const [offer] = results.value.filter((item) => item.id === offerId);
+  const payload = {
+    assigned_cvs: offer.assigned_cvs,
+    active: !offer.active,
+  };
+  const params: fetchWrapperProps = {
+    method: EFetchMethods.PUT,
+    path: `offers/${offerId}`,
+    body: JSON.stringify(payload),
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const { data, error } = await useFetchWrapper(params);
+  if (error.value) {
+    helperStore.renderToastMessage($toast, true, {
+      error: "Something went wrong updating Offer",
+    });
+  } else {
+    helperStore.renderToastMessage($toast, false, {
+      success: "Oferta actualizada correctamente",
+    });
+    const updatedIndex = results.value.findIndex(
+      (item) => item.id === data.value.id
+    );
+    if (updatedIndex !== -1) {
+      results.value[updatedIndex] = {
+        ...results.value[updatedIndex],
+        active: data.value.active,
+      };
+    }
+  }
+};
+
+onMounted(() => {
+  if (props.companyId) {
+    fetchCompanyOffersDetails();
+  }
+});
+
+const onHandleOfferSearch = (searchValue: string): void => {
+  filteredResults.value = results.value.filter((item) => {
+    const name = item.name.toLowerCase();
+    return name.includes(searchValue.toLowerCase());
+  });
+  currentPage.value = 1;
 };
 
 // Computed property to calculate the total number of pages
 const totalPages = computed(() => {
-  return Math.ceil(results.value.length / rowsPerPage.value);
+  return Math.ceil(filteredResults.value.length / rowsPerPage.value);
 });
 
 // Computed property to slice the results based on the current page
 const paginatedResults = computed(() => {
   const start = (currentPage.value - 1) * rowsPerPage.value;
   const end = start + rowsPerPage.value;
-  return results.value.slice(start, end);
+  return filteredResults.value.slice(start, end);
 });
 
 const nextPage = () => {
@@ -139,18 +319,19 @@ const previousPage = () => {
   }
 };
 
-const onHandleOffer = (): void => {
-  const randomNum = Math.floor(Math.random() * 3) + 1;
-  navigateTo(`/super-admin/offers/${randomNum}`);
+const onHandleOffer = (offerId: number): void => {
+  navigateTo(`/super-admin/offers/${offerId}?companyId=${props.companyId}`);
 };
+
 watch(
-  () => props.companyName,
-  (newValue: string) => {
-    console.log("new value: ", newValue);
+  () => props.companyId,
+  (newCompanyId: string) => {
+    if (newCompanyId) {
+      fetchCompanyOffersDetails();
+    }
   }
 );
 </script>
-
 <style lang="scss" scoped>
 .results-table {
   .kpi-section {
@@ -160,7 +341,7 @@ watch(
     gap: 2rem;
     margin-bottom: 5rem;
   }
-  .search-container{
+  .search-container {
     width: 30%;
     padding-bottom: 2.5rem;
     padding-left: 0.5rem;
@@ -175,7 +356,7 @@ watch(
       border-spacing: 0;
       border-radius: 12px;
       overflow: hidden;
-      border: 1px darken($color: #F9FAFB, $amount: 10%) solid;
+      border: 1px darken($color: #f9fafb, $amount: 10%) solid;
 
       thead th:nth-child(3),
       tbody td:nth-child(3) {
@@ -184,13 +365,13 @@ watch(
 
       tbody tr:first-child {
         td {
-          border-top: 1px darken($color: #F9FAFB, $amount: 10%) solid;
+          border-top: 1px darken($color: #f9fafb, $amount: 10%) solid;
         }
       }
 
       tbody tr:not(:last-child) {
         td {
-          border-bottom: 1px darken($color: #F9FAFB, $amount: 10%) solid;
+          border-bottom: 1px darken($color: #f9fafb, $amount: 10%) solid;
         }
       }
 
@@ -202,7 +383,7 @@ watch(
       }
 
       tbody tr:nth-child(2n) {
-        background-color: #F9FAFB; /* Adjust this color to your needs */
+        background-color: #f9fafb;
       }
 
       th:first-child {
@@ -218,7 +399,7 @@ watch(
         border-bottom-right-radius: 12px;
       }
       th {
-        background-color: #F9FAFB;
+        background-color: #f9fafb;
         font-weight: bold;
         padding: 1.5rem 2rem;
       }
@@ -226,10 +407,92 @@ watch(
         vertical-align: middle;
         padding: 1.5rem 2rem;
       }
+
+      .input-wrapper {
+        position: relative;
+      }
+
+      .input-container {
+        background-color: #e8ebf1;
+        padding: 0.5rem;
+        border-radius: 1rem;
+        width: 100px;
+        display: flex;
+        flex-direction: row;
+        position: absolute;
+        z-index: 1;
+        top: -2.7rem;
+        left: 100%;
+        align-items: center;
+        margin-left: -10px;
+
+        .input {
+          background: var(--background-input-field);
+          border: 1px #d1d5dc solid;
+          border-radius: 1rem;
+          color: var(--color-text-200);
+          font-size: 1.6rem;
+          width: 100%;
+          margin-right: 0.5rem;
+
+          &:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px transparent;
+          }
+        }
+        .icon {
+          cursor: pointer;
+          border-radius: 1rem;
+        }
+      }
+
+      .tooltip {
+        position: relative;
+        display: inline-block;
+        .icon {
+          cursor: pointer;
+        }
+      }
+
+      .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 80px;
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px 0;
+        position: absolute;
+        z-index: 1;
+        bottom: 100%;
+        right: 50%;
+        margin-left: -40px;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      .tooltip:hover .tooltiptext {
+        visibility: visible;
+        opacity: 1;
+      }
+
+      .status {
+        background-color: var(--color-danger);
+        border: solid 1px #555;
+        border-radius: 100px;
+        width: 1.5rem;
+        height: 1.5rem;
+        justify-self: center;
+
+        &.active {
+          background-color: var(--color-success);
+        }
+      }
+
       .avatar {
         height: 30px;
         width: 30px;
-        background-color: darken($color: #F9FAFB, $amount: 5%);
+        background-color: darken($color: #f9fafb, $amount: 5%);
         border-radius: 50%;
         position: relative;
         margin: 0 auto;
