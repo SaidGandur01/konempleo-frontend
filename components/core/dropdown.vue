@@ -170,7 +170,7 @@ const onEmitValue = (item?: IListOptions): void => {
     if (item?.key) {
       currentSelection.value = item.value;
       if (props.shouldEmitId) {
-        emit("select", item.key);
+        emit("select", String(item.key));
       } else {
         emit("select", item.value);
       }

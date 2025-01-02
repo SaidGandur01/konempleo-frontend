@@ -9,13 +9,8 @@
       :key="index"
       :class="inputWrapperClasses"
     >
-      <input
-        :id="id"
-        v-model="fields[index]"
-        type="text"
-        :placeholder="placeholder"
-        class="input-field"
-        @input="onInput(index, ($event.target as HTMLInputElement).value)"
+      <span :id="id" type="text" :disabled="!disableInput" class="input-field">
+        {{ field.value }}</span
       >
       <CoreButton
         label=""
@@ -24,39 +19,54 @@
         @click="removeField(index)"
       />
     </div>
-    <CoreButton
-      full-width
-      label=""
-      size="sm"
-      :has-plus-icon="true"
-      @click="addField"
-    />
+    <div :class="inputWrapperClasses">
+      <input
+        id="add-skill-input"
+        v-model="newField.value"
+        :disabled="disableInput"
+        type="text"
+        :placeholder="placeholder"
+        class="input-field"
+      />
+      <CoreButton
+        label=""
+        size="custom"
+        :has-plus-icon="true"
+        @click="addField()"
+      />
+    </div>
   </div>
 </template>
-
 <script lang="ts" setup>
+import type { IListOptions } from './dropdown.vue';
+
 interface IDynamicInputFieldProps {
-  initialFields: Array<string>;
+  initialFields: IListOptions[];
   placeholder: string;
   label?: string;
   required?: boolean;
   id: string;
   size?: "sm" | "md" | "lg" | "xl";
+  addSkillCallback: (data: string) => void;
+  disableInput: boolean;
 }
 
 const props = withDefaults(defineProps<IDynamicInputFieldProps>(), {
-  initialFields: () => [""],
+  initialFields: () => [{ key: "", value: "" }],
   placeholder: "Enter value",
   label: undefined,
   required: false,
   id: undefined,
   size: "md",
+  addSkillCallback: () => undefined,
+  disableInput: true,
+  shouldEmitId: false,
 });
 
 const emit = defineEmits(["update:fields"]);
 
 const fields = ref([...props.initialFields]);
-
+const newField = ref({ key: "", value: "" });
 const inputWrapperClasses = computed(() => ({
   "field-wrapper": true,
   "field-wrapper--sm": props.size === "sm",
@@ -66,23 +76,29 @@ const inputWrapperClasses = computed(() => ({
 }));
 
 const addField = () => {
-  fields.value.push("");
-  emit("update:fields", fields.value);
-};
-
-const removeField = (index: number) => {
-  if (fields.value.length > 1) {
-    fields.value.splice(index, 1);
-    emit("update:fields", fields.value);
+  if (newField.value && newField.value.value) {
+    fields.value.push({...newField.value});
+    emit("update:fields", [...fields.value]);
+    props.addSkillCallback(newField.value.value);
+    newField.value = { key: "", value: "" };
   }
 };
 
-const onInput = (index: number, value: string) => {
-  fields.value[index] = value;
-  emit("update:fields", fields.value);
+const removeField = (index: number) => {
+  if (fields.value.length > 0) {
+    fields.value.splice(index, 1);
+    emit("update:fields", [...fields.value]);
+  }
 };
-</script>
 
+watch(
+  () => props.initialFields,
+  (newValue: IListOptions[]) => {
+    fields.value = newValue;
+    emit("update:fields", [...fields.value]);
+  }
+);
+</script>
 <style lang="scss" scoped>
 .dynamic-input-fields {
   display: flex;
