@@ -170,7 +170,11 @@
           <CoreDropdown
             :list-options="userDropdownOptions"
             label="Persona Responsable en KonEmpleo"
-            placeholder="Seleccione una opción"
+            :placeholder="
+              currentCompany && currentCompany.admin_name
+                ? currentCompany.admin_name
+                : 'Seleccione una opción'
+            "
             :should-emit-id="true"
             max-height="200px"
             @select="(data) => handleOnInput('konempleo_contact', data)"
@@ -279,9 +283,12 @@ const onUpdateCompany = async () => {
     document: form.value.document_number,
     document_type: form.value.company_document_type,
     city: form.value.city,
-    totaloffers: Number(currentCompany.value.totaloffers) + Number(form.value.company_offers),
+    totaloffers:
+      Number(currentCompany.value.totaloffers) +
+      Number(form.value.company_offers),
     availableoffers:
-      Number(currentCompany.value.totaloffers) + Number(form.value.company_offers),
+      Number(currentCompany.value.totaloffers) +
+      Number(form.value.company_offers),
     employees: form.value.employees,
     recruiter_name: form.value.user_company_name,
     recruiter_email: form.value.user_company_email,
@@ -356,7 +363,7 @@ onMounted(async () => {
   } else {
     const response = data.value
       .filter((user: any) => user.role === 2)
-      .reduce((acc , user) => {
+      .reduce((acc, user) => {
         acc.push({ key: user.id, value: user.fullname });
         return acc;
       }, []);

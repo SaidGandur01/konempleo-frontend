@@ -1,11 +1,11 @@
 <template>
   <div class="results-table">
     <div class="search-container">
-        <CoreSearchBar
-          :min-length-search-criteria="2"
-          @input="onHandleUserSearch"
-        />
-      </div>
+      <CoreSearchBar
+        :min-length-search-criteria="1"
+        @input="onHandleUserSearch"
+      />
+    </div>
     <div
       v-if="paginatedResults && paginatedResults.length"
       class="table-wrapper"
@@ -18,16 +18,23 @@
             <th>Mail</th>
             <th>Empresas</th>
             <th>Tipo de Usuario</th>
+            <th>Status</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="(result, index) in paginatedResults" :key="index">
             <td>{{ result.id }}</td>
-            <td>{{ result.user_name }}</td>
-            <td>{{ result.user_mail }}</td>
-            <td>{{ result.companies.join(', ') }}</td>
-            <td>{{ result.user_type }}</td>
+            <td>{{ result.fullname }}</td>
+            <td>{{ result.email }}</td>
+            <td>{{ result.companies && result.companies.join(", ") }}</td>
+            <td>{{ result.role }}</td>
+            <td>
+              <div :class="['status', 'tooltip', { active: result.active }]">
+                <span v-if="result.active" class="tooltiptext">Active</span>
+                <span v-else class="tooltiptext">Inactive</span>
+              </div>
+            </td>
             <td>
               <div class="actions">
                 <div class="tooltip">
@@ -35,23 +42,51 @@
                     class="icon"
                     :icon="['fas', 'pen-to-square']"
                     :style="{ color: '#00CC88' }"
+                    @click="onHandleUserEdit(result.id)"
                   />
                   <span class="tooltiptext">Edit</span>
                 </div>
                 <div class="tooltip">
-                  <font-awesome-icon
-                    class="icon"
-                    :icon="['fas', 'user-minus']"
-                    :style="{ color: '#5C60F5' }"
-                    @click="onHandleCompanySelected(result.id)"
-                  />
-                  <span class="tooltiptext">Suspender</span>
+                  <div v-if="result.active">
+                    <font-awesome-icon
+                      class="icon"
+                      :icon="['fas', 'user-minus']"
+                      :style="{ color: '#5C60F5' }"
+                      @click="
+                        onHandleUpdateUser({
+                          userId: result.id,
+                          updateActive: true,
+                        })
+                      "
+                    />
+                    <span class="tooltiptext">Suspender</span>
+                  </div>
+                  <div v-else>
+                    <font-awesome-icon
+                      class="icon"
+                      :icon="['fas', 'user-plus']"
+                      :style="{ color: '#5C60F5' }"
+                      @click="
+                        onHandleUpdateUser({
+                          userId: result.id,
+                          updateActive: true,
+                        })
+                      "
+                    />
+                    <span class="tooltiptext">Activar</span>
+                  </div>
                 </div>
                 <div class="tooltip">
                   <font-awesome-icon
                     class="icon"
                     :icon="['fas', 'trash']"
                     :style="{ color: '#FE3366' }"
+                    @click="
+                      onHandleUpdateUser({
+                        userId: result.id,
+                        updateDeleted: true,
+                      })
+                    "
                   />
                   <span class="tooltiptext">Delete</span>
                 </div>
@@ -70,41 +105,155 @@
         </button>
       </div>
     </div>
-    <div v-else class="no-data">
-      <span>No hay ofertas asociadas a esta empresa</span>
+    <div v-if="results && results.length < 1" class="no-data">
+      <span>No hay Usuarios disponibles</span>
+    </div>
+    <div
+      v-if="results.length > 1 && paginatedResults.length < 1"
+      class="no-data"
+    >
+      <span>Ningun Usuario hace match con tu busqueda</span>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { generateSuperUsersData } from "~/utils/helpers/super-users-generator.helper";
 import type { ISuperUsersListTableRow } from "~/utils/interfaces/super-users-list-table";
+import { useUserStore } from "~/store/user.store";
+import { getPUTUserPayload, roleMapFromToken } from "~/utils/helpers/common";
+import { useHelperStore } from "~/store/helper.store";
 
-const results = ref<ISuperUsersListTableRow[]>(
-  generateSuperUsersData(35)
-);
-
+const { $toast } = useNuxtApp();
+const userStore = useUserStore();
+const helperStore = useHelperStore();
+const token = userStore.getToken();
 const currentPage = ref(1);
 const rowsPerPage = ref(10);
+const filteredResults = ref<ISuperUsersListTableRow[]>([]);
+const results = ref<ISuperUsersListTableRow[]>([]);
+const usersCleanResult = ref<ISuperUsersListTableRow[]>([]);
 
-const onHandleUserSearch = (search: string): void => {
-  console.log('search value: ', search)
+onMounted(async () => {
+  const params: fetchWrapperProps = {
+    method: EFetchMethods.GET,
+    path: "users/",
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const { data, error } = await useFetchWrapper(params);
+  if (error.value) {
+    helperStore.renderToastMessage($toast, true, {
+      error: "something went wrong bringing Users data",
+    });
+    results.value = [];
+    usersCleanResult.value = [];
+  } else {
+    const response = data.value.map((user: any) => {
+      const mappedRole = roleMapFromToken(user.role)?.replace("-", " ");
+      const mappedCompanies = user.companies.map((item) => {
+        return item.name;
+      });
+      return {
+        ...user,
+        role: mappedRole,
+        companies: mappedCompanies,
+      };
+    });
+    usersCleanResult.value = data.value;
+    results.value = response;
+    filteredResults.value = response;
+  }
+});
+
+const onHandleUserSearch = (searchValue: string): void => {
+  filteredResults.value = results.value.filter((item) => {
+    const name = item.fullname.toLowerCase();
+    return name.includes(searchValue.toLowerCase());
+  });
+  currentPage.value = 1;
 };
 
-const onHandleCompanySelected = (companyId: number): void => {
-  console.log("company id: ", companyId);
-  navigateTo(`/super-admin/offer-details/${companyId}`);
+const onHandleUpdateUser = async ({
+  userId,
+  updateActive,
+  updateDeleted,
+}: {
+  userId: number;
+  updateActive?: boolean;
+  updateDeleted?: boolean;
+}) => {
+  const [filteredUser] = usersCleanResult.value.filter((item) => item.id === userId);
+  const mappedCompanies = filteredUser.companies.reduce((acc: any, company: any) => {
+    acc.push(company.id);
+    return acc;
+  }, []);
+  const user = JSON.parse(JSON.stringify(filteredUser));
+  user.companies = mappedCompanies;
+  const params: fetchWrapperProps = {
+    method: EFetchMethods.PUT,
+    path: `user/admin/${userId}`,
+    body: JSON.stringify(
+      getPUTUserPayload({
+        user,
+        updateActive,
+        updateDeleted,
+      })
+    ),
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const { data, error } = await useFetchWrapper(params);
+  if (error.value) {
+    helperStore.renderToastMessage($toast, true, {
+      error: `Something went wrong ${updateActive ? "updating" : "deleting"} User`,
+    });
+  } else {
+    helperStore.renderToastMessage($toast, false, {
+      success: `Usuario ${updateActive ? "Actualizado" : "Borrado"} correctamente`,
+    });
+    const updatedIndex = results.value.findIndex((item) => item.id === data.value.id);
+    const cleanResultsIndex = usersCleanResult.value.findIndex(
+      (item) => item.id === data.value.id
+    );
+    if (updateActive) {
+      if (updatedIndex !== -1) {
+        results.value[updatedIndex] = {
+          ...results.value[updatedIndex],
+          active: data.value.active,
+        };
+      }
+      if (cleanResultsIndex !== -1) {
+        usersCleanResult.value[cleanResultsIndex] = {
+          ...usersCleanResult.value[cleanResultsIndex],
+          active: data.value.active,
+        };
+      }
+    }
+    if (data.value.is_deleted === true && updatedIndex !== -1) {
+      results.value.splice(updatedIndex, 1);
+      usersCleanResult.value.splice(updatedIndex, 1);
+    }
+  }
 };
+
+const onHandleUserEdit = (userId: number): void => {
+  navigateTo(`/super-admin/users/edit/${userId}`);
+};
+
 // Computed property to calculate the total number of pages
 const totalPages = computed(() => {
-  return Math.ceil(results.value.length / rowsPerPage.value);
+  return Math.ceil(filteredResults.value.length / rowsPerPage.value);
 });
 
 // Computed property to slice the results based on the current page
 const paginatedResults = computed(() => {
   const start = (currentPage.value - 1) * rowsPerPage.value;
   const end = start + rowsPerPage.value;
-  return results.value.slice(start, end);
+  return filteredResults.value.slice(start, end);
 });
 
 const nextPage = () => {
@@ -119,10 +268,9 @@ const previousPage = () => {
   }
 };
 </script>
-
 <style lang="scss" scoped>
 .results-table {
-  .search-container{
+  .search-container {
     width: 30%;
     padding-bottom: 2.5rem;
     padding-left: 0.5rem;
@@ -137,7 +285,7 @@ const previousPage = () => {
       border-spacing: 0;
       border-radius: 12px;
       overflow: hidden;
-      border: 1px darken($color: #F9FAFB, $amount: 10%) solid;
+      border: 1px darken($color: #f9fafb, $amount: 10%) solid;
 
       thead th:nth-child(3),
       tbody td:nth-child(3) {
@@ -146,13 +294,13 @@ const previousPage = () => {
 
       tbody tr:first-child {
         td {
-          border-top: 1px darken($color: #F9FAFB, $amount: 10%) solid;
+          border-top: 1px darken($color: #f9fafb, $amount: 10%) solid;
         }
       }
 
       tbody tr:not(:last-child) {
         td {
-          border-bottom: 1px darken($color: #F9FAFB, $amount: 10%) solid;
+          border-bottom: 1px darken($color: #f9fafb, $amount: 10%) solid;
         }
       }
 
@@ -164,7 +312,7 @@ const previousPage = () => {
       }
 
       tbody tr:nth-child(2n) {
-        background-color: #F9FAFB; /* Adjust this color to your needs */
+        background-color: #f9fafb; /* Adjust this color to your needs */
       }
 
       th:first-child {
@@ -180,7 +328,7 @@ const previousPage = () => {
         border-bottom-right-radius: 12px;
       }
       th {
-        background-color: #F9FAFB;
+        background-color: #f9fafb;
         font-weight: bold;
         padding: 1.5rem 2rem;
       }
@@ -191,7 +339,7 @@ const previousPage = () => {
       .avatar {
         height: 30px;
         width: 30px;
-        background-color: darken($color: #F9FAFB, $amount: 5%);
+        background-color: darken($color: #f9fafb, $amount: 5%);
         border-radius: 50%;
         position: relative;
         margin: 0 auto;
@@ -223,35 +371,46 @@ const previousPage = () => {
         justify-content: center;
         gap: 2rem;
 
-        .tooltip {
-          position: relative;
-          display: inline-block;
-        }
-
-        .tooltip .tooltiptext {
-          visibility: hidden;
-          width: 80px;
-          background-color: #333;
-          color: #fff;
-          text-align: center;
-          border-radius: 6px;
-          padding: 5px 0;
-          position: absolute;
-          z-index: 1;
-          top: 100%;
-          right: 50%;
-          margin-left: -40px;
-          opacity: 0;
-          transition: opacity 0.3s;
-        }
-
-        .tooltip:hover .tooltiptext {
-          visibility: visible;
-          opacity: 1;
-        }
-
         .icon {
           cursor: pointer;
+        }
+      }
+      .tooltip {
+        position: relative;
+        display: inline-block;
+      }
+
+      .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 80px;
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px 0;
+        position: absolute;
+        z-index: 1;
+        top: 100%;
+        right: 50%;
+        margin-left: -40px;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      .tooltip:hover .tooltiptext {
+        visibility: visible;
+        opacity: 1;
+      }
+      .status {
+        background-color: var(--color-danger);
+        border: solid 1px #555;
+        border-radius: 100px;
+        width: 1.5rem;
+        height: 1.5rem;
+        justify-self: center;
+
+        &.active {
+          background-color: var(--color-success);
         }
       }
     }

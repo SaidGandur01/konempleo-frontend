@@ -73,9 +73,11 @@
             :list-options="employessRangeListData"
             label="Número de empleados"
             placeholder="Seleccione un rango"
-            @select="(data) => handleOnInput('city', data)"
+            @select="(data) => handleOnInput('employees', data)"
           />
-          <span v-if="!form.city" class="error-message">{{ cityError }}</span>
+          <span v-if="!form.employees" class="error-message">{{
+            employeesError
+          }}</span>
         </div>
         <div class="form-field">
           <CoreInput
@@ -134,9 +136,10 @@
         </div>
         <div class="form-field">
           <CoreDropdown
-            :list-options="konEmpleoContactListData"
+            :list-options="adminUserResults"
             label="Persona Responsable en KonEmpleo"
             placeholder="Seleccione una opción"
+            :should-emit-id="true"
             @select="(data) => handleOnInput('konempleo_contact', data)"
           />
           <span v-if="!form.konempleo_contact" class="error-message">{{
@@ -162,7 +165,7 @@
           <CoreButton
             size="sm"
             label="Crear Empresa"
-            :disabled="false"
+            :disabled="disableButton"
             @click="onCreateCompany"
           />
         </div>
@@ -181,6 +184,13 @@
               <span v-else>Upload Logo</span>
             </div>
           </label>
+          <span
+            v-if="form.company_logo"
+            class="delete-image"
+            @click="deleteImgSelection"
+          >
+            Borrar selección
+          </span>
         </div>
       </div>
     </div>
@@ -190,8 +200,9 @@
 import { cityListData } from "~/data/city/city";
 import { companyDocumentTypeListData } from "~/data/document-type-company/document-type-company";
 import { employessRangeListData } from "~/data/employess-range/employess-range";
-import { konEmpleoContactListData } from "~/data/konempleo-contacts/konempleo-contacts";
 import { useHelperStore } from "~/store/helper.store";
+import { useUserStore } from "~/store/user.store";
+import { getCreateCompanyPayload, isValidEmail } from "~/utils/helpers/common";
 
 interface ICreateCompanyForm {
   company_name: string;
@@ -204,6 +215,7 @@ interface ICreateCompanyForm {
   user_company_phone: string;
   company_document_type: string;
   company_offers: number;
+  employees: string;
   company_logo?: File | null;
 }
 const form = ref<ICreateCompanyForm>({
@@ -217,6 +229,7 @@ const form = ref<ICreateCompanyForm>({
   user_company_phone: "",
   konempleo_contact: "",
   company_offers: 5,
+  employees: "",
   company_logo: null,
 });
 
@@ -229,12 +242,21 @@ const companyOffersError = ref<string>("");
 const companyDocumentTypeError = ref<string>("");
 const documentNumberError = ref<string>("");
 const cityError = ref<string>("");
+const employeesError = ref<string>("");
 const userCompanyPhoneError = ref<string>("");
-
 const disableButton = ref<boolean>(true);
 const imageSrc = ref<string | null>(null);
+const adminUserResults = ref([]);
 const helperStore = useHelperStore();
 const { $toast } = useNuxtApp();
+const userStore = useUserStore();
+const token = userStore.getToken();
+
+const deleteImgSelection = () => {
+  form.value.company_logo = null;
+  imageSrc.value = null;
+  form.value.company_logo = null;
+};
 
 const previewImage = (event: Event) => {
   const input = event.target as HTMLInputElement;
@@ -248,15 +270,66 @@ const previewImage = (event: Event) => {
     form.value.company_logo = file;
   }
 };
-const onCreateCompany = (): void => {
-  console.log("form: ", form.value);
-  helperStore.renderToastMessage($toast, false, {
-    success: "Empresa creada exitosamente",
-  });
-  setTimeout(() => {
-    navigateTo("/super-admin/companies");
-  }, 1500);
+
+const onCreateCompany = async () => {
+  const formData = new FormData();
+  const payload = getCreateCompanyPayload(form.value);
+  formData.append("company_in", JSON.stringify(payload));
+  if (form.value.company_logo) {
+    formData.append("picture", form.value.company_logo);
+  }
+  const params: fetchWrapperProps = {
+    method: EFetchMethods.POST,
+    path: "company/",
+    body: formData,
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  const { data, error } = await useFetchWrapper(params);
+  if (error.value) {
+    helperStore.renderToastMessage($toast, true, {
+      error: "something went wrong creating company",
+    });
+  } else {
+    const response = data.value;
+    helperStore.renderToastMessage($toast, false, {
+      success: "Empresa creada exitosamente",
+    });
+    setTimeout(() => {
+      navigateTo("/super-admin/companies");
+    }, 1500);
+    console.log(response);
+  }
 };
+
+onMounted(async () => {
+  const params: fetchWrapperProps = {
+    method: EFetchMethods.GET,
+    path: "users/",
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const { data, error } = await useFetchWrapper(params);
+  if (error.value) {
+    helperStore.renderToastMessage($toast, true, {
+      error: "something went wrong bringing Users data",
+    });
+    adminUserResults.value = [];
+  } else {
+    const response = data.value
+      .filter((user: any) => user.role === 2)
+      .reduce((acc, user) => {
+        acc.push({ key: user.id, value: user.fullname });
+        return acc;
+      }, []);
+    adminUserResults.value = response || [];
+  }
+});
 const handleOnInput = (keyField: string, value: string): void => {
   form.value = {
     ...form.value,
@@ -287,17 +360,23 @@ const validateErrorsForm = (keyField: string, value: string): void => {
         value.length < 3 ? "Inserta un username válido" : "";
       break;
     case "user_company_email":
-      if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value)) {
+      if (!isValidEmail(value)) {
         userCompanyEmailError.value = "Ingresa un email válido";
+      } else {
+        userCompanyEmailError.value = "";
       }
       break;
     case "konempleo_contact":
-      konEmpleoContactError.value = !value.length
-        ? "Selecciona una opción"
-        : "";
+      konEmpleoContactError.value =
+        isNaN(Number(value)) || Number(value) < 1
+          ? "Selecciona una opción"
+          : "";
       break;
     case "city":
-      cityError.value = !value.length ? "Selecciona una opción" : "";
+      cityError.value = !value.trim().length ? "Selecciona una opción" : "";
+      break;
+    case "employees":
+      employeesError.value = !value.length ? "Selecciona una opción" : "";
       break;
     case "company_document_type":
       companyDocumentTypeError.value = !value.length
@@ -322,15 +401,22 @@ const validateForm = (): void => {
   const isDocumentNumberValid =
     form.value.document_number.length >= 3 && documentNumberError.value === "";
   const isUserCompanyPhoneValid =
-    form.value.user_company_phone.length >= 3 && userCompanyPhoneError.value === "";
+    form.value.user_company_phone.length >= 3 &&
+    userCompanyPhoneError.value === "";
   const isUserCompanyNameValid =
     form.value.user_company_name.length >= 3 &&
     userCompanyNameError.value === "";
   const isKonEmpleoContactValid =
-    form.value.konempleo_contact && konEmpleoContactError.value === "";
-  const isCityValid = form.value.city && cityError.value === "";
+    !isNaN(Number(form.value.konempleo_contact)) &&
+    Number(form.value.konempleo_contact) >= 1 &&
+    konEmpleoContactError.value === "";
+  const isCityValid =
+    form.value.city.trim().length > 0 && cityError.value === "";
+  const isEmployeesValid =
+    form.value.employees.trim().length > 0 && employeesError.value === "";
   const isCompanyDocumentTypeValid =
-    form.value.company_document_type && companyDocumentTypeError.value === "";
+    form.value.company_document_type.trim().length > 0 &&
+    companyDocumentTypeError.value === "";
   const isCompanyOffersValid =
     !isNaN(Number(form.value.company_offers)) &&
     Number(form.value.company_offers) >= 1 &&
@@ -340,14 +426,13 @@ const validateForm = (): void => {
     isCompanyNameValid &&
     isSectorValid &&
     isUserCompanyNameValid &&
-    /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(
-      form.value.user_company_email
-    ) &&
+    isValidEmail(form.value.user_company_email) &&
     isKonEmpleoContactValid &&
     isCompanyOffersValid &&
     isCompanyDocumentTypeValid &&
     isDocumentNumberValid &&
     isCityValid &&
+    isEmployeesValid &&
     isUserCompanyPhoneValid
   );
 };
@@ -389,6 +474,16 @@ const validateForm = (): void => {
         width: 250px;
         height: 250px;
         margin: 0 auto;
+      }
+
+      .delete-image {
+        margin-top: 1rem;
+        cursor: pointer;
+        color: var(--color-brand);
+      }
+
+      .delete-image:hover {
+        text-decoration: underline;
       }
 
       #imageUpload {
