@@ -51,7 +51,7 @@
 
       <div class="search-container">
         <CoreSearchBar
-          :min-length-search-criteria="2"
+          :min-length-search-criteria="1"
           @input="onHandleUserSearch"
         />
       </div>
@@ -97,12 +97,19 @@
 <script lang="ts" setup>
 import { generateCandidatesData } from "~/utils/helpers/candidates-generator.helper";
 import type { ICandidatesTableRow } from "~/utils/interfaces";
+import { useUserStore } from "~/store/user.store";
+import { useHelperStore } from "~/store/helper.store";
+
 interface ITableProps {
-  offerName: string;
+  offerId: string;
 }
 const props = withDefaults(defineProps<ITableProps>(), {
-  offerName: "",
+  offerId: "",
 });
+const { $toast } = useNuxtApp();
+const userStore = useUserStore();
+const helperStore = useHelperStore();
+const token = userStore.getToken();
 const results = ref<ICandidatesTableRow[]>(generateCandidatesData(50));
 const currentPage = ref(1);
 const rowsPerPage = ref(10);
@@ -135,10 +142,30 @@ const previousPage = () => {
   }
 };
 
+const fetchOfferDetails = async (offerId: number) => {
+  const params: fetchWrapperProps = {
+    method: EFetchMethods.GET,
+    path: `cvoffers/${offerId}`,
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const { data, error } = await useFetchWrapper(params);
+  if (error.value) {
+    helperStore.renderToastMessage($toast, true, {
+      error: "something went wrong bringing cvs for this Offer",
+    });
+  } else {
+    const mappedOffer = data.value
+    console.log('mappedOffer',mappedOffer)
+  }
+};
+
 watch(
-  () => props.offerName,
-  (newValue: string) => {
-    console.log("new value: ", newValue);
+  () => props.offerId,
+  async (newOfferId: string) => {
+    if(newOfferId) await fetchOfferDetails(Number(newOfferId))
   }
 );
 </script>
@@ -268,7 +295,7 @@ watch(
           padding: 5px 0;
           position: absolute;
           z-index: 1;
-          top: 100%;
+          bottom: 100%;
           right: 50%;
           margin-left: -40px;
           opacity: 0;

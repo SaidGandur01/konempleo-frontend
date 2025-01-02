@@ -1,9 +1,6 @@
 <template>
   <div class="results-table">
-    <div
-      v-if="companyName && paginatedResults && paginatedResults.length"
-      class="table-wrapper"
-    >
+    <div v-if="results && results.length" class="table-wrapper">
       <div class="kpi-section">
         <CoreKpiWrapper
           title-two="20"
@@ -42,83 +39,103 @@
           description-one="Efectividad Total"
         />
       </div>
-
       <div class="search-container">
         <CoreSearchBar
-          :min-length-search-criteria="2"
-          @input="onHandleUserSearch"
+          :min-length-search-criteria="1"
+          @input="onHandleOfferSearch"
         />
       </div>
-
-      <table>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Nombre Oferta</th>
-            <th>Candidatos</th>
-            <th>Contactados</th>
-            <th>ECG</th>
-            <th>Exactitud</th>
-            <th>Tus datos</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(result, index) in paginatedResults" :key="index">
-            <td class="ranking">{{ result.number }}</td>
-            <td style="cursor: pointer;" @click="onHandleOffer">{{ result.offer_name }}</td>
-            <td>{{ result.candidates }}</td>
-            <td>{{ result.contacted }}</td>
-            <td>{{ result.ecg }}</td>
-            <td>{{ result.accuracy }}</td>
-            <td>{{ result.tus_datos }}</td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="pagination">
-        <button :disabled="currentPage === 1" @click="previousPage">
-          Previous
-        </button>
-        <span>Page {{ currentPage }} of {{ totalPages }}</span>
-        <button :disabled="currentPage === totalPages" @click="nextPage">
-          Next
-        </button>
+      <div
+        v-if="paginatedResults && paginatedResults.length"
+        class="table-wrapper"
+      >
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nombre Oferta</th>
+              <th>Candidatos</th>
+              <th>Contactados</th>
+              <th>ECG</th>
+              <th>Exactitud</th>
+              <th>Tus datos</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(result, index) in paginatedResults" :key="index">
+              <td class="ranking">{{ result.id }}</td>
+              <td style="cursor: pointer" @click="onHandleOffer(result.id)">
+                {{ result.name }}
+              </td>
+              <td>{{ result.vacants }}</td>
+              <td>{{ result.contacted }}</td>
+              <td>{{ result.ecg }}</td>
+              <td>{{ result.accuracy }}</td>
+              <td>{{ result.tus_datos }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pagination">
+          <button :disabled="currentPage === 1" @click="previousPage">
+            Previous
+          </button>
+          <span>Page {{ currentPage }} of {{ totalPages }}</span>
+          <button :disabled="currentPage === totalPages" @click="nextPage">
+            Next
+          </button>
+        </div>
       </div>
     </div>
-    <div v-else class="no-data">
+    <div v-if="results && results.length < 1" class="no-data">
       <span>No hay ofertas asociadas a esta empresa</span>
+    </div>
+    <div
+      v-if="results.length > 1 && paginatedResults.length < 1"
+      class="no-data"
+    >
+      <span>Ninguna Oferta hace match con tu busqueda</span>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { generateOffersData } from "~/utils/helpers/offers-list-generator.helper";
 import type { IOffersListTableRow } from "~/utils/interfaces";
+import { useUserStore } from "~/store/user.store";
+import { useHelperStore } from "~/store/helper.store";
 
 interface ITableProps {
-  companyName: string;
+  companyId: string;
 }
-const props = withDefaults(defineProps<ITableProps>(), {
-  companyName: "",
-});
-const results = ref<IOffersListTableRow[]>(generateOffersData(35));
 
+const props = withDefaults(defineProps<ITableProps>(), {
+  companyId: "",
+});
+const { $toast } = useNuxtApp();
+const userStore = useUserStore();
+const helperStore = useHelperStore();
+const results = ref<IOffersListTableRow[]>([]);
+const filteredResults = ref<IOffersListTableRow[]>([]);
 const currentPage = ref(1);
 const rowsPerPage = ref(10);
 
-const onHandleUserSearch = (search: string): void => {
-  console.log('search value: ', search)
+const onHandleOfferSearch = (searchValue: string): void => {
+  filteredResults.value = results.value.filter((item) => {
+    const name = item.name.toLowerCase();
+    return name.includes(searchValue.toLowerCase());
+  });
+  currentPage.value = 1;
 };
 
 // Computed property to calculate the total number of pages
 const totalPages = computed(() => {
-  return Math.ceil(results.value.length / rowsPerPage.value);
+  return Math.ceil(filteredResults.value.length / rowsPerPage.value);
 });
 
 // Computed property to slice the results based on the current page
 const paginatedResults = computed(() => {
   const start = (currentPage.value - 1) * rowsPerPage.value;
   const end = start + rowsPerPage.value;
-  return results.value.slice(start, end);
+  return filteredResults.value.slice(start, end);
 });
 
 const nextPage = () => {
@@ -132,14 +149,45 @@ const previousPage = () => {
     currentPage.value--;
   }
 };
-const onHandleOffer = (): void => {
-  const randomNum = Math.floor(Math.random() * 3) + 1;
-  navigateTo(`/admin/offers/${randomNum}`);
+
+const onHandleOffer = (offerId: number): void => {
+  navigateTo(`/admin/offers/${offerId}?companyId=${props.companyId}`);
 };
+
+const fetchCompanyOffersDetails = async () => {
+  const token = userStore.getToken();
+  const params: fetchWrapperProps = {
+    method: EFetchMethods.GET,
+    path: `offers/company/details/${props.companyId}`,
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const { data, error } = await useFetchWrapper(params);
+  if (error.value) {
+    helperStore.renderToastMessage($toast, true, {
+      error: "something went wrong bringing offers for this Company",
+    });
+    results.value = [];
+  } else {
+    results.value = data.value;
+    filteredResults.value = data.value;
+  }
+};
+
+onMounted(() => {
+  if (props.companyId) {
+    fetchCompanyOffersDetails();
+  }
+});
+
 watch(
-  () => props.companyName,
-  (newValue: string) => {
-    console.log("new value: ", newValue);
+  () => props.companyId,
+  (newCompanyId: string) => {
+    if (newCompanyId) {
+      fetchCompanyOffersDetails();
+    }
   }
 );
 </script>
@@ -153,7 +201,7 @@ watch(
     gap: 2rem;
     margin-bottom: 5rem;
   }
-  .search-container{
+  .search-container {
     width: 30%;
     padding-bottom: 2.5rem;
     padding-left: 0.5rem;
@@ -168,7 +216,7 @@ watch(
       border-spacing: 0;
       border-radius: 12px;
       overflow: hidden;
-      border: 1px darken($color: #F9FAFB, $amount: 10%) solid;
+      border: 1px darken($color: #f9fafb, $amount: 10%) solid;
 
       thead th:nth-child(3),
       tbody td:nth-child(3) {
@@ -177,13 +225,13 @@ watch(
 
       tbody tr:first-child {
         td {
-          border-top: 1px darken($color: #F9FAFB, $amount: 10%) solid;
+          border-top: 1px darken($color: #f9fafb, $amount: 10%) solid;
         }
       }
 
       tbody tr:not(:last-child) {
         td {
-          border-bottom: 1px darken($color: #F9FAFB, $amount: 10%) solid;
+          border-bottom: 1px darken($color: #f9fafb, $amount: 10%) solid;
         }
       }
 
@@ -195,7 +243,7 @@ watch(
       }
 
       tbody tr:nth-child(2n) {
-        background-color: #F9FAFB; /* Adjust this color to your needs */
+        background-color: #f9fafb; /* Adjust this color to your needs */
       }
 
       th:first-child {
@@ -211,7 +259,7 @@ watch(
         border-bottom-right-radius: 12px;
       }
       th {
-        background-color: #F9FAFB;
+        background-color: #f9fafb;
         font-weight: bold;
         padding: 1.5rem 2rem;
       }
@@ -222,7 +270,7 @@ watch(
       .avatar {
         height: 30px;
         width: 30px;
-        background-color: darken($color: #F9FAFB, $amount: 5%);
+        background-color: darken($color: #f9fafb, $amount: 5%);
         border-radius: 50%;
         position: relative;
         margin: 0 auto;
