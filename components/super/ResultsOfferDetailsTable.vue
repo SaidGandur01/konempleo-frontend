@@ -166,7 +166,7 @@ const fetchOfferDetails = async (offerId: number) => {
   const { data, error } = await useFetchWrapper(params);
   if (error.value) {
     helperStore.renderToastMessage($toast, true, {
-      error: "something went wrong bringing Offer",
+      error: "something went wrong bringing cvs for this Offer",
     });
   } else {
     const mappedOffer = data.value
