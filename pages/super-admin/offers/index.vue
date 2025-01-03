@@ -124,7 +124,6 @@ onMounted(async () => {
     companyId.value = companyIdFromQuery;
     currentCompanySelection.value = filteredCompany.key;
     companyFromUrl.value = filteredCompany.value;
-    await fetchCompanyOffers(Number(companyIdFromQuery));
   }
 });
 

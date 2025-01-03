@@ -59,6 +59,9 @@
               <th>ECG</th>
               <th>Exactitud</th>
               <th>Tus datos</th>
+              <th>CVS Asignados</th>
+              <th>Status</th>
+              <th>Cierre de oferta</th>
             </tr>
           </thead>
           <tbody>
@@ -72,6 +75,35 @@
               <td>{{ result.ecg }}</td>
               <td>{{ result.accuracy }}</td>
               <td>{{ result.tus_datos }}</td>
+              <td>{{ result.assigned_cvs }}</td>
+              <td>
+                <div :class="['status', 'tooltip', { active: result.active }]">
+                  <span v-if="result.active" class="tooltiptext">Active</span>
+                  <span v-else class="tooltiptext">Inactive</span>
+                </div>
+              </td>
+              <td>
+                <div class="tooltip">
+                  <div v-if="result.active">
+                    <font-awesome-icon
+                      class="icon"
+                      :icon="['fas', 'circle-xmark']"
+                      size="lg"
+                      :style="{ color: '#dd2727' }"
+                      @click="onSuspendOffer(result.id)"
+                    />
+                    <span class="tooltiptext">Desactivar Oferta</span>
+                  </div>
+                  <div v-else>
+                    <font-awesome-icon
+                      :icon="['fas', 'circle-xmark']"
+                      size="lg"
+                      :style="{ color: '#725e6e' }"
+                    />
+                    <span class="tooltiptext">Offerta Inactiva</span>
+                  </div>
+                </div>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -113,6 +145,7 @@ const props = withDefaults(defineProps<ITableProps>(), {
 const { $toast } = useNuxtApp();
 const userStore = useUserStore();
 const helperStore = useHelperStore();
+const token = userStore.getToken();
 const results = ref<IOffersListTableRow[]>([]);
 const filteredResults = ref<IOffersListTableRow[]>([]);
 const currentPage = ref(1);
@@ -124,6 +157,34 @@ const onHandleOfferSearch = (searchValue: string): void => {
     return name.includes(searchValue.toLowerCase());
   });
   currentPage.value = 1;
+};
+
+const onSuspendOffer = async (offerId: number) => {
+  const [offer] = results.value.filter((item) => item.id === offerId);
+  const payload = {
+    assigned_cvs: offer.assigned_cvs,
+    active: !offer.active,
+  };
+  const params: fetchWrapperProps = {
+    method: EFetchMethods.PUT,
+    path: `offers/${offerId}`,
+    body: JSON.stringify(payload),
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const { data, error } = await useFetchWrapper(params);
+  if (error.value) {
+    helperStore.renderToastMessage($toast, true, {
+      error: "Something went wrong updating company",
+    });
+  } else {
+    helperStore.renderToastMessage($toast, false, {
+      success: "Compañia actualizada correctamente",
+    });
+    console.log(data);
+  }
 };
 
 // Computed property to calculate the total number of pages
@@ -155,7 +216,6 @@ const onHandleOffer = (offerId: number): void => {
 };
 
 const fetchCompanyOffersDetails = async () => {
-  const token = userStore.getToken();
   const params: fetchWrapperProps = {
     method: EFetchMethods.GET,
     path: `offers/company/details/${props.companyId}`,
@@ -296,14 +356,46 @@ watch(
           margin-top: 2px;
         }
       }
-      .actions {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 2rem;
-
+      .tooltip {
+        position: relative;
+        display: inline-block;
         .icon {
           cursor: pointer;
+        }
+      }
+
+      .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 80px;
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px 0;
+        position: absolute;
+        z-index: 1;
+        bottom: 100%;
+        right: 50%;
+        margin-left: -40px;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      .tooltip:hover .tooltiptext {
+        visibility: visible;
+        opacity: 1;
+      }
+
+      .status {
+        background-color: var(--color-danger);
+        border: solid 1px #555;
+        border-radius: 100px;
+        width: 1.5rem;
+        height: 1.5rem;
+        justify-self: center;
+
+        &.active {
+          background-color: var(--color-success);
         }
       }
     }
