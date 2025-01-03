@@ -8,4 +8,6 @@ export interface IOffersListTableRow {
   ecg: number | string;
   accuracy: number | string;
   tus_datos: number | string;
+  assigned_cvs: number | string;
+  active: boolean;
 };

@@ -87,6 +87,7 @@ const handleOnInput = (keyField: string, value: string): void => {
   currentSelection.value = value;
   validateErrorsForm(keyField, value);
 };
+
 const validateErrorsForm = (keyField: string, value: string): void => {
   switch (keyField) {
     case "company_name":

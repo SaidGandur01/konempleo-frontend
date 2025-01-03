@@ -209,7 +209,7 @@ const onAddCVCount = async (offerId: number) => {
   if (cvCount.value) {
     const [offer] = results.value.filter((item) => item.id === offerId);
     const payload = {
-      assigned_cvs: Number(offer.assigned_cvs) + Number(cvCount),
+      assigned_cvs: Number(offer.assigned_cvs) + Number(cvCount.value),
       active: offer.active,
     };
     const params: fetchWrapperProps = {

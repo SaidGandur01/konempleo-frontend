@@ -1,12 +1,11 @@
 export interface ICompaniesListTableRow {
   id: number;
   logo: string;
-  company_name: string;
-  cv_loaded: number;
-  total_offers: number;
-  active_process: number;
+  name: string;
+  cv_count: number;
+  totaloffers: number;
+  activeoffers: number;
   used_offers: number;
-  associated_user: string;
-  mail: string;
-  status: boolean;
+  recruiter_email: string;
+  active: boolean;
 };
