@@ -12,10 +12,18 @@ export const useHelperStore = defineStore("helper-store", {
       isError = false,
       customMessages?: { pending?: string; success?: string; error?: string }
     ): void {
-      const message = customMessages?.success || 'Default success message';
-      toastInstance(message, {
-        type: isError ? 'error' : 'success', 
-      });
+      if (isError){
+        const message = customMessages?.error|| 'Something went wrong';
+        toastInstance(message, {
+          type: 'error', 
+        });
+      }else {
+        const message = customMessages?.success || customMessages?.pending || 'Success';
+        toastInstance(message, {
+          type: 'success', 
+        });
+      }
+      
     },
   },
 });
