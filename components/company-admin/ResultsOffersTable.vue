@@ -1,9 +1,6 @@
 <template>
   <div class="results-table">
-    <div
-      v-if="paginatedResults && paginatedResults.length"
-      class="table-wrapper"
-    >
+    <div v-if="results && results.length" class="table-wrapper">
       <div class="kpi-section">
         <CoreKpiWrapper
           title-two="20"
@@ -42,86 +39,156 @@
           description-one="Efectividad Total"
         />
       </div>
-
       <div class="search-container">
         <CoreSearchBar
-          :min-length-search-criteria="2"
-          @input="onHandleUserSearch"
+          :min-length-search-criteria="1"
+          @input="onHandleOfferSearch"
         />
       </div>
-
-      <table>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Nombre Oferta</th>
-            <th>Candidatos</th>
-            <th>Contactados</th>
-            <th>Tus datos</th>
-            <th>CV Asignadas</th>
-            <th>Mensaje WP</th>
-            <th>Cierre de oferta</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(result, index) in paginatedResults" :key="index">
-            <td class="ranking">{{ result.number }}</td>
-            <td style="cursor: pointer;" @click="onHandleOffer">{{ result.offer_name }}</td>
-            <td>{{ result.candidates }}</td>
-            <td>{{ result.contacted }}</td>
-            <td>{{ result.tus_datos }}</td>
-            <td>{{ result.cv_assigned }}</td>
-            <td>{{ result.whatsapp_message }}</td>
-            <td>{{ result.offer_closed }}</td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="pagination">
-        <button :disabled="currentPage === 1" @click="previousPage">
-          Previous
-        </button>
-        <span>Page {{ currentPage }} of {{ totalPages }}</span>
-        <button :disabled="currentPage === totalPages" @click="nextPage">
-          Next
-        </button>
+      <div
+        v-if="paginatedResults && paginatedResults.length"
+        class="table-wrapper"
+      >
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nombre Oferta</th>
+              <th>Candidatos</th>
+              <th>Contactados</th>
+              <th>Tus datos</th>
+              <th>CV Asignadas</th>
+              <th>Mensaje WP</th>
+              <th>Status</th>
+              <th>Cierre de oferta</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(result, index) in paginatedResults" :key="index">
+              <td class="ranking">{{ result.id }}</td>
+              <td style="cursor: pointer" @click="onHandleOffer(result.id)">
+                {{ result.name }}
+              </td>
+              <td>{{ result.vitae_offer_count }}</td>
+              <td>{{ result.contacted }}</td>
+              <td>{{ result.tus_datos }}</td>
+              <td>{{ result.assigned_cvs }}</td>
+              <td>{{ result.whatsapp_message }}</td>
+              <td>
+                <div :class="['status', 'tooltip', { active: result.active }]">
+                  <span v-if="result.active" class="tooltiptext">Active</span>
+                  <span v-else class="tooltiptext">Inactive</span>
+                </div>
+              </td>
+              <td>
+                <div class="tooltip">
+                  <div v-if="result.active">
+                    <font-awesome-icon
+                      class="icon"
+                      :icon="['fas', 'circle-xmark']"
+                      size="lg"
+                      :style="{ color: '#dd2727' }"
+                      @click="onSuspendOffer(result.id)"
+                    />
+                    <span class="tooltiptext">Desactivar Oferta</span>
+                  </div>
+                  <div v-else>
+                    <font-awesome-icon
+                      :icon="['fas', 'circle-xmark']"
+                      size="lg"
+                      :style="{ color: '#725e6e' }"
+                    />
+                    <span class="tooltiptext">Offerta Inactiva</span>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pagination">
+          <button :disabled="currentPage === 1" @click="previousPage">
+            Previous
+          </button>
+          <span>Page {{ currentPage }} of {{ totalPages }}</span>
+          <button :disabled="currentPage === totalPages" @click="nextPage">
+            Next
+          </button>
+        </div>
       </div>
     </div>
-    <div v-else class="no-data">
+    <div v-if="results && results.length < 1" class="no-data">
       <span>No hay ofertas asociadas a esta empresa</span>
+    </div>
+    <div
+      v-if="results.length > 1 && paginatedResults.length < 1"
+      class="no-data"
+    >
+      <span>Ninguna Oferta hace match con tu busqueda</span>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { generateCompanyAdminOffersListData } from "~/utils/helpers/company-admin-offers-list.helper";
 import type { ICompanyAdminOffersListTableRow } from "~/utils/interfaces";
+import { useUserStore } from "~/store/user.store";
+import { useHelperStore } from "~/store/helper.store";
 
-interface ITableProps {
-  offerName: string;
-}
-const props = withDefaults(defineProps<ITableProps>(), {
-  offerName: "",
-});
-
-const results = ref<ICompanyAdminOffersListTableRow[]>(generateCompanyAdminOffersListData(35));
-
+const results = ref<ICompanyAdminOffersListTableRow[]>([]);
+const filteredResults = ref<ICompanyAdminOffersListTableRow[]>([]);
+const myData = ref({});
 const currentPage = ref(1);
 const rowsPerPage = ref(10);
+const { $toast } = useNuxtApp();
+const helperStore = useHelperStore();
+const userStore = useUserStore();
+const token = userStore.getToken();
 
-const onHandleUserSearch = (search: string): void => {
-  console.log('search value: ', search)
+const onHandleOfferSearch = (searchValue: string): void => {
+  filteredResults.value = results.value.filter((item) => {
+    const name = item.name.toLowerCase();
+    return name.includes(searchValue.toLowerCase());
+  });
+  currentPage.value = 1;
+};
+
+const onSuspendOffer = async (offerId: number) => {
+  const [offer] = results.value.filter((item) => item.id === offerId);
+  const payload = {
+    assigned_cvs: offer.assigned_cvs,
+    active: !offer.active,
+  };
+  const params: fetchWrapperProps = {
+    method: EFetchMethods.PUT,
+    path: `offers/${offerId}`,
+    body: JSON.stringify(payload),
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const { data, error } = await useFetchWrapper(params);
+  if (error.value) {
+    helperStore.renderToastMessage($toast, true, {
+      error: "Something went wrong updating company",
+    });
+  } else {
+    helperStore.renderToastMessage($toast, false, {
+      success: "Compañia actualizada correctamente",
+    });
+    console.log(data);
+  }
 };
 
 // Computed property to calculate the total number of pages
 const totalPages = computed(() => {
-  return Math.ceil(results.value.length / rowsPerPage.value);
+  return Math.ceil(filteredResults.value.length / rowsPerPage.value);
 });
 
 // Computed property to slice the results based on the current page
 const paginatedResults = computed(() => {
   const start = (currentPage.value - 1) * rowsPerPage.value;
   const end = start + rowsPerPage.value;
-  return results.value.slice(start, end);
+  return filteredResults.value.slice(start, end);
 });
 
 const nextPage = () => {
@@ -135,18 +202,53 @@ const previousPage = () => {
     currentPage.value--;
   }
 };
-const onHandleOffer = (): void => {
-  const randomNum = Math.floor(Math.random() * 3) + 1;
-  navigateTo(`/company-admin/offer-details/${randomNum}`);
-};
-watch(
-  () => props.offerName,
-  (newValue: string) => {
-    console.log("new value: ", newValue);
-  }
-);
-</script>
 
+const onHandleOffer = (offerId: number): void => {
+  navigateTo(`/company-admin/offer-details/${offerId}`);
+};
+
+const fetchOffers = async (companyId: number) => {
+  const params: fetchWrapperProps = {
+    method: EFetchMethods.GET,
+    path: `offers/company/details/${companyId}`,
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const { data, error } = await useFetchWrapper(params);
+  if (error.value) {
+    helperStore.renderToastMessage($toast, true, {
+      error: "something went wrong bringing offers",
+    });
+    results.value = [];
+  } else {
+    results.value = data.value;
+    filteredResults.value = data.value;
+  }
+};
+
+onMounted(async () => {
+  const params: fetchWrapperProps = {
+    method: EFetchMethods.GET,
+    path: `users/me`,
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const { data, error } = await useFetchWrapper(params);
+  if (error.value) {
+    helperStore.renderToastMessage($toast, true, {
+      error: "something went wrong bringing User data",
+    });
+    myData.value = {};
+  } else {
+    myData.value = data.value;
+    await fetchOffers(Number(data.value.companies[0].id));
+  }
+});
+</script>
 <style lang="scss" scoped>
 .results-table {
   .kpi-section {
@@ -156,7 +258,7 @@ watch(
     gap: 2rem;
     margin-bottom: 5rem;
   }
-  .search-container{
+  .search-container {
     width: 30%;
     padding-bottom: 2.5rem;
     padding-left: 0.5rem;
@@ -171,7 +273,7 @@ watch(
       border-spacing: 0;
       border-radius: 12px;
       overflow: hidden;
-      border: 1px darken($color: #F9FAFB, $amount: 10%) solid;
+      border: 1px darken($color: #f9fafb, $amount: 10%) solid;
 
       thead th:nth-child(3),
       tbody td:nth-child(3) {
@@ -180,13 +282,13 @@ watch(
 
       tbody tr:first-child {
         td {
-          border-top: 1px darken($color: #F9FAFB, $amount: 10%) solid;
+          border-top: 1px darken($color: #f9fafb, $amount: 10%) solid;
         }
       }
 
       tbody tr:not(:last-child) {
         td {
-          border-bottom: 1px darken($color: #F9FAFB, $amount: 10%) solid;
+          border-bottom: 1px darken($color: #f9fafb, $amount: 10%) solid;
         }
       }
 
@@ -198,7 +300,7 @@ watch(
       }
 
       tbody tr:nth-child(2n) {
-        background-color: #F9FAFB; /* Adjust this color to your needs */
+        background-color: #f9fafb; /* Adjust this color to your needs */
       }
 
       th:first-child {
@@ -214,7 +316,7 @@ watch(
         border-bottom-right-radius: 12px;
       }
       th {
-        background-color: #F9FAFB;
+        background-color: #f9fafb;
         font-weight: bold;
         padding: 1.5rem 2rem;
       }
@@ -222,21 +324,7 @@ watch(
         vertical-align: middle;
         padding: 1.5rem 2rem;
       }
-      .avatar {
-        height: 30px;
-        width: 30px;
-        background-color: darken($color: #F9FAFB, $amount: 5%);
-        border-radius: 50%;
-        position: relative;
-        margin: 0 auto;
 
-        .icon {
-          position: absolute;
-          top: 45%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-        }
-      }
       .ranking {
         font-weight: 700;
       }
@@ -251,41 +339,46 @@ watch(
           margin-top: 2px;
         }
       }
-      .actions {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 2rem;
-
-        .tooltip {
-          position: relative;
-          display: inline-block;
-        }
-
-        .tooltip .tooltiptext {
-          visibility: hidden;
-          width: 80px;
-          background-color: #333;
-          color: #fff;
-          text-align: center;
-          border-radius: 6px;
-          padding: 5px 0;
-          position: absolute;
-          z-index: 1;
-          top: 100%;
-          right: 50%;
-          margin-left: -40px;
-          opacity: 0;
-          transition: opacity 0.3s;
-        }
-
-        .tooltip:hover .tooltiptext {
-          visibility: visible;
-          opacity: 1;
-        }
-
+      .tooltip {
+        position: relative;
+        display: inline-block;
         .icon {
           cursor: pointer;
+        }
+      }
+
+      .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 80px;
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px 0;
+        position: absolute;
+        z-index: 1;
+        bottom: 100%;
+        right: 50%;
+        margin-left: -40px;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      .tooltip:hover .tooltiptext {
+        visibility: visible;
+        opacity: 1;
+      }
+
+      .status {
+        background-color: var(--color-danger);
+        border: solid 1px #555;
+        border-radius: 100px;
+        width: 1.5rem;
+        height: 1.5rem;
+        justify-self: center;
+
+        &.active {
+          background-color: var(--color-success);
         }
       }
     }

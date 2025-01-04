@@ -1,9 +1,6 @@
 <template>
   <div class="results-table">
-    <div
-      v-if="offerName && paginatedResults && paginatedResults.length"
-      class="table-wrapper"
-    >
+    <div v-if="results && results.length" class="table-wrapper">
       <div class="kpi-section">
         <CoreKpiWrapper
           title-one="Budget"
@@ -48,36 +45,38 @@
           description-one="Efectividad Total"
         />
       </div>
-
       <div class="search-container">
         <CoreSearchBar
-          :min-length-search-criteria="2"
-          @input="onHandleUserSearch"
+          :min-length-search-criteria="1"
+          @input="onHandleCandidateSearch"
         />
       </div>
-
-      <table>
-        <thead>
-          <tr>
-            <th>Ranking</th>
-            <th>Nombre</th>
-            <th>Whatsapp</th>
-            <th>Revisar tus datos</th>
-            <th>Tus Datos</th>
-            <th>Movil</th>
-            <th>Mail</th>
-            <th>Score</th>
-            <th>Contratado</th>
-            <th>Comentarios</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(result, index) in paginatedResults" :key="index">
-            <td class="ranking">{{ result.ranking }}</td>
-            <td>{{ result.nombre }}</td>
-            <td>wp status</td>
-            <td>
-              <div class="tooltip">
+      <div
+        v-if="paginatedResults && paginatedResults.length"
+        class="table-wrapper"
+      >
+        <table>
+          <thead>
+            <tr>
+              <th>Ranking</th>
+              <th>Nombre</th>
+              <th>Whatsapp</th>
+              <th>Revisar tus datos</th>
+              <th>Tus Datos</th>
+              <th>Movil</th>
+              <th>Mail</th>
+              <th>Score</th>
+              <th>Contratado</th>
+              <th>Comentarios</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(result, index) in paginatedResults" :key="index">
+              <td class="ranking">{{ result.vitae_offer_id }}</td>
+              <td>{{ result.candidate_name }}</td>
+              <td>{{ result.whatsapp_status }}</td>
+              <td>
+                <div class="tooltip">
                   <font-awesome-icon
                     class="icon"
                     :icon="['fas', 'pen-to-square']"
@@ -85,59 +84,77 @@
                   />
                   <span class="tooltiptext">Edit</span>
                 </div>
-            </td>
-            <td>Sin antecedentes</td>
-            <td>{{ result.movil }}</td>
-            <td>{{ result.mail }}</td>
-            <td>{{ result.score }}</td>
-            <td>{{ result.contratado }}</td>
-            <td>Comentarios</td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="pagination">
-        <button :disabled="currentPage === 1" @click="previousPage">
-          Previous
-        </button>
-        <span>Page {{ currentPage }} of {{ totalPages }}</span>
-        <button :disabled="currentPage === totalPages" @click="nextPage">
-          Next
-        </button>
+              </td>
+              <td>Sin antecedentes</td>
+              <td>{{ result.candidate_phone }}</td>
+              <td>{{ result.candidate_mail }}</td>
+              <td>{{ result.response_score }}</td>
+              <td>{{ result.contratado }}</td>
+              <td>Comentarios</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pagination">
+          <button :disabled="currentPage === 1" @click="previousPage">
+            Previous
+          </button>
+          <span>Page {{ currentPage }} of {{ totalPages }}</span>
+          <button :disabled="currentPage === totalPages" @click="nextPage">
+            Next
+          </button>
+        </div>
       </div>
     </div>
-    <div v-else class="no-data">
+    <div v-if="results && results.length < 1" class="no-data">
       <span>No existen datos para mostrar</span>
+    </div>
+    <div
+      v-if="results.length > 1 && paginatedResults.length < 1"
+      class="no-data"
+    >
+      <span>Ningun candidato hace match con tu busqueda</span>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { generateCandidatesData } from "~/utils/helpers/candidates-generator.helper";
 import type { ICandidatesTableRow } from "~/utils/interfaces";
+import { useUserStore } from "~/store/user.store";
+import { useHelperStore } from "~/store/helper.store";
+
 interface ITableProps {
-  offerName: string;
+  offerId: string;
 }
 const props = withDefaults(defineProps<ITableProps>(), {
-  offerName: "",
+  offerId: "",
 });
-const results = ref<ICandidatesTableRow[]>(generateCandidatesData(50));
+const results = ref<ICandidatesTableRow[]>([]);
+const filteredResults = ref<ICandidatesTableRow[]>([]);
 const currentPage = ref(1);
 const rowsPerPage = ref(10);
+const { $toast } = useNuxtApp();
+const helperStore = useHelperStore();
+const userStore = useUserStore();
+const token = userStore.getToken();
 
-const onHandleUserSearch = (search: string): void => {
-  console.log('search value: ', search)
+const onHandleCandidateSearch = (searchValue: string): void => {
+  filteredResults.value = results.value.filter((item) => {
+    const name = item.candidate_name.toLowerCase();
+    return name.includes(searchValue.toLowerCase());
+  });
+  currentPage.value = 1;
 };
 
 // Computed property to calculate the total number of pages
 const totalPages = computed(() => {
-  return Math.ceil(results.value.length / rowsPerPage.value);
+  return Math.ceil(filteredResults.value.length / rowsPerPage.value);
 });
 
 // Computed property to slice the results based on the current page
 const paginatedResults = computed(() => {
   const start = (currentPage.value - 1) * rowsPerPage.value;
   const end = start + rowsPerPage.value;
-  return results.value.slice(start, end);
+  return filteredResults.value.slice(start, end);
 });
 
 const nextPage = () => {
@@ -152,10 +169,31 @@ const previousPage = () => {
   }
 };
 
+const fetchOfferDetails = async (offerId: number) => {
+  const params: fetchWrapperProps = {
+    method: EFetchMethods.GET,
+    path: `cvoffers/${offerId}`,
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const { data, error } = await useFetchWrapper(params);
+  if (error.value) {
+    helperStore.renderToastMessage($toast, true, {
+      error: "something went wrong bringing cvs for this offer",
+    });
+    results.value = [];
+  } else {
+    results.value = data.value;
+    filteredResults.value = data.value;
+  }
+};
+
 watch(
-  () => props.offerName,
-  (newValue: string) => {
-    console.log("new value: ", newValue);
+  () => props.offerId,
+  async (newOfferId: string) => {
+    if (newOfferId) await fetchOfferDetails(Number(newOfferId));
   }
 );
 </script>
@@ -169,7 +207,7 @@ watch(
     gap: 2rem;
     margin-bottom: 5rem;
   }
-  .search-container{
+  .search-container {
     width: 30%;
     padding-bottom: 2.5rem;
     padding-left: 0.5rem;
@@ -184,7 +222,7 @@ watch(
       border-spacing: 0;
       border-radius: 12px;
       overflow: hidden;
-      border: 1px darken($color: #F9FAFB, $amount: 10%) solid;
+      border: 1px darken($color: #f9fafb, $amount: 10%) solid;
 
       thead th:nth-child(3),
       tbody td:nth-child(3) {
@@ -193,13 +231,13 @@ watch(
 
       tbody tr:first-child {
         td {
-          border-top: 1px darken($color: #F9FAFB, $amount: 10%) solid;
+          border-top: 1px darken($color: #f9fafb, $amount: 10%) solid;
         }
       }
 
       tbody tr:not(:last-child) {
         td {
-          border-bottom: 1px darken($color: #F9FAFB, $amount: 10%) solid;
+          border-bottom: 1px darken($color: #f9fafb, $amount: 10%) solid;
         }
       }
 
@@ -211,7 +249,7 @@ watch(
       }
 
       tbody tr:nth-child(2n) {
-        background-color: #F9FAFB; /* Adjust this color to your needs */
+        background-color: #f9fafb; /* Adjust this color to your needs */
       }
 
       th:first-child {
@@ -227,7 +265,7 @@ watch(
         border-bottom-right-radius: 12px;
       }
       th {
-        background-color: #F9FAFB;
+        background-color: #f9fafb;
         font-weight: bold;
         padding: 1.5rem 2rem;
       }
@@ -238,7 +276,7 @@ watch(
       .avatar {
         height: 30px;
         width: 30px;
-        background-color: darken($color: #F9FAFB, $amount: 5%);
+        background-color: darken($color: #f9fafb, $amount: 5%);
         border-radius: 50%;
         position: relative;
         margin: 0 auto;
@@ -279,7 +317,7 @@ watch(
         padding: 5px 0;
         position: absolute;
         z-index: 1;
-        top: 100%;
+        bottom: 100%;
         right: 50%;
         margin-left: -40px;
         opacity: 0;
@@ -295,7 +333,6 @@ watch(
         align-items: center;
         justify-content: center;
         gap: 2rem;
-
 
         .icon {
           cursor: pointer;

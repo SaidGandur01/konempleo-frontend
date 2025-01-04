@@ -1,10 +1,11 @@
 export interface ICompanyAdminOffersListTableRow {
-  number: number;
-  offer_name: string;
-  candidates: number;
+  id: number;
+  name: string;
+  vacants: number;
   contacted: number;
   tus_datos: number | string;
-  cv_assigned: number | string;
+  assigned_cvs: number | string;
   whatsapp_message: number | string;
-  offer_closed: boolean;
+  active: boolean;
+  vitae_offer_count: number;
 };

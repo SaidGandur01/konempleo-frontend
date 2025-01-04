@@ -35,46 +35,115 @@
           class="error-message"
           >{{ emailError }}</span
         >
-        <div class="button">
-          <CoreButton
-            size="sm"
-            label="Crear Usuario"
-            :disabled="disableButton"
-            @click="onCreateUser"
-          />
-        </div>
+      </div>
+      <div class="form-field">
+        <CoreInput
+          id="user-phone-id"
+          name="number"
+          min-length="2"
+          label="Telefono del Usuario"
+          placeholder="Ingresa un numero válido"
+          required
+          type="number"
+          @input="(data) => handleOnInput('phone', data)"
+        />
+        <span v-if="form.phone.length < 3" class="error-message">{{
+          phoneError
+        }}</span>
+      </div>
+      <div class="button">
+        <CoreButton
+          size="sm"
+          label="Crear Usuario"
+          :disabled="disableButton"
+          @click="onCreateUser"
+        />
       </div>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
+import { getCreateUserPayload, isValidEmail } from "~/utils/helpers/common";
+import { useHelperStore } from "~/store/helper.store";
+import { useUserStore } from "~/store/user.store";
+
 interface ICreateUserForm {
   name: string;
   email: string;
+  phone: string;
 }
-
 const form = ref<ICreateUserForm>({
-  name: '',
-  email: ''
-})
+  name: "",
+  email: "",
+  phone: "",
+});
+const nameError = ref<string>("");
+const emailError = ref<string>("");
+const phoneError = ref<string>("");
+const disableButton = ref<boolean>(true);
+const userStore = useUserStore();
+const helperStore = useHelperStore();
+const token = userStore.getToken();
+const { $toast } = useNuxtApp();
 
-const nameError = ref<string>('')
-const emailError = ref<string>('')
+const fetchMyData = async () => {
+  const params: fetchWrapperProps = {
+    method: EFetchMethods.GET,
+    path: `users/me`,
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const { data, error } = await useFetchWrapper(params);
+  if (error.value) {
+    helperStore.renderToastMessage($toast, true, {
+      error: "something went wrong bringing User data",
+    });
+    return { myData: null, error: true };
+  } else {
+    return { myData: data.value, error: null };
+  }
+};
 
-const disableButton = ref<boolean>(true)
-
-const onCreateUser = (): void => {
-  console.log("form: ", form.value);
-}
+const onCreateUser = async () => {
+  const { myData, error: userDataError } = await fetchMyData();
+  if (!userDataError) {
+    const payload = getCreateUserPayload(form.value, true);
+    const params: fetchWrapperProps = {
+      method: EFetchMethods.POST,
+      path: `user/?company_id=${myData.companies[0].id}`,
+      body: payload,
+      headers: {
+        accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    const { data, error } = await useFetchWrapper(params);
+    if (error.value) {
+      helperStore.renderToastMessage($toast, true, {
+        error: "something went wrong creating User",
+      });
+    } else {
+      helperStore.renderToastMessage($toast, false, {
+        success: "Usuario creado exitosamente",
+      });
+      setTimeout(() => {
+        navigateTo("/company-admin/users");
+      }, 1500);
+      console.log(data.value);
+    }
+  }
+};
 
 const handleOnInput = (keyfield: string, value: string): void => {
   form.value = {
     ...form.value,
-    [keyfield]: value
+    [keyfield]: value,
   };
   validateErrorsForm(keyfield, value);
   validateForm();
-}
+};
 
 const validateErrorsForm = (keyfield: string, value: string): void => {
   switch (keyfield) {
@@ -82,21 +151,28 @@ const validateErrorsForm = (keyfield: string, value: string): void => {
       nameError.value = value.length < 3 ? "Inserta un nombre válido" : "";
       break;
     case "email":
-      if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value)) {
+      if (!isValidEmail(value)) {
         emailError.value = "Ingresa un email válido";
+      } else {
+        emailError.value = "";
       }
+      break;
+    case "phone":
+      nameError.value = value.length < 3 ? "Inserta un numero válido" : "";
       break;
     default:
       break;
   }
-}
+};
 
 const validateForm = (): void => {
   const isNameValid = form.value.name.length >= 3 && nameError.value === "";
+  const isPhoneValid = form.value.phone.length >= 3 && phoneError.value === "";
 
   disableButton.value = !(
     isNameValid &&
-    /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(form.value.email)
+    isValidEmail(form.value.email) &&
+    isPhoneValid
   );
 };
 </script>
