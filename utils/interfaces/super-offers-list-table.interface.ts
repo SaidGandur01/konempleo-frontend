@@ -9,6 +9,7 @@ export interface ISuperOffersListTableRow {
   accuracy: number | string;
   tus_datos: string;
   assigned_cvs: number;
+  vitae_offer_count: number;
   whatsapp_message: string;
   active: boolean;
   showCVInput?:boolean;

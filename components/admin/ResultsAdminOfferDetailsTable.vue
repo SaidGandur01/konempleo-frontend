@@ -1,7 +1,7 @@
 <template>
   <div class="results-table">
     <div
-      v-if="offerName && paginatedResults && paginatedResults.length"
+    v-if="results && results.length" 
       class="table-wrapper"
     >
       <div class="kpi-section">
@@ -48,14 +48,16 @@
           description-one="Efectividad Total"
         />
       </div>
-
       <div class="search-container">
         <CoreSearchBar
           :min-length-search-criteria="1"
-          @input="onHandleUserSearch"
+          @input="onHandleCandidateSearch"
         />
       </div>
-
+      <div
+        v-if="paginatedResults && paginatedResults.length"
+        class="table-wrapper"
+      >
       <table>
         <thead>
           <tr>
@@ -69,11 +71,11 @@
         </thead>
         <tbody>
           <tr v-for="(result, index) in paginatedResults" :key="index">
-            <td class="ranking">{{ result.ranking }}</td>
-            <td>{{ result.nombre }}</td>
-            <td>{{ result.movil }}</td>
-            <td>{{ result.mail }}</td>
-            <td>{{ result.score }}</td>
+            <td class="ranking">{{ result.vitae_offer_id }}</td>
+            <td>{{ result.candidate_name }}</td>
+            <td>{{ result.candidate_phone }}</td>
+            <td>{{ result.candidate_mail }}</td>
+            <td>{{ result.response_score }}</td>
             <td>{{ result.contratado }}</td>
           </tr>
         </tbody>
@@ -88,14 +90,20 @@
         </button>
       </div>
     </div>
-    <div v-else class="no-data">
+    </div>
+    <div v-if="results && results.length < 1" class="no-data">
       <span>No existen datos para mostrar</span>
+    </div>
+    <div
+      v-if="results.length > 1 && paginatedResults.length < 1"
+      class="no-data"
+    >
+      <span>Ningun candidato hace match con tu busqueda</span>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { generateCandidatesData } from "~/utils/helpers/candidates-generator.helper";
 import type { ICandidatesTableRow } from "~/utils/interfaces";
 import { useUserStore } from "~/store/user.store";
 import { useHelperStore } from "~/store/helper.store";
@@ -110,24 +118,28 @@ const { $toast } = useNuxtApp();
 const userStore = useUserStore();
 const helperStore = useHelperStore();
 const token = userStore.getToken();
-const results = ref<ICandidatesTableRow[]>(generateCandidatesData(50));
+const results = ref<ICandidatesTableRow[]>([]);
+const filteredResults = ref<ICandidatesTableRow[]>([]);
 const currentPage = ref(1);
 const rowsPerPage = ref(10);
 
-const onHandleUserSearch = (search: string): void => {
-  console.log('search value: ', search)
-};
+const onHandleCandidateSearch = (searchValue: string): void => {
+  filteredResults.value = results.value.filter((item) => {
+    const name = item.candidate_name.toLowerCase();
+    return name.includes(searchValue.toLowerCase());
+  });
+  currentPage.value = 1;};
 
 // Computed property to calculate the total number of pages
 const totalPages = computed(() => {
-  return Math.ceil(results.value.length / rowsPerPage.value);
+  return Math.ceil(filteredResults.value.length / rowsPerPage.value);
 });
 
 // Computed property to slice the results based on the current page
 const paginatedResults = computed(() => {
   const start = (currentPage.value - 1) * rowsPerPage.value;
   const end = start + rowsPerPage.value;
-  return results.value.slice(start, end);
+  return filteredResults.value.slice(start, end);
 });
 
 const nextPage = () => {
@@ -156,9 +168,10 @@ const fetchOfferDetails = async (offerId: number) => {
     helperStore.renderToastMessage($toast, true, {
       error: "something went wrong bringing cvs for this Offer",
     });
+    results.value = [];
   } else {
-    const mappedOffer = data.value
-    console.log('mappedOffer',mappedOffer)
+    results.value = data.value;
+    filteredResults.value = data.value;
   }
 };
 
