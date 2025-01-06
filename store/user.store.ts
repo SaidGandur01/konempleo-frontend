@@ -83,28 +83,10 @@ export const useUserStore = defineStore("user-store", {
     isAdmin(): boolean {
       return this.role === EUser.ADMIN;
     },
-    renderToast(toastInstance: any, isError = false, errorMessage?: string) {
-      const resolver = new Promise((resolve) => setTimeout(resolve, 0));
-      const error = new Promise((resolve, reject) => setTimeout(reject, 0));
-      const promiseResult = isError ? error : resolver;
-      toastInstance.promise(
-        promiseResult,
-        {
-          pending: "Uploading data...",
-          success: "Successful response",
-          error:
-            errorMessage ||
-            "Ups! There was an error 😞. Please contact your admin for support",
-        },
-        {
-          position: toastInstance.POSITION.TOP_RIGHT,
-        }
-      );
-    },
-    reset(): void {
-      localStorage.removeItem("token");
-      navigateTo("/login");
+    reset() {
       Object.assign(this, defaultState);
+      localStorage.removeItem("token");
+      return navigateTo("/login");
     },
   },
 });

@@ -10,4 +10,5 @@ export interface IOffersListTableRow {
   tus_datos: number | string;
   assigned_cvs: number | string;
   active: boolean;
+  vitae_offer_count: number;
 };

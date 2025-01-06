@@ -70,7 +70,7 @@
               <td style="cursor: pointer" @click="onHandleOffer(result.id)">
                 {{ result.name }}
               </td>
-              <td>{{ result.vacants }}</td>
+              <td>{{ result.vitae_offer_count }}</td>
               <td>{{ result.contacted }}</td>
               <td>{{ result.ecg }}</td>
               <td>{{ result.accuracy }}</td>

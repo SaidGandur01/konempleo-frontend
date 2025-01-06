@@ -67,6 +67,7 @@
           :list-options="contractTypeListData"
           label="Tipo de contrato"
           placeholder="Seleccione un tipo de contrato"
+          :should-emit-id="true"
           @select="(data) => handleOnInput('contract_type', data)"
         />
         <span v-if="!form.contract_type" class="error-message">{{
@@ -78,6 +79,7 @@
           :list-options="shiftListData"
           label="Horario"
           placeholder="Seleccione una opción"
+          :should-emit-id="true"
           @select="(data) => handleOnInput('shift', data)"
         />
         <span v-if="form.shift.length < 1" class="error-message">{{
@@ -94,7 +96,7 @@
       </div>
       <div class="form-field">
         <CoreDropdown
-          :list-options="locationListData"
+          :list-options="cityListData"
           label="Ciudad"
           placeholder="Seleccione una ciudad"
           @select="(data) => handleOnInput('location', data)"
@@ -110,6 +112,7 @@
           :list-options="genderListData"
           label="Género"
           placeholder="Seleccione una opción"
+          :should-emit-id="true"
           @select="(data) => handleOnInput('gender', data)"
         />
         <span v-if="!form.gender" class="error-message">{{ genderError }}</span>
@@ -141,6 +144,7 @@
           :list-options="militaryServiceBookListData"
           label="Libreta militar"
           placeholder="Seleccione una opción"
+          :should-emit-id="true"
           @select="(data) => handleOnInput('military_service_book', data)"
         />
         <span v-if="!form.military_service_book" class="error-message">{{
@@ -154,6 +158,7 @@
           :list-options="drivingLicenseListData"
           label="Licencia de Conducción"
           placeholder="Seleccione una opción"
+          :should-emit-id="true"
           @select="(data) => handleOnInput('driving_license', data)"
         />
         <span v-if="!form.driving_license" class="error-message">{{
@@ -197,6 +202,7 @@
           :list-options="educationListData"
           label="Educación Mínima"
           placeholder="Seleccione una opción"
+          :should-emit-id="true"
           @select="(data) => handleOnInput('education', data)"
         />
         <span v-if="!form.education" class="error-message">{{
@@ -207,14 +213,15 @@
     <div class="form-group">
       <div class="form-field">
         <CoreDropdown
-          :list-options="loadedSkillListData"
-          label="Habilidades asociadas al cargo"
-          placeholder="Habilidades asociadas al cargo"
-          max-height="100px"
-          @select="(data) => handleOnInput('loaded_skill', data)"
+          :list-options="cargos"
+          label="Cargo"
+          placeholder="Seleccione el cargo"
+          :should-emit-id="true"
+          :should-show-search-bar="true"
+          @select="(data) => handleOnInput('cargo', data)"
         />
-        <span v-if="form.loaded_skill.length < 1" class="error-message">{{
-          loadedSkillsError
+        <span v-if="form.cargo.length < 1" class="error-message">{{
+          cargoError
         }}</span>
       </div>
     </div>
@@ -223,32 +230,35 @@
         <CoreDynamicInputFields
           id="skills-list"
           v-model:fields="form.skill"
+          :initial-fields="skills"
           label="Habilidades necesarias para un cargo"
           required
           placeholder="Campo de Texto para agregar habilidades específicas o especiales"
+          :add-skill-callback="(data) => onNewSkill(data)"
+          :disable-input="!currentCargoId"
         />
       </div>
     </div>
     <div class="form-field">
-        <CoreInput
-          id="offer-id"
-          name="text"
-          min-length="2"
-          label="Preguntas filtro"
-          placeholder=""
-          required
-          type="text"
-          @input="(data) => handleOnInput('questions_filter', data)"
-        />
-        <span v-if="form.questions_filter.length < 3" class="error-message">{{
-          questionsFilterError
-        }}</span>
-      </div>
+      <CoreInput
+        id="offer-id"
+        name="text"
+        min-length="2"
+        label="Preguntas filtro"
+        placeholder=""
+        required
+        type="text"
+        @input="(data) => handleOnInput('questions_filter', data)"
+      />
+      <span v-if="form.questions_filter.length < 3" class="error-message">{{
+        questionsFilterError
+      }}</span>
+    </div>
     <div class="button">
       <CoreButton
         size="sm"
         label="Crear oferta"
-        :disabled="false"
+        :disabled="disableButton"
         @click="onCreateOffer"
       />
     </div>
@@ -262,11 +272,13 @@ import { drivingLicenseListData } from "~/data/driving-license/driving-license";
 import { educationListData } from "~/data/education/education";
 import { expertiseAreaListData } from "~/data/expertise-area/expertise-area";
 import { genderListData } from "~/data/gender/gender";
-import { locationListData } from "~/data/locations/locations";
+import { cityListData } from "~/data/city/city";
 import { militaryServiceBookListData } from "~/data/military-service-book/military-service-book";
 import { shiftListData } from "~/data/shift/shifts";
 import { workTypeListData } from "~/data/work-type/work-type";
-import { loadedSkillListData } from "~/data/loaded-skills/loaded-skills";
+import { useUserStore } from "~/store/user.store";
+import { useHelperStore } from "~/store/helper.store";
+import type { IListOptions } from "../core/dropdown.vue";
 
 interface ICreateOfferForm {
   offer_name: string;
@@ -284,11 +296,12 @@ interface ICreateOfferForm {
   disability: string;
   location: string;
   education: string;
-  loaded_skill: string;
-  skill: [''],
+  cargo: string;
+  skill: IListOptions[];
   profesional_experience_years: number;
   questions_filter: string;
 }
+
 const form = ref<ICreateOfferForm>({
   offer_name: "",
   duties: "",
@@ -296,7 +309,7 @@ const form = ref<ICreateOfferForm>({
   max_positions: 1,
   contract_type: "",
   shift: "",
-  range_salary: [0, 0],
+  range_salary: [1000000, 4000000],
   gender: "",
   age: "",
   work_type: "",
@@ -305,11 +318,15 @@ const form = ref<ICreateOfferForm>({
   disability: "",
   location: "",
   education: "",
-  loaded_skill: "",
-  skill: [''],
+  cargo: "",
+  skill: [{ key: "", value: "" }],
   profesional_experience_years: 0,
   questions_filter: "",
 });
+const { $toast } = useNuxtApp();
+const helperStore = useHelperStore();
+const userStore = useUserStore();
+const token = userStore.getToken();
 const offerNameError = ref<string>("");
 const dutiesError = ref<string>("");
 const expertiseAreaError = ref<string>("");
@@ -325,9 +342,12 @@ const drivingLicenseError = ref<string>("");
 const disabilityError = ref<string>("");
 const educationError = ref<string>("");
 const profesionalExperienceError = ref<string>("");
-const loadedSkillsError = ref<string>("");
+const cargoError = ref<string>("");
 const disableButton = ref<boolean>(true);
 const questionsFilterError = ref<string>("");
+const cargos = ref([]);
+const skills = ref([]);
+const currentCargoId = ref<number>();
 
 const onHandleRangeSelection = (data: { min: number; max: number }): void => {
   form.value = {
@@ -336,21 +356,55 @@ const onHandleRangeSelection = (data: { min: number; max: number }): void => {
   };
 };
 
-const handleOnInput = (keyField: string, value: string): void => {
+const onNewSkill = async (skill: string) => {
+  const payload = {
+    cargoId: currentCargoId.value,
+    skills: [skill],
+  };
+  const params: fetchWrapperProps = {
+    method: EFetchMethods.POST,
+    path: `skills/`,
+    body: payload,
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const { data, error } = await useFetchWrapper(params);
+  if (error.value) {
+    helperStore.renderToastMessage($toast, true, {
+      error: "something went wrong creating new Skill for this cargo",
+    });
+  } else {
+    helperStore.renderToastMessage($toast, false, {
+      success: "Skill creada exitosamente",
+    });
+    console.log(data);
+    await fetchCargoSkills(currentCargoId.value as number);
+  }
+};
+
+const handleOnInput = (keyField: string, value: string | string[]): void => {
   form.value = {
     ...form.value,
     [keyField]: value,
   };
   validateErrorsForm(keyField, value);
   validateForm();
+  if (keyField === "cargo") currentCargoId.value = Number(value);
 };
-const validateErrorsForm = (keyField: string, value: string): void => {
+
+const validateErrorsForm = (
+  keyField: string,
+  value: string | string[]
+): void => {
   switch (keyField) {
     case "offer_name":
       offerNameError.value = value.length < 3 ? "Inserta un nombre válido" : "";
       break;
     case "questions_filter":
-      questionsFilterError.value = value.length < 3 ? "Inserta un valor válido" : "";
+      questionsFilterError.value =
+        value.length < 3 ? "Inserta un valor válido" : "";
       break;
     case "duties":
       dutiesError.value = value.length < 3 ? "Inserta un valor válido" : "";
@@ -404,25 +458,27 @@ const validateErrorsForm = (keyField: string, value: string): void => {
           ? "Inserta un valor válido"
           : "";
       break;
-    case "loaded_skill":
-      loadedSkillsError.value = !value.length ? "Selecciona una opción" : "";
+    case "cargo":
+      cargoError.value = !value.length ? "Selecciona una opción" : "";
       break;
     default:
       break;
   }
 };
+
 const validateForm = (): void => {
   const isOfferNameValid =
     form.value.offer_name.length >= 3 && offerNameError.value === "";
   const isQuestionsFilterValid =
-    form.value.questions_filter.length >= 3 && questionsFilterError.value === "";
+    form.value.questions_filter.length >= 3 &&
+    questionsFilterError.value === "";
   const isDutiesValid =
     form.value.duties.length >= 3 && dutiesError.value === "";
   const isExpertiseAreaValid =
     form.value.expertise_area && expertiseAreaError.value === "";
   const isMaxPositionsValid =
     !isNaN(Number(form.value.max_positions)) &&
-    Number(form.value.max_positions) >= 1 &&
+    Number(form.value.max_positions) > 0 &&
     maxPositionsError.value === "";
   const isContractTypeValid =
     form.value.contract_type && contractTypeError.value === "";
@@ -438,13 +494,11 @@ const validateForm = (): void => {
   const isDisabilityValid =
     form.value.disability && disabilityError.value === "";
   const isEducationValid = form.value.education && educationError.value === "";
-
   const isProfessionalExperienceValid =
     !isNaN(Number(form.value.profesional_experience_years)) &&
     Number(form.value.profesional_experience_years) > 0 &&
     profesionalExperienceError.value === "";
-  const isLoadedSkillValid =
-    form.value.loaded_skill && loadedSkillsError.value === "";
+  const isCargoValid = form.value.cargo && cargoError.value === "";
 
   disableButton.value = !(
     isOfferNameValid &&
@@ -462,13 +516,148 @@ const validateForm = (): void => {
     isDisabilityValid &&
     isEducationValid &&
     isProfessionalExperienceValid &&
-    isLoadedSkillValid &&
+    isCargoValid &&
     isQuestionsFilterValid
   );
 };
-const onCreateOffer = async (): Promise<void> => {
-  console.log(form.value);
+
+const fetchUserData = async () => {
+  const params: fetchWrapperProps = {
+    method: EFetchMethods.GET,
+    path: `users/me`,
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const { data, error } = await useFetchWrapper(params);
+  if (error.value) {
+    helperStore.renderToastMessage($toast, true, {
+      error: "something went wrong bringing User data",
+    });
+    return { myData: null, error: true };
+  } else {
+    return { myData: data.value, error: null };
+  }
 };
+
+const onCreateOffer = async (): Promise<void> => {
+  const { myData, error: userDataError } = await fetchUserData();
+  if (!userDataError) {
+    const getPayload = (data:any) => {
+      const mapSkills = data.skill.map((skill: IListOptions) => {
+        const skillId = skill.key;
+        return skillId;
+      });
+
+      return {
+        offer_in: {
+          name: data.offer_name,
+          duties: data.duties,
+          exp_area: data.expertise_area,
+          vacants: data.max_positions,
+          contract_type: Number(data.contract_type),
+          salary: data.range_salary.join(" , ").replace(",", "-"),
+          city: data.location,
+          shift: data.shift,
+          gender: data.gender,
+          military_notebook: data.military_service_book,
+          age: data.age,
+          job_type: data.work_type,
+          license: data.driving_license,
+          disabled: data.disability === "SI" ? true : false,
+          experience_years: data.profesional_experience_years,
+          filter_questions: data.questions_filter,
+          ed_required: data.education,
+          cargoId: data.cargo,
+          assigned_cvs: 50,
+          companyId: myData.companies[0].id,
+        },
+        skills: mapSkills,
+      };
+    };
+    const payload = getPayload(form.value);
+    const params: fetchWrapperProps = {
+      method: EFetchMethods.POST,
+      path: "offers/",
+      body: payload,
+      headers: {
+        accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    const { data, error } = await useFetchWrapper(params);
+    if (error.value) {
+      helperStore.renderToastMessage($toast, true, {
+        error: "something went wrong creating Offer",
+      });
+    } else {
+      const response = data.value;
+      helperStore.renderToastMessage($toast, false, {
+        success: "Offer creada exitosamente",
+      });
+      setTimeout(() => {
+        navigateTo("/company-admin/offers");
+      }, 1500);
+      console.log(response);
+    }
+  }
+};
+
+const fetchCargoSkills = async (id: number) => {
+  const params: fetchWrapperProps = {
+    method: EFetchMethods.GET,
+    path: `skills/cargo/${id}`,
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const { data, error } = await useFetchWrapper(params);
+  if (error.value) {
+    helperStore.renderToastMessage($toast, true, {
+      error: "something went wrong bringing Skills data for this cargo",
+    });
+    skills.value = [];
+  } else {
+    const mappedSkills = data.value.skills.reduce((acc, item) => {
+      acc.push({ key: item.id, value: item.name });
+      return acc;
+    }, []);
+    skills.value = mappedSkills;
+  }
+};
+
+onMounted(async () => {
+  const params: fetchWrapperProps = {
+    method: EFetchMethods.GET,
+    path: "cargo/",
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const { data, error } = await useFetchWrapper(params);
+  if (error.value) {
+    helperStore.renderToastMessage($toast, true, {
+      error: "something went wrong bringing Cargos data",
+    });
+    cargos.value = [];
+  } else {
+    const mappedCargos = data.value.reduce((acc, item) => {
+      acc.push({ key: item.id, value: item.name });
+      return acc;
+    }, []);
+    cargos.value = mappedCargos;
+  }
+});
+
+watch(currentCargoId, async (newValue) => {
+  if (newValue) {
+    await fetchCargoSkills(newValue);
+  }
+});
 </script>
 <style lang="scss" scoped>
 .create-offer {
