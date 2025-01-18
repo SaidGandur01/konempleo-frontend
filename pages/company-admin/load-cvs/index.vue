@@ -22,19 +22,11 @@
         @click="sendFiles"
       />
     </div>
-    <div class="logo" @click="getCVsFromS3">
-      <img
-        class="size-40 rounded-full outline outline-offset-4 hover:bg-gray-200"
-        :src="kLogo"
-        alt="download CV's"
-      />
-    </div>
   </NuxtLayout>
 </template>
 <script lang="ts" setup>
 import { useUserStore } from "~/store/user.store";
 import { useHelperStore } from "~/store/helper.store";
-import kLogo from "~/public/images/KE_solok.png";
 
 definePageMeta({
   middleware: ["protected", "user-guard"],
@@ -53,7 +45,7 @@ const token = userStore.getToken();
 const offerError = ref<string>("");
 const disabledButton = ref<boolean>(true);
 const dropdownOptions = ref([]);
-const files = ref<any>([]);
+const files = ref<Blob[]>([]);
 const myData = ref({});
 
 const handleOnInput = (keyField: string, value: string): void => {
@@ -88,14 +80,13 @@ const validateForm = (): void => {
 
 const onHandleFiles = (inputFiles: any): void => {
   files.value = inputFiles;
-  console.log("input files", inputFiles);
   validateForm();
 };
 
-const fetchMyData = async () => {
+const fetchOffers = async (companyId:number) => {
   const params: fetchWrapperProps = {
     method: EFetchMethods.GET,
-    path: `users/me`,
+    path: `offers/company/details/${companyId}`,
     headers: {
       accept: "application/json",
       Authorization: `Bearer ${token}`,
@@ -104,11 +95,15 @@ const fetchMyData = async () => {
   const { data, error } = await useFetchWrapper(params);
   if (error.value) {
     helperStore.renderToastMessage($toast, true, {
-      error: "something went wrong bringing User data",
+      error: "something went wrong bringing offers",
     });
-    myData.value = {};
+    dropdownOptions.value = [];
   } else {
-    myData.value = data.value;
+    const mappedResponse = data.value.reduce((acc, offer) => {
+      acc.push({ key: offer.id, value: offer.name });
+      return acc;
+    }, []);
+    dropdownOptions.value = mappedResponse;
   }
 };
 
@@ -127,7 +122,6 @@ const sendFiles = async () => {
         Authorization: `Bearer ${token}`,
       },
     };
-    console.log("files", files.value);
     const { data, error } = await useFetchWrapper(params);
     if (error.value) {
       helperStore.renderToastMessage($toast, true, {
@@ -138,24 +132,17 @@ const sendFiles = async () => {
         success: "Hoja de vida guardada exitosamente",
       });
       setTimeout(() => {
-        navigateTo("/company-admin/offers");
+        navigateTo(`/company-admin/offer-details/${form.value.offer}`);
       }, 1500);
       console.log(data);
     }
   }
 };
 
-function getCVsFromS3() {
-  // if (pond.value) {
-  //   pond.value.processFiles();  // This will trigger the file upload process
-  // }
-}
-
 onMounted(async () => {
-  fetchMyData();
   const params: fetchWrapperProps = {
     method: EFetchMethods.GET,
-    path: `offers/owner/`,
+    path: `users/me`,
     headers: {
       accept: "application/json",
       Authorization: `Bearer ${token}`,
@@ -164,16 +151,12 @@ onMounted(async () => {
   const { data, error } = await useFetchWrapper(params);
   if (error.value) {
     helperStore.renderToastMessage($toast, true, {
-      error: "something went wrong bringing offers",
+      error: "something went wrong bringing User data",
     });
-    dropdownOptions.value = [];
+    myData.value = {};
   } else {
-    // save data in local store for searching purposes
-    const mappedResponse = data.value.reduce((acc, offer) => {
-      acc.push({ key: offer.id, value: offer.name });
-      return acc;
-    }, []);
-    dropdownOptions.value = mappedResponse;
+    myData.value = data.value;
+    await fetchOffers(Number(data.value.companies[0].id));
   }
 });
 </script>

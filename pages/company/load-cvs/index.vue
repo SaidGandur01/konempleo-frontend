@@ -22,19 +22,11 @@
         @click="sendFiles"
       />
     </div>
-    <div class="logo" @click="getCVsFromS3">
-      <img
-        class="size-40 rounded-full outline outline-offset-4 hover:bg-gray-200"
-        :src="kLogo"
-        alt="download CV's"
-      />
-    </div>
   </NuxtLayout>
 </template>
 <script lang="ts" setup>
 import { useUserStore } from "~/store/user.store";
 import { useHelperStore } from "~/store/helper.store";
-import kLogo from "~/public/images/KE_solok.png";
 
 definePageMeta({
   middleware: ["protected", "user-guard"],
@@ -53,7 +45,7 @@ const token = userStore.getToken();
 const offerError = ref<string>("");
 const disabledButton = ref<boolean>(true);
 const dropdownOptions = ref([]);
-const files = ref<any>([]);
+const files = ref<Blob[]>([]);
 const myData = ref({});
 
 const handleOnInput = (keyField: string, value: string): void => {
@@ -88,7 +80,6 @@ const validateForm = (): void => {
 
 const onHandleFiles = (inputFiles: any): void => {
   files.value = inputFiles;
-  console.log("input files", inputFiles);
   validateForm();
 };
 
@@ -113,11 +104,12 @@ const fetchMyData = async () => {
 };
 
 const sendFiles = async () => {
-  if(Array.isArray(files.value)){
+  if (Array.isArray(files.value)) {
     const formData = new FormData();
     for (const file of files.value) {
       formData.append("files", file);
     }
+    
     const params: fetchWrapperProps = {
       method: EFetchMethods.POST,
       body: formData,
@@ -127,7 +119,7 @@ const sendFiles = async () => {
         Authorization: `Bearer ${token}`,
       },
     };
-    console.log("files", files.value);
+
     const { data, error } = await useFetchWrapper(params);
     if (error.value) {
       helperStore.renderToastMessage($toast, true, {
@@ -138,18 +130,12 @@ const sendFiles = async () => {
         success: "Hoja de vida guardada exitosamente",
       });
       setTimeout(() => {
-        navigateTo("/company-admin/offers");
+        navigateTo(`/company/offer-details/${form.value.offer}`);
       }, 1500);
       console.log(data);
     }
   }
 };
-
-function getCVsFromS3() {
-  // if (pond.value) {
-  //   pond.value.processFiles();  // This will trigger the file upload process
-  // }
-}
 
 onMounted(async () => {
   fetchMyData();
