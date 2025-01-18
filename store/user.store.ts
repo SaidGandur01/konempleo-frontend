@@ -54,7 +54,7 @@ export const useUserStore = defineStore("user-store", {
           navigateTo("/super-admin/companies");
           break;
         case EUser.COMPANY:
-          navigateTo("/company/offer-list");
+          navigateTo("/company/offers");
           break;
         default:
           navigateTo("/login");
