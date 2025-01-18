@@ -139,6 +139,7 @@ const onUpdateUser = async () => {
     ...currentUser.value,
     fullname: form.value.fullname,
     phone: form.value.phone,
+    companies: [currentUser.value.companies[0].id]
   };
   const params: fetchWrapperProps = {
     method: EFetchMethods.PUT,
