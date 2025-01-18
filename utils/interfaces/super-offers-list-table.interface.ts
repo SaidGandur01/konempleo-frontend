@@ -12,5 +12,8 @@ export interface ISuperOffersListTableRow {
   vitae_offer_count: number;
   whatsapp_message: string;
   active: boolean;
-  showCVInput?:boolean;
+  city: string;
+  salary: string;
+  contract_type: number;
+  cvCount?: number;
 }
