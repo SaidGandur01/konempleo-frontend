@@ -1,5 +1,14 @@
 import { EUser } from "../enum";
 
+export const formatSalary = (salary: string) => {
+  const salaryRanges = salary.split(",");
+  const formattedSalary = salaryRanges.map((range) => {
+    const trimmedStr = range.trim();
+    return `$${trimmedStr.replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
+  });
+  return formattedSalary.join(' - ');
+};
+
 export const roleMapFromToken = (role: number): EUser | null => {
   switch (role) {
     case 1:
@@ -22,13 +31,13 @@ export const isValidEmail = (value: any): boolean => {
   return true;
 };
 
-export const getCreateCompanyPayload = (data: any) => {
+export const getCreateCompanyPayload = (data: any, KOEId?: number ) => {
   const formattedPayload = {
     employees: parseInt(data.employees.split("-")[1]) || 0,
     sector: data.sector,
     city: data.city,
     name: data.company_name,
-    konempleo_responsible: data.konempleo_contact,
+    konempleo_responsible: data.konempleo_contact || KOEId,
     responsible_user: {
       fullname: data.user_company_name,
       email: data.user_company_email,
@@ -209,6 +218,11 @@ export const getUserRoleNavMapping = (userRole: EUser) => {
           redirect: "/company-admin/load-cvs",
         },
         {
+          label: "Importar CV's",
+          icons: ["fas", "download"],
+          redirect: "/company-admin/import-cvs",
+        },
+        {
           label: "Crear Usuario",
           icons: ["fas", "users"],
           redirect: "/company-admin/create-user",
@@ -259,7 +273,7 @@ export const getUserRoleNavMapping = (userRole: EUser) => {
         {
           label: "Lista de ofertas",
           icons: ["fas", "hippo"],
-          redirect: "/company/offer-list",
+          redirect: "/company/offers",
         },
         {
           label: "Detalle de oferta",
@@ -275,6 +289,11 @@ export const getUserRoleNavMapping = (userRole: EUser) => {
           label: "Carga CV's",
           icons: ["far", "file"],
           redirect: "/company/load-cvs",
+        },
+        {
+          label: "Importar CV's",
+          icons: ["fas", "download"],
+          redirect: "/company/import-cvs",
         },
       ];
   }

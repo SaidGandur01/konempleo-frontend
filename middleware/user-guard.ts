@@ -19,7 +19,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
       case EUser.ADMIN_COMPANY:
         return navigateTo("/company-admin/offers");
       case EUser.COMPANY:
-        return navigateTo("/company/offer-list");
+        return navigateTo("/company/offers");
       default:
         return userStore.reset();
     }
