@@ -15,12 +15,16 @@
         offerError
       }}</span>
     </div>
-    <CompanyAdminResultsOfferDetailsTable :offer-id="currentSelection" />
+    <CompanyAdminResultsOfferDetailsTable
+      :offer-id="offerId"
+      :request-offer-data="onDataRequest"
+    />
   </NuxtLayout>
 </template>
 <script lang="ts" setup>
 import { useUserStore } from "~/store/user.store";
 import { useHelperStore } from "~/store/helper.store";
+import type { ICompanyOffersListTableRow } from "~/utils/interfaces";
 
 definePageMeta({
   middleware: ["protected", "user-guard"],
@@ -35,13 +39,13 @@ const form = ref<ICreateOfferForm>({
 });
 const offerIdFromUrl = ref<string>("");
 const offerError = ref<string>("");
-const currentSelection = ref<string>("");
+const offerId = ref<string>("");
 const { $toast } = useNuxtApp();
 const helperStore = useHelperStore();
 const userStore = useUserStore();
 const token = userStore.getToken();
 const dropdownOptions = ref([]);
-const myData = ref({});
+const offerResults = ref<ICompanyOffersListTableRow[]>([]);
 
 const handleOnInput = (keyField: string, value: string): void => {
   form.value = {
@@ -49,9 +53,10 @@ const handleOnInput = (keyField: string, value: string): void => {
     [keyField]: value,
   };
   offerIdFromUrl.value = "";
-  currentSelection.value = value;
+  offerId.value = value;
   validateErrorsForm(keyField, value);
 };
+
 const validateErrorsForm = (keyField: string, value: string): void => {
   switch (keyField) {
     case "offer":
@@ -61,6 +66,22 @@ const validateErrorsForm = (keyField: string, value: string): void => {
       break;
   }
 };
+
+const onDataRequest = (offerId: string) => {
+  const [filteredOffer] = offerResults.value.filter(
+    (offer) => offer.id === Number(offerId)
+  );
+  if (filteredOffer) {
+    return {
+      offerName: filteredOffer.name,
+      zone: filteredOffer.city,
+      salary: filteredOffer.salary,
+      contract:
+        filteredOffer.contract_type === 1 ? "Tiempo Completo" : "Medio Tiempo",
+    };
+  }
+};
+
 const fetchOffers = async (companyId: number) => {
   const params: fetchWrapperProps = {
     method: EFetchMethods.GET,
@@ -82,6 +103,7 @@ const fetchOffers = async (companyId: number) => {
       acc.push({ key: offer.id, value: offer.name });
       return acc;
     }, []);
+    offerResults.value = data.value;
     dropdownOptions.value = mappedResponse;
   }
 };
@@ -100,18 +122,16 @@ onMounted(async () => {
     helperStore.renderToastMessage($toast, true, {
       error: "something went wrong bringing User data",
     });
-    myData.value = {};
   } else {
-    myData.value = data.value;
     await fetchOffers(Number(data.value.companies[0].id));
   }
   const route = useRoute();
-  const offerId = route.params.id || null;
-  if (offerId) {
+  const offerIdFromRoute = route.params.id || null;
+  if (offerIdFromRoute) {
     const [filteredOffer] = dropdownOptions.value.filter((item) => {
-      if (item.key === Number(offerId)) return item;
+      if (item.key === Number(offerIdFromRoute)) return item;
     });
-    currentSelection.value = filteredOffer.key; // we are having dups companies waiting for fix on backend
+    offerId.value = filteredOffer.key;
     offerIdFromUrl.value = filteredOffer.value;
   }
 });
