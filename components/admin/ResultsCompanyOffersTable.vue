@@ -59,9 +59,6 @@
               <th>ECG</th>
               <th>Exactitud</th>
               <th>Tus datos</th>
-              <th>CVS Asignados</th>
-              <th>Status</th>
-              <th>Cierre de oferta</th>
             </tr>
           </thead>
           <tbody>
@@ -75,35 +72,6 @@
               <td>{{ result.ecg }}</td>
               <td>{{ result.accuracy }}</td>
               <td>{{ result.tus_datos }}</td>
-              <td>{{ result.assigned_cvs }}</td>
-              <td>
-                <div :class="['status', 'tooltip', { active: result.active }]">
-                  <span v-if="result.active" class="tooltiptext">Active</span>
-                  <span v-else class="tooltiptext">Inactive</span>
-                </div>
-              </td>
-              <td>
-                <div class="tooltip">
-                  <div v-if="result.active">
-                    <font-awesome-icon
-                      class="icon"
-                      :icon="['fas', 'circle-xmark']"
-                      size="lg"
-                      :style="{ color: '#dd2727' }"
-                      @click="onSuspendOffer(result.id)"
-                    />
-                    <span class="tooltiptext">Desactivar Oferta</span>
-                  </div>
-                  <div v-else>
-                    <font-awesome-icon
-                      :icon="['fas', 'circle-xmark']"
-                      size="lg"
-                      :style="{ color: '#725e6e' }"
-                    />
-                    <span class="tooltiptext">Offerta Inactiva</span>
-                  </div>
-                </div>
-              </td>
             </tr>
           </tbody>
         </table>
@@ -157,34 +125,6 @@ const onHandleOfferSearch = (searchValue: string): void => {
     return name.includes(searchValue.toLowerCase());
   });
   currentPage.value = 1;
-};
-
-const onSuspendOffer = async (offerId: number) => {
-  const [offer] = results.value.filter((item) => item.id === offerId);
-  const payload = {
-    assigned_cvs: offer.assigned_cvs,
-    active: !offer.active,
-  };
-  const params: fetchWrapperProps = {
-    method: EFetchMethods.PUT,
-    path: `offers/${offerId}`,
-    body: JSON.stringify(payload),
-    headers: {
-      accept: "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  };
-  const { data, error } = await useFetchWrapper(params);
-  if (error.value) {
-    helperStore.renderToastMessage($toast, true, {
-      error: "Something went wrong updating company",
-    });
-  } else {
-    helperStore.renderToastMessage($toast, false, {
-      success: "Compañia actualizada correctamente",
-    });
-    console.log(data);
-  }
 };
 
 // Computed property to calculate the total number of pages
@@ -251,7 +191,6 @@ watch(
   }
 );
 </script>
-
 <style lang="scss" scoped>
 .results-table {
   .kpi-section {
