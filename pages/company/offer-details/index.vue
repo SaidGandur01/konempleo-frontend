@@ -15,16 +15,12 @@
         offerError
       }}</span>
     </div>
-    <CompanyResultsOfferDetailsTable
-      :offer-id="offerId"
-      :request-offer-data="onDataRequest"
-    />
+    <CompanyResultsOfferDetailsTable :offer-id="currentSelection" />
   </NuxtLayout>
 </template>
 <script lang="ts" setup>
 import { useUserStore } from "~/store/user.store";
 import { useHelperStore } from "~/store/helper.store";
-import type { ICompanyOffersListTableRow } from "~/utils/interfaces";
 
 definePageMeta({
   middleware: ["protected", "user-guard"],
@@ -39,13 +35,12 @@ const form = ref<ICreateOfferForm>({
 });
 const offerIdFromUrl = ref<string>("");
 const offerError = ref<string>("");
-const offerId = ref<string>("");
-const { $toast } = useNuxtApp();
+const currentSelection = ref<string>("");
+  const { $toast } = useNuxtApp();
 const helperStore = useHelperStore();
 const userStore = useUserStore();
 const token = userStore.getToken();
 const dropdownOptions = ref([]);
-const offerResults = ref<ICompanyOffersListTableRow[]>([]);
 
 const handleOnInput = (keyField: string, value: string): void => {
   form.value = {
@@ -53,7 +48,7 @@ const handleOnInput = (keyField: string, value: string): void => {
     [keyField]: value,
   };
   offerIdFromUrl.value = "";
-  offerId.value = value;
+  currentSelection.value = value;
   validateErrorsForm(keyField, value);
 };
 
@@ -64,21 +59,6 @@ const validateErrorsForm = (keyField: string, value: string): void => {
       break;
     default:
       break;
-  }
-};
-
-const onDataRequest = (offerId: string) => {
-  const [filteredOffer] = offerResults.value.filter(
-    (offer) => offer.id === Number(offerId)
-  );
-  if (filteredOffer) {
-    return {
-      offerName: filteredOffer.name,
-      zone: filteredOffer.city,
-      salary: filteredOffer.salary,
-      contract:
-        filteredOffer.contract_type === 1 ? "Tiempo Completo" : "Medio Tiempo",
-    };
   }
 };
 
@@ -98,20 +78,20 @@ onMounted(async () => {
     });
     dropdownOptions.value = [];
   } else {
+    // save data in local store for searching purposes
     const mappedResponse = data.value.reduce((acc, offer) => {
       acc.push({ key: offer.id, value: offer.name });
       return acc;
     }, []);
-    offerResults.value = data.value;
     dropdownOptions.value = mappedResponse;
   }
   const route = useRoute();
-  const offerIdFromRoute = route.params.id || null;
-  if (offerIdFromRoute) {
+  const offerId = route.params.id || null;
+  if (offerId) {
     const [filteredOffer] = dropdownOptions.value.filter((item) => {
-      if (item.key === Number(offerIdFromRoute)) return item;
+      if (item.key === Number(offerId)) return item;
     });
-    offerId.value = filteredOffer.key;
+    currentSelection.value = filteredOffer.key; // we are having dups companies waiting for fix on backend
     offerIdFromUrl.value = filteredOffer.value;
   }
 });
