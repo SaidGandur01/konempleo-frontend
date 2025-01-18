@@ -60,7 +60,6 @@
               <th>Exactitud</th>
               <th>Tus Datos</th>
               <th>CV Asignadas</th>
-              <th>Mensaje WP</th>
               <th>Status</th>
               <th>Cierre de oferta</th>
             </tr>
@@ -77,7 +76,6 @@
               <td>{{ result.accuracy }}</td>
               <td>{{ result.tus_datos }}</td>
               <td>{{ result.assigned_cvs }}</td>
-              <td>{{ result.whatsapp_message }}</td>
               <td>
                 <div :class="['status', 'tooltip', { active: result.active }]">
                   <span v-if="result.active" class="tooltiptext">Active</span>
@@ -172,13 +170,21 @@ const onSuspendOffer = async (offerId: number) => {
   const { data, error } = await useFetchWrapper(params);
   if (error.value) {
     helperStore.renderToastMessage($toast, true, {
-      error: "Something went wrong updating company",
+      error: "Something went wrong updating offer",
     });
   } else {
     helperStore.renderToastMessage($toast, false, {
-      success: "Compañia actualizada correctamente",
+      success: "Oferta actualizada correctamente",
     });
-    console.log(data);
+    const updatedIndex = results.value.findIndex(
+      (item) => item.id === data.value.id
+    );
+    if (updatedIndex >= 0) {
+      results.value[updatedIndex] = {
+        ...results.value[updatedIndex],
+        active: data.value.active,
+      };
+    }
   }
 };
 
