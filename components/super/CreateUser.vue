@@ -126,6 +126,7 @@ const handleOnInput = (keyField: string, value: string | string[]): void => {
   validateErrorsForm(keyField, value);
   validateForm();
 };
+
 const validateErrorsForm = (
   keyField: string,
   value: string | string[]
@@ -141,8 +142,8 @@ const validateErrorsForm = (
       case "email":
         if (!isValidEmail(value)) {
           emailError.value = "Ingresa un email válido";
-        }else{
-          emailError.value = ""
+        } else {
+          emailError.value = "";
         }
         break;
       case "companies":
@@ -160,6 +161,7 @@ const validateErrorsForm = (
     }
   }
 };
+
 const validateForm = (): void => {
   const isNameValid = form.value.name.length >= 3 && nameError.value === "";
   const isCompaniesValid = form.value.companies && companiesError.value === "";
@@ -174,8 +176,9 @@ const validateForm = (): void => {
     isRolValid
   );
 };
+
 const onCreateUser = async () => {
-  const payload = getCreateUserPayload(form.value)
+  const payload = getCreateUserPayload(form.value);
   const userStore = useUserStore();
   const token = userStore.getToken();
   const params: fetchWrapperProps = {
@@ -204,6 +207,7 @@ const onCreateUser = async () => {
     console.log(response);
   }
 };
+
 onMounted(async () => {
   const params: fetchWrapperProps = {
     method: EFetchMethods.GET,

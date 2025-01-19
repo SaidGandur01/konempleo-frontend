@@ -15,21 +15,29 @@
         companyError
       }}</span>
     </div>
-    <div v-if="companyId" class="form-field">
-      <CoreDropdown
-        :list-options="offersResult"
-        label="Seleccione una oferta"
-        :placeholder="
-          offerFromUrl ? `${offerFromUrl}` : 'Seleccione una opción'
-        "
-        :should-emit-id="true"
-        @select="(data) => handleOnInput('offer', data)"
+    <div v-if="dropDownOptions.length > 0">
+      <div v-if="companyId" class="form-field mb-12">
+        <CoreDropdown
+          :list-options="dropDownOptions"
+          label="Seleccione una oferta"
+          :placeholder="
+            offerFromUrl ? `${offerFromUrl}` : 'Seleccione una opción'
+          "
+          :should-emit-id="true"
+          @select="(data) => handleOnInput('offer', data)"
+        />
+        <span v-if="form.offer.length < 1" class="error-message">{{
+          offerError
+        }}</span>
+      </div>
+      <AdminResultsAdminOfferDetailsTable
+        v-if="currentOfferId"
+        :offer-id="currentOfferId"
       />
-      <span v-if="form.offer.length < 1" class="error-message">{{
-        offerError
-      }}</span>
     </div>
-    <AdminResultsAdminOfferDetailsTable :offer-id="currentOfferId" />
+    <div v-else class="no-data">
+      <span>No hay ofertas asociadas a esta empresa</span>
+    </div>
   </NuxtLayout>
 </template>
 <script lang="ts" setup>
@@ -60,7 +68,7 @@ const offerFromUrl = ref<string>("");
 const companyFromUrl = ref<string>("");
 const companyId = ref<string>("");
 const companiesResult = ref([]);
-const offersResult = ref([]);
+const dropDownOptions = ref([]);
 const currentOfferId = ref<string>("");
 
 const handleOnInput = (keyField: string, value: string): void => {
@@ -70,7 +78,11 @@ const handleOnInput = (keyField: string, value: string): void => {
   };
   companyFromUrl.value = "";
   offerFromUrl.value = "";
-  if (keyField === "company") companyId.value = value;
+  if (keyField === "company") {
+    // reset offerId back to default if user changes company
+    if (companyId.value) currentOfferId.value = "";
+    companyId.value = value;
+  }
   if (keyField === "offer") currentOfferId.value = value;
   validateErrorsForm(keyField, value);
 };
@@ -87,7 +99,26 @@ const validateErrorsForm = (keyField: string, value: string): void => {
   }
 };
 
-onMounted(async() => {
+onMounted(async () => {
+  await fetchCompanies();
+
+  const route = useRoute();
+  const offerId = route.params.id || null;
+  const companyIdFromQuery = route.query.companyId as string;
+  if (offerId) {
+    currentOfferId.value = offerId as string;
+  }
+  if (companyIdFromQuery) {
+    const [filteredCompany] = companiesResult.value.filter((item) => {
+      if (item.key === Number(companyIdFromQuery)) return item;
+    });
+    companyId.value = companyIdFromQuery;
+    currentCompanySelection.value = filteredCompany.key;
+    companyFromUrl.value = filteredCompany.value;
+  }
+});
+
+const fetchCompanies = async () => {
   const params: fetchWrapperProps = {
     method: EFetchMethods.GET,
     path: "company/owned/",
@@ -109,22 +140,7 @@ onMounted(async() => {
     }, []);
     companiesResult.value = mappedResponse;
   }
-
-  const route = useRoute();
-  const offerId = route.params.id || null;
-  const companyIdFromQuery = route.query.companyId as string;
-  if (offerId) {
-    currentOfferId.value = offerId as string;
-  }
-  if (companyIdFromQuery) {
-    const [filteredCompany] = companiesResult.value.filter((item) => {
-      if (item.key === Number(companyIdFromQuery)) return item;
-    });
-    companyId.value = companyIdFromQuery;
-    currentCompanySelection.value = filteredCompany.key;
-    companyFromUrl.value = filteredCompany.value;
-  }
-});
+};
 
 const fetchCompanyOffers = async (companyId: number) => {
   const params: fetchWrapperProps = {
@@ -140,17 +156,17 @@ const fetchCompanyOffers = async (companyId: number) => {
     helperStore.renderToastMessage($toast, true, {
       error: "something went wrong bringing Offer",
     });
-    offersResult.value = [];
+    dropDownOptions.value = [];
   } else {
     const mappedOffers = data.value.reduce((acc, item) => {
       acc.push({ key: item.id, value: item.name });
       return acc;
     }, []);
-    offersResult.value = mappedOffers;
+    dropDownOptions.value = mappedOffers;
     const [filteredOffer] = mappedOffers.filter((item) => {
       if (item.key === Number(currentOfferId.value)) return item;
     });
-    if(filteredOffer) offerFromUrl.value = filteredOffer.value;
+    if (filteredOffer) offerFromUrl.value = filteredOffer.value;
   }
 };
 
@@ -163,5 +179,14 @@ watch(companyId, async (newCompanyId) => {
 <style lang="scss" scoped>
 h2 {
   font-size: 1.7rem;
+}
+.no-data {
+  padding: 2rem;
+  background: var(--color-brand-neutral-700);
+  width: 100%;
+  display: flex;
+  border-radius: 1rem;
+  color: var(--color-text-200);
+  font-weight: 600;
 }
 </style>

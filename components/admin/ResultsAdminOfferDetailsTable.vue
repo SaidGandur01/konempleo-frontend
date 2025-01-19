@@ -1,9 +1,6 @@
 <template>
   <div class="results-table">
-    <div
-    v-if="results && results.length" 
-      class="table-wrapper"
-    >
+    <div v-if="results && results.length" class="table-wrapper">
       <div class="kpi-section">
         <CoreKpiWrapper
           title-one="Budget"
@@ -58,38 +55,55 @@
         v-if="paginatedResults && paginatedResults.length"
         class="table-wrapper"
       >
-      <table>
-        <thead>
-          <tr>
-            <th>Ranking</th>
-            <th>Nombre</th>
-            <th>Movil</th>
-            <th>Mail</th>
-            <th>Score</th>
-            <th>Contratado</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(result, index) in paginatedResults" :key="index">
-            <td class="ranking">{{ result.vitae_offer_id }}</td>
-            <td>{{ result.candidate_name }}</td>
-            <td>{{ result.candidate_phone }}</td>
-            <td>{{ result.candidate_mail }}</td>
-            <td>{{ result.response_score }}</td>
-            <td>{{ result.contratado }}</td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="pagination">
-        <button :disabled="currentPage === 1" @click="previousPage">
-          Previous
-        </button>
-        <span>Page {{ currentPage }} of {{ totalPages }}</span>
-        <button :disabled="currentPage === totalPages" @click="nextPage">
-          Next
-        </button>
+        <table>
+          <thead>
+            <tr>
+              <th>Ranking</th>
+              <th>Nombre</th>
+              <th>Movil</th>
+              <th>Mail</th>
+              <th>Score</th>
+              <th>Contratado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(result, index) in paginatedResults" :key="index">
+              <td class="ranking">{{ index + 1 }}</td>
+              <td>
+                <div class="icon" @click="onCandidateClick(result)">
+                  {{ result.candidate_name }}
+                </div>
+              </td>
+              <td>{{ result.candidate_phone }}</td>
+              <td>{{ result.candidate_mail }}</td>
+              <td>{{ result.response_score }}</td>
+              <td>
+                <div
+                  :class="[
+                    'status',
+                    'tooltip',
+                    { active: result.status === 'hired' },
+                  ]"
+                >
+                  <span v-if="result.status === 'hired'" class="tooltiptext"
+                    >Contratado</span
+                  >
+                  <span v-else class="tooltiptext">No Contratado</span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pagination">
+          <button :disabled="currentPage === 1" @click="previousPage">
+            Previous
+          </button>
+          <span>Page {{ currentPage }} of {{ totalPages }}</span>
+          <button :disabled="currentPage === totalPages" @click="nextPage">
+            Next
+          </button>
+        </div>
       </div>
-    </div>
     </div>
     <div v-if="results && results.length < 1" class="no-data">
       <span>No existen datos para mostrar</span>
@@ -114,6 +128,7 @@ interface ITableProps {
 const props = withDefaults(defineProps<ITableProps>(), {
   offerId: "",
 });
+
 const { $toast } = useNuxtApp();
 const userStore = useUserStore();
 const helperStore = useHelperStore();
@@ -128,7 +143,8 @@ const onHandleCandidateSearch = (searchValue: string): void => {
     const name = item.candidate_name.toLowerCase();
     return name.includes(searchValue.toLowerCase());
   });
-  currentPage.value = 1;};
+  currentPage.value = 1;
+};
 
 // Computed property to calculate the total number of pages
 const totalPages = computed(() => {
@@ -154,6 +170,34 @@ const previousPage = () => {
   }
 };
 
+const onCandidateClick = async (candidate: ICandidatesTableRow) => {
+  if (candidate.url) {
+    // temporary => it is supposed that every candidate should have a valid url
+    const candidatePath = candidate.url.split(".com/")[1];
+    const params: fetchWrapperProps = {
+      method: EFetchMethods.GET,
+      path: `generate-presigned-url/?file_path=${candidatePath}`,
+      headers: {
+        accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    const { data, error } = await useFetchWrapper(params);
+    if (error.value) {
+      helperStore.renderToastMessage($toast, true, {
+        error: "something went wrong bringing CV",
+      });
+    } else {
+      helperStore.renderToastMessage($toast, false, {
+        success: "Abriendo CV del candidato",
+      });
+      setTimeout(() => {
+        window.open(data.value.url);
+      }, 2000);
+    }
+  }
+};
+
 const fetchOfferDetails = async (offerId: number) => {
   const params: fetchWrapperProps = {
     method: EFetchMethods.GET,
@@ -170,19 +214,31 @@ const fetchOfferDetails = async (offerId: number) => {
     });
     results.value = [];
   } else {
-    results.value = data.value;
-    filteredResults.value = data.value;
+    const mappedResponse = data.value.sort(
+      (a, b) => b.response_score - a.response_score
+    );
+    results.value = mappedResponse;
+    filteredResults.value = mappedResponse;
   }
 };
 
+onMounted(async () => {
+  await fetchOfferDetails(Number(props.offerId));
+});
+
 watch(
   () => props.offerId,
-  async (newOfferId: string) => {
-    if(newOfferId) await fetchOfferDetails(Number(newOfferId))
+  async (newOfferId) => {
+    if (newOfferId === "") {
+      // reset values to default
+      results.value = [];
+      filteredResults.value = [];
+    } else {
+      await fetchOfferDetails(Number(newOfferId));
+    }
   }
 );
 </script>
-
 <style lang="scss" scoped>
 .results-table {
   .kpi-section {
@@ -192,7 +248,7 @@ watch(
     gap: 2rem;
     margin-bottom: 5rem;
   }
-  .search-container{
+  .search-container {
     width: 30%;
     padding-bottom: 2.5rem;
     padding-left: 0.5rem;
@@ -207,7 +263,7 @@ watch(
       border-spacing: 0;
       border-radius: 12px;
       overflow: hidden;
-      border: 1px darken($color: #F9FAFB, $amount: 10%) solid;
+      border: 1px darken($color: #f9fafb, $amount: 10%) solid;
 
       thead th:nth-child(3),
       tbody td:nth-child(3) {
@@ -216,13 +272,13 @@ watch(
 
       tbody tr:first-child {
         td {
-          border-top: 1px darken($color: #F9FAFB, $amount: 10%) solid;
+          border-top: 1px darken($color: #f9fafb, $amount: 10%) solid;
         }
       }
 
       tbody tr:not(:last-child) {
         td {
-          border-bottom: 1px darken($color: #F9FAFB, $amount: 10%) solid;
+          border-bottom: 1px darken($color: #f9fafb, $amount: 10%) solid;
         }
       }
 
@@ -234,7 +290,7 @@ watch(
       }
 
       tbody tr:nth-child(2n) {
-        background-color: #F9FAFB; /* Adjust this color to your needs */
+        background-color: #f9fafb; /* Adjust this color to your needs */
       }
 
       th:first-child {
@@ -250,7 +306,7 @@ watch(
         border-bottom-right-radius: 12px;
       }
       th {
-        background-color: #F9FAFB;
+        background-color: #f9fafb;
         font-weight: bold;
         padding: 1.5rem 2rem;
       }
@@ -261,7 +317,7 @@ watch(
       .avatar {
         height: 30px;
         width: 30px;
-        background-color: darken($color: #F9FAFB, $amount: 5%);
+        background-color: darken($color: #f9fafb, $amount: 5%);
         border-radius: 50%;
         position: relative;
         margin: 0 auto;
@@ -276,15 +332,44 @@ watch(
       .ranking {
         font-weight: 700;
       }
-      .whatsapp-wrapper,
-      .tus-datos-wrapper {
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        gap: 1rem;
 
-        .text-info {
-          margin-top: 2px;
+      .tooltip {
+        position: relative;
+        display: inline-block;
+      }
+
+      .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 80px;
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px 0;
+        position: absolute;
+        z-index: 1;
+        bottom: 100%;
+        right: 50%;
+        margin-left: -40px;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      .tooltip:hover .tooltiptext {
+        visibility: visible;
+        opacity: 1;
+      }
+
+      .status {
+        background-color: var(--color-danger);
+        border: solid 1px #555;
+        border-radius: 100px;
+        width: 1.5rem;
+        height: 1.5rem;
+        justify-self: center;
+
+        &.active {
+          background-color: var(--color-success);
         }
       }
       .actions {
@@ -292,37 +377,9 @@ watch(
         align-items: center;
         justify-content: center;
         gap: 2rem;
-
-        .tooltip {
-          position: relative;
-          display: inline-block;
-        }
-
-        .tooltip .tooltiptext {
-          visibility: hidden;
-          width: 80px;
-          background-color: #333;
-          color: #fff;
-          text-align: center;
-          border-radius: 6px;
-          padding: 5px 0;
-          position: absolute;
-          z-index: 1;
-          bottom: 100%;
-          right: 50%;
-          margin-left: -40px;
-          opacity: 0;
-          transition: opacity 0.3s;
-        }
-
-        .tooltip:hover .tooltiptext {
-          visibility: visible;
-          opacity: 1;
-        }
-
-        .icon {
-          cursor: pointer;
-        }
+      }
+      .icon {
+        cursor: pointer;
       }
     }
   }

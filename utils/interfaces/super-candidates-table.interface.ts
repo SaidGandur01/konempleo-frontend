@@ -7,6 +7,11 @@ export interface ISuperCandidatesTableRow {
   gender: 'male' | 'female';
   candidate_phone: string;
   candidate_mail : string;
+  whatsapp_status : string;
+  background_check : string;
+  comments : string;
+  status : string;
+  url : string;
   response_score: number;
   average_experience_in_years: number;
   average_time_per_job: number;

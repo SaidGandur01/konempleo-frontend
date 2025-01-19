@@ -4,6 +4,9 @@ export interface ICandidatesTableRow {
   candidate_phone: string;
   candidate_mail: string;
   response_score: number | string;
-  contratado: boolean;
+  status: string;
+  url: string;
   whatsapp_status: string;
+  comments: string;
+  background_check: string;
 }

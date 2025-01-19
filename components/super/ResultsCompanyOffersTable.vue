@@ -76,27 +76,29 @@
               <td>{{ result.accuracy }}</td>
               <td>{{ result.tus_datos }}</td>
               <td>
-                {{ result.assigned_cvs }}
-                <div class="tooltip">
+                <div class="input-container">
+                  <input
+                    v-model.number="result.cvCount"
+                    class="input"
+                    type="number"
+                    :min="result.assigned_cvs"
+                  />
                   <font-awesome-icon
+                    v-if="
+                      result.cvCount && result.cvCount > result.assigned_cvs
+                    "
                     class="icon"
                     :icon="['fas', 'circle-plus']"
-                    :style="{ color: '#5C60F5' }"
-                    @click="result.showCVInput = !result.showCVInput"
+                    :style="{ color: '#00CC88' }"
+                    size="lg"
+                    @click="onAddCVCount(result)"
                   />
-                  <span class="tooltiptext">Añadir</span>
-                </div>
-                <div v-if="result.showCVInput" class="input-wrapper">
-                  <div class="input-container">
-                    <input v-model="cvCount" class="input" type="number" />
-                    <font-awesome-icon
-                      class="icon"
-                      :icon="['fas', 'circle-plus']"
-                      :style="{ color: '#00CC88' }"
-                      size="lg"
-                      @click="onAddCVCount(result.id)"
-                    />
-                  </div>
+                  <font-awesome-icon
+                    v-else
+                    :icon="['fas', 'circle-plus']"
+                    :style="{ color: 'gray' }"
+                    size="lg"
+                  />
                 </div>
               </td>
               <td>
@@ -166,7 +168,6 @@ const results = ref<ISuperOffersListTableRow[]>([]);
 const filteredResults = ref<ISuperOffersListTableRow[]>([]);
 const currentPage = ref(1);
 const rowsPerPage = ref(10);
-const cvCount = ref<number | null>(null);
 
 interface ITableProps {
   companyId: string;
@@ -192,55 +193,44 @@ const fetchCompanyOffersDetails = async () => {
     results.value = [];
   } else {
     const mappedResponse = data.value.map((item) => {
-      return { ...item, showCVInput: false };
+      return { ...item, cvCount: item.assigned_cvs };
     });
     results.value = mappedResponse;
     filteredResults.value = mappedResponse;
   }
 };
 
-const onAddCVCount = async (offerId: number) => {
-  const index = results.value.findIndex((item) => item.id === offerId);
-  // close the tooltip
-  results.value[index] = {
-    ...results.value[index],
-    showCVInput: false,
+const onAddCVCount = async (offer: any) => {
+  const payload = {
+    assigned_cvs: offer.cvCount,
+    active: offer.active,
   };
-  if (cvCount.value) {
-    const [offer] = results.value.filter((item) => item.id === offerId);
-    const payload = {
-      assigned_cvs: Number(offer.assigned_cvs) + Number(cvCount.value),
-      active: offer.active,
-    };
-    const params: fetchWrapperProps = {
-      method: EFetchMethods.PUT,
-      path: `offers/${offerId}`,
-      body: JSON.stringify(payload),
-      headers: {
-        accept: "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    };
-    const { data, error } = await useFetchWrapper(params);
-    if (error.value) {
-      helperStore.renderToastMessage($toast, true, {
-        error: "Something went wrong updating Offer",
-      });
-      cvCount.value = null
-    } else {
-      helperStore.renderToastMessage($toast, false, {
-        success: "Oferta actualizada correctamente",
-      });
-      cvCount.value = null
-      const updatedIndex = results.value.findIndex(
-        (item) => item.id === data.value.id
-      );
-      if (updatedIndex !== -1) {
-        results.value[updatedIndex] = {
-          ...results.value[updatedIndex],
-          assigned_cvs: data.value.assigned_cvs,
-        };
-      }
+  const params: fetchWrapperProps = {
+    method: EFetchMethods.PUT,
+    path: `offers/${offer.id}`,
+    body: JSON.stringify(payload),
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const { data, error } = await useFetchWrapper(params);
+  if (error.value) {
+    helperStore.renderToastMessage($toast, true, {
+      error: "Something went wrong updating Offer",
+    });
+  } else {
+    helperStore.renderToastMessage($toast, false, {
+      success: "Oferta actualizada correctamente",
+    });
+    const updatedIndex = results.value.findIndex(
+      (item) => item.id === data.value.id
+    );
+    if (updatedIndex !== -1) {
+      results.value[updatedIndex] = {
+        ...results.value[updatedIndex],
+        assigned_cvs: data.value.assigned_cvs,
+      };
     }
   }
 };
@@ -408,23 +398,13 @@ watch(
         padding: 1.5rem 2rem;
       }
 
-      .input-wrapper {
-        position: relative;
-      }
-
       .input-container {
-        background-color: #e8ebf1;
         padding: 0.5rem;
         border-radius: 1rem;
         width: 100px;
         display: flex;
-        flex-direction: row;
-        position: absolute;
-        z-index: 1;
-        top: -2.7rem;
-        left: 100%;
+        gap: 1rem;
         align-items: center;
-        margin-left: -10px;
 
         .input {
           background: var(--background-input-field);
@@ -433,7 +413,6 @@ watch(
           color: var(--color-text-200);
           font-size: 1.6rem;
           width: 100%;
-          margin-right: 0.5rem;
 
           &:focus {
             outline: none;
