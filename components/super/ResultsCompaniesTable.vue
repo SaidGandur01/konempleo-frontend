@@ -72,12 +72,15 @@
           </div> -->
             <tr v-for="(result, index) in paginatedResults" :key="index">
               <td>
-                <div class="avatar">
+                <div v-if="!result.picture" class="avatar">
                   <font-awesome-icon
                     class="icon"
                     :icon="['fas', 'user-tie']"
                     size="lg"
                   />
+                </div>
+                <div v-else class="avatar">
+                  <img :src="result.picture" alt="Company Logo" class="logo" />
                 </div>
               </td>
               <td>{{ result.name }}</td>
@@ -199,6 +202,7 @@ onMounted(async () => {
     results.value = [];
   } else {
     const mappedCompany = data.value.map((company: any) => {
+      // need to map the company logo
       const used_offers =
         Number(company.totaloffers) - Number(company.availableoffers);
       return { ...company, used_offers };
@@ -313,7 +317,6 @@ const onHandleCompanyEdit = (companyId: number): void => {
   navigateTo(`/super-admin/companies/edit/${companyId}`);
 };
 
-
 const onHandleCompanySelected = (companyId: number): void => {
   navigateTo(`/super-admin/offer-details/${companyId}`);
 };
@@ -424,18 +427,26 @@ const previousPage = () => {
         padding: 1.5rem 2rem;
       }
       .avatar {
-        height: 30px;
-        width: 30px;
+        height: 35px;
+        width: 35px;
         background-color: darken($color: #f9fafb, $amount: 5%);
-        border-radius: 50%;
         position: relative;
         margin: 0 auto;
+        border-radius: 50%;
 
         .icon {
           position: absolute;
           top: 45%;
           left: 50%;
           transform: translate(-50%, -50%);
+        }
+        
+        .logo {
+          position: absolute;
+          width: 100%;
+          border-radius: 50%;
+          height: 100%;
+          object-fit: cover;
         }
       }
       .ranking {
