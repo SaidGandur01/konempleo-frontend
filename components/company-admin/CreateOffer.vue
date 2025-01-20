@@ -217,9 +217,12 @@
           label="Cargo"
           placeholder="Seleccione el cargo"
           :should-emit-id="true"
+          :should-show-search-bar="true"
           @select="(data) => handleOnInput('cargo', data)"
         />
-        <span v-if="!form.cargo" class="error-message">{{ cargoError }}</span>
+        <span v-if="form.cargo.length < 1" class="error-message">{{
+          cargoError
+        }}</span>
       </div>
     </div>
     <div class="form-group">
@@ -276,6 +279,7 @@ import { workTypeListData } from "~/data/work-type/work-type";
 import { useUserStore } from "~/store/user.store";
 import { useHelperStore } from "~/store/helper.store";
 import type { IListOptions } from "../core/dropdown.vue";
+import { formatSalary } from "~/utils/helpers/common";
 
 interface ICreateOfferForm {
   offer_name: string;
@@ -554,7 +558,7 @@ const onCreateOffer = async (): Promise<void> => {
           exp_area: data.expertise_area,
           vacants: data.max_positions,
           contract_type: Number(data.contract_type),
-          salary: data.range_salary.join(" , ").replace(",", "-"),
+          salary: formatSalary(data.range_salary.join()),
           city: data.location,
           shift: data.shift,
           gender: data.gender,
