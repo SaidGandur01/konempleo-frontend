@@ -404,7 +404,6 @@ const handleOnInput = (keyField: string, value: string | string[]): void => {
   };
   validateErrorsForm(keyField, value);
   validateForm();
-  console.log(keyField, value)
   if (keyField === "cargo") currentCargoId.value = Number(value);
 };
 

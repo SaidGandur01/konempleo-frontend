@@ -91,7 +91,12 @@
       <div class="form-field">
         <CoreRangeSlider
           label="Rango salarial"
-          @drag-end="onHandleRangeSelection"
+          :min-value="minSalary"
+          :max-value="10000000"
+          :max-initial-value="maxSalary"
+          :multiplier="100000"
+          :is-currency="true"
+          @drag-end="(data) => onHandleSalarySelection(data as IRange)"
         />
       </div>
       <div class="form-field">
@@ -118,11 +123,13 @@
         <span v-if="!form.gender" class="error-message">{{ genderError }}</span>
       </div>
       <div class="form-field">
-        <CoreDropdown
-          :list-options="ageListData"
+        <CoreRangeSlider
           label="Edad"
-          placeholder="Seleccione una opción"
-          @select="(data) => handleOnInput('age', data)"
+          :min-value="minAge"
+          :max-value="100"
+          :multiplier="1"
+          :single-slide="true"
+          @drag-end="(data) => handleOnAgeSelection(data as number)"
         />
         <span v-if="!form.age" class="error-message">{{ ageError }}</span>
       </div>
@@ -158,7 +165,7 @@
           :list-options="drivingLicenseListData"
           label="Licencia de Conducción"
           placeholder="Seleccione una opción"
-          :should-emit-id="true"
+          :multiple-select="true"
           @select="(data) => handleOnInput('driving_license', data)"
         />
         <span v-if="!form.driving_license" class="error-message">{{
@@ -179,21 +186,17 @@
     </div>
     <div class="form-group">
       <div class="form-field">
-        <CoreInput
-          id="profesional-experience-id"
-          name="number"
-          min-length="2"
+        <CoreDropdown
+          :list-options="workExperienceData"
           label="Experiencia laboral"
-          required
-          type="number"
-          :value="0"
-          @input="(data) => handleOnInput('profesional_experience_years', data)"
+          placeholder="Seleccione una opción"
+          @select="
+            (data) => handleOnInput('profesional_experience_years', data)
+          "
         />
-        <span
-          v-if="form.profesional_experience_years < 1"
-          class="error-message"
-          >{{ profesionalExperienceError }}</span
-        >
+        <span v-if="!form.profesional_experience_years" class="error-message">{{
+          profesionalExperienceError
+        }}</span>
       </div>
     </div>
     <div class="form-group">
@@ -265,7 +268,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ageListData } from "~/data/age/age";
+import { workExperienceData } from "~/data/experience-years/experience-years";
 import { contractTypeListData } from "~/data/contract-type/contract-type";
 import { disabilityListData } from "~/data/disability/disability";
 import { drivingLicenseListData } from "~/data/driving-license/driving-license";
@@ -280,6 +283,7 @@ import { useUserStore } from "~/store/user.store";
 import { useHelperStore } from "~/store/helper.store";
 import type { IListOptions } from "../core/dropdown.vue";
 import { formatSalary } from "~/utils/helpers/common";
+import type { IRange } from "../core/RangeSlider.vue";
 
 interface ICreateOfferForm {
   offer_name: string;
@@ -299,9 +303,13 @@ interface ICreateOfferForm {
   education: string;
   cargo: string;
   skill: IListOptions[];
-  profesional_experience_years: number;
+  profesional_experience_years: string;
   questions_filter: string;
 }
+
+const minSalary = 1423500;
+const maxSalary = 4000000;
+const minAge = 18;
 
 const form = ref<ICreateOfferForm>({
   offer_name: "",
@@ -310,9 +318,9 @@ const form = ref<ICreateOfferForm>({
   max_positions: 1,
   contract_type: "",
   shift: "",
-  range_salary: [1000000, 4000000],
+  range_salary: [minSalary, maxSalary],
   gender: "",
-  age: "",
+  age: `${minAge}`,
   work_type: "",
   military_service_book: "",
   driving_license: "",
@@ -321,7 +329,7 @@ const form = ref<ICreateOfferForm>({
   education: "",
   cargo: "",
   skill: [{ key: "", value: "" }],
-  profesional_experience_years: 0,
+  profesional_experience_years: "",
   questions_filter: "",
 });
 const { $toast } = useNuxtApp();
@@ -336,7 +344,6 @@ const contractTypeError = ref<string>("");
 const shiftError = ref<string>("");
 const locationError = ref<string>("");
 const genderError = ref<string>("");
-const ageError = ref<string>("");
 const workTypeError = ref<string>("");
 const militaryServiceBookError = ref<string>("");
 const drivingLicenseError = ref<string>("");
@@ -350,10 +357,17 @@ const cargos = ref([]);
 const skills = ref([]);
 const currentCargoId = ref<number>();
 
-const onHandleRangeSelection = (data: { min: number; max: number }): void => {
+const onHandleSalarySelection = (data: { min: number; max: number }): void => {
   form.value = {
     ...form.value,
     range_salary: [data.min, data.max],
+  };
+};
+
+const handleOnAgeSelection = (data: number): void => {
+  form.value = {
+    ...form.value,
+    age: data.toString(),
   };
 };
 
@@ -433,9 +447,6 @@ const validateErrorsForm = (
     case "gender":
       genderError.value = !value.length ? "Selecciona una opción" : "";
       break;
-    case "age":
-      ageError.value = !value.length ? "Selecciona una opción" : "";
-      break;
     case "work_type":
       workTypeError.value = !value.length ? "Selecciona una opción" : "";
       break;
@@ -486,7 +497,6 @@ const validateForm = (): void => {
   const isShiftValid = form.value.shift && shiftError.value === "";
   const isLocationValid = form.value.location && locationError.value === "";
   const isGenderValid = form.value.gender && genderError.value === "";
-  const isAgeValid = form.value.age && ageError.value === "";
   const isWorkTypeValid = form.value.work_type && workTypeError.value === "";
   const isMilitaryServiceBookValid =
     form.value.military_service_book && militaryServiceBookError.value === "";
@@ -510,7 +520,6 @@ const validateForm = (): void => {
     isShiftValid &&
     isLocationValid &&
     isGenderValid &&
-    isAgeValid &&
     isWorkTypeValid &&
     isMilitaryServiceBookValid &&
     isDrivingLicenseValid &&
