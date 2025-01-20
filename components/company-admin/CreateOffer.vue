@@ -131,7 +131,6 @@
           :single-slide="true"
           @drag-end="(data) => handleOnAgeSelection(data as number)"
         />
-        <span v-if="!form.age" class="error-message">{{ ageError }}</span>
       </div>
     </div>
     <div class="form-group">
