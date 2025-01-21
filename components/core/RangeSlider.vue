@@ -1,9 +1,24 @@
 <template>
   <div class="slider-container">
     <span v-if="label">{{ label }}</span>
-    <div class="slider-header">
+    <div v-if="props.singleSlide" class="slider-header">
       <div
-        :style="{ left: leftLabelPosition + '%', position: 'absolute' }"
+        :style="{
+          left: currentValuPosition + '%',
+          position: 'absolute',
+        }"
+        class="label"
+      >
+        {{ currentValue }}
+      </div>
+    </div>
+    <div v-else class="slider-header">
+      <div
+        :style="{
+          left: leftLabelPosition + '%',
+          position: 'absolute',
+          transform: leftLabelPosition >= 18 ? 'translateX(-100%)' : 'none',
+        }"
         class="label"
       >
         {{ formattedMinValue }}
@@ -12,7 +27,7 @@
         :style="{
           left: rightLabelPosition + '%',
           position: 'absolute',
-          transform: rightLabelPosition >= 80 ? 'translateX(-100%)' : 'none'
+          transform: rightLabelPosition >= 80 ? 'translateX(-100%)' : 'none',
         }"
         class="label"
       >
@@ -20,13 +35,14 @@
       </div>
     </div>
     <Slider
-      v-model="value"
-      :min="min"
-      :max="max"
+      v-model="scaledValue"
+      :min="scaledMin"
+      :max="scaledMax"
       :enable-cross="false"
       :dot-size="20"
       :height="6"
       :tooltip="'never'"
+      :step="step"
       :bg-style="{ backgroundColor: '#ffffff' }"
       :process-style="{ backgroundColor: '#FF4B4B' }"
       @drag-end="updateLabelPositions"
@@ -42,43 +58,90 @@
 import Slider from "vue-3-slider-component";
 
 interface InputProps {
-  label?: string;
+  label: string;
+  minValue: number;
+  maxValue: number;
+  maxInitialValue: number;
+  multiplier: number;
+  singleSlide: boolean;
+  isCurrency: boolean;
 }
-interface IRangeEmit {
-  (event: "drag-end", value: { min: number; max: number }): void;
-}
-withDefaults(defineProps<InputProps>(), {
+
+const props = withDefaults(defineProps<InputProps>(), {
   label: "",
+  minValue: 0,
+  maxValue: 0,
+  maxInitialValue: 0,
+  multiplier: 1,
+  singleSlide: false,
+  isCurrency: false,
 });
-const min = 1000000;
-const max = 10000000;
-const value = ref([1000000, 4000000]);
+
+export interface IRange {
+  min: number;
+  max: number;
+}
+
+interface IRangeEmit {
+  (event: "drag-end", value: number | IRange): void;
+}
+
+const min = props.minValue;
+const max = props.maxValue;
+const step = props.multiplier;
+const scaledMin = Math.floor(min / step);
+const scaledMax = Math.ceil(max / step);
+
+const scaledValue = props.singleSlide
+  ? ref<number>(props.minValue)
+  : ref<any>([min / step, Math.ceil(props.maxInitialValue / step)]);
+
 const emit = defineEmits<IRangeEmit>();
 
-const formattedMinValue = computed(() => formatter(value.value[0]));
-const formattedMaxValue = computed(() => formatter(value.value[1]));
+const currentValue = computed(() => formatter(scaledValue.value * step));
+
+const formattedMinValue = computed(() =>
+  formatter(scaledValue.value[0] * step)
+);
+
+const formattedMaxValue = computed(() =>
+  formatter(scaledValue.value[1] * step)
+);
+
+const currentValuPosition = computed(() => {
+  return ((scaledValue.value - scaledMin) / (scaledMax - scaledMin)) * 100;
+});
 
 const leftLabelPosition = computed(() => {
-  return ((value.value[0] - min) / (max - min)) * 100;
+  return ((scaledValue.value[0] - scaledMin) / (scaledMax - scaledMin)) * 100;
 });
+
 const rightLabelPosition = computed(() => {
-  return ((value.value[1] - min) / (max - min)) * 100;
+  return ((scaledValue.value[1] - scaledMin) / (scaledMax - scaledMin)) * 100;
 });
 
 function updateLabelPositions() {
+  if (props.singleSlide) {
+    const payload: number = scaledValue.value * step;
+    emit("drag-end", payload);
+    return;
+  }
   const payload: { min: number; max: number } = {
-    min: value.value[0],
-    max: value.value[1],
+    min: scaledValue.value[0] * step,
+    max: scaledValue.value[1] * step,
   };
   emit("drag-end", payload);
 }
 
 function formatter(val: number) {
-  return new Intl.NumberFormat("es-CO", {
-    style: "currency",
-    currency: "COP",
-    minimumFractionDigits: 0,
-  }).format(val);
+  if (props.isCurrency) {
+    return new Intl.NumberFormat("es-CO", {
+      style: "currency",
+      currency: "COP",
+      minimumFractionDigits: 0,
+    }).format(val);
+  }
+  return val;
 }
 </script>
 <style lang="scss" scoped>

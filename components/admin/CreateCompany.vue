@@ -134,18 +134,6 @@
             >{{ userCompanyPhoneError }}</span
           >
         </div>
-        <div class="form-field">
-          <CoreDropdown
-            :list-options="adminUserResults"
-            label="Persona Responsable en KonEmpleo"
-            placeholder="Seleccione una opción"
-            :should-emit-id="true"
-            @select="(data) => handleOnInput('konempleo_contact', data)"
-          />
-          <span v-if="!form.konempleo_contact" class="error-message">{{
-            konEmpleoContactError
-          }}</span>
-        </div>
         <div class="button">
           <CoreButton
             size="sm"
@@ -194,7 +182,6 @@ interface ICreateCompanyForm {
   sector: string;
   user_company_name: string;
   user_company_email: string;
-  konempleo_contact: string;
   document_number: string;
   city: string;
   user_company_phone: string;
@@ -211,7 +198,6 @@ const form = ref<ICreateCompanyForm>({
   document_number: "",
   city: "",
   user_company_phone: "",
-  konempleo_contact: "",
   company_logo: null,
   employees: "",
 });
@@ -220,7 +206,6 @@ const companyNameError = ref<string>("");
 const sectorError = ref<string>("");
 const userCompanyNameError = ref<string>("");
 const userCompanyEmailError = ref<string>("");
-const konEmpleoContactError = ref<string>("");
 const companyDocumentTypeError = ref<string>("");
 const documentNumberError = ref<string>("");
 const cityError = ref<string>("");
@@ -228,7 +213,6 @@ const employeesError = ref<string>("");
 const userCompanyPhoneError = ref<string>("");
 const disableButton = ref<boolean>(true);
 const imageSrc = ref<string | null>(null);
-  const adminUserResults = ref([]);
 const helperStore = useHelperStore();
 const userStore = useUserStore();
 const { $toast } = useNuxtApp();
@@ -253,42 +237,46 @@ const previewImage = (event: Event) => {
 };
 
 const onCreateCompany = async () => {
-  const formData = new FormData();
-  const payload = getCreateCompanyPayload(form.value);
-  formData.append("company_in", JSON.stringify(payload));
-  if (form.value.company_logo) {
-    formData.append("picture", form.value.company_logo);
-  }
-  const params: fetchWrapperProps = {
-    method: EFetchMethods.POST,
-    path: "company/",
-    body: formData,
-    headers: {
-      accept: "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  };
-
-  const { data, error } = await useFetchWrapper(params);
-  if (error.value) {
-    helperStore.renderToastMessage($toast, true, {
-      error: "something went wrong creating company",
-    });
-  } else {
-    const response = data.value;
-    helperStore.renderToastMessage($toast, false, {
-      success: "Creando Empresa...",
-    });
-    setTimeout(() => {
-      navigateTo("/admin/companies");
-    }, 1500);
-    console.log(response);
+  const {myData, error: myDataError} = await fetchUserData()
+  if(!myDataError){
+    const formData = new FormData();
+    const payload = getCreateCompanyPayload(form.value, myData.id);
+    formData.append("company_in", JSON.stringify(payload));
+    if (form.value.company_logo) {
+      formData.append("picture", form.value.company_logo);
+    }
+    const params: fetchWrapperProps = {
+      method: EFetchMethods.POST,
+      path: "company/",
+      body: formData,
+      headers: {
+        accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    };
+  
+    const { data, error } = await useFetchWrapper(params);
+    if (error.value) {
+      helperStore.renderToastMessage($toast, true, {
+        error: "something went wrong creating company",
+      });
+    } else {
+      const response = data.value;
+      helperStore.renderToastMessage($toast, false, {
+        success: "Creando Empresa...",
+      });
+      setTimeout(() => {
+        navigateTo("/admin/companies");
+      }, 1500);
+      console.log(response);
+    }
   }
 };
-onMounted(async () => {
+
+const fetchUserData = async () => {
   const params: fetchWrapperProps = {
     method: EFetchMethods.GET,
-    path: "users/",
+    path: `users/me`,
     headers: {
       accept: "application/json",
       Authorization: `Bearer ${token}`,
@@ -297,20 +285,13 @@ onMounted(async () => {
   const { data, error } = await useFetchWrapper(params);
   if (error.value) {
     helperStore.renderToastMessage($toast, true, {
-      error: "something went wrong bringing Users data",
+      error: "something went wrong bringing User data",
     });
-    adminUserResults.value = [];
+    return { myData: null, error: true };
   } else {
-    // grab only de admin roles to display in koe contact dropdown
-    const response = data.value
-      .filter((user: any) => user.role === 2)
-      .reduce((acc, user) => {
-        acc.push({ key: user.id, value: user.fullname });
-        return acc;
-      }, []);
-    adminUserResults.value = response || [];
+    return { myData: data.value, error: null };
   }
-});
+};
 const handleOnInput = (keyField: string, value: string): void => {
   form.value = {
     ...form.value,
@@ -319,6 +300,7 @@ const handleOnInput = (keyField: string, value: string): void => {
   validateErrorsForm(keyField, value);
   validateForm();
 };
+
 const validateErrorsForm = (keyField: string, value: string): void => {
   switch (keyField) {
     case "company_name":
@@ -346,12 +328,6 @@ const validateErrorsForm = (keyField: string, value: string): void => {
       } else {
         userCompanyEmailError.value = "";
       }
-      break;
-    case "konempleo_contact":
-      konEmpleoContactError.value =
-        isNaN(Number(value)) || Number(value) < 1
-          ? "Selecciona una opción"
-          : "";
       break;
     case "city":
       cityError.value = !value.trim().length ? "Selecciona una opción" : "";
@@ -381,10 +357,6 @@ const validateForm = (): void => {
   const isUserCompanyNameValid =
     form.value.user_company_name.length >= 3 &&
     userCompanyNameError.value === "";
-  const isKonEmpleoContactValid =
-    !isNaN(Number(form.value.konempleo_contact)) &&
-    Number(form.value.konempleo_contact) > 0 &&
-    konEmpleoContactError.value === "";
   const isCityValid =
     form.value.city.trim().length > 0 && cityError.value === "";
   const isEmployeesValid =
@@ -398,7 +370,6 @@ const validateForm = (): void => {
     isSectorValid &&
     isUserCompanyNameValid &&
     isValidEmail(form.value.user_company_email) &&
-    isKonEmpleoContactValid &&
     isCompanyDocumentTypeValid &&
     isDocumentNumberValid &&
     isCityValid &&
