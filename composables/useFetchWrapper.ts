@@ -18,7 +18,7 @@ export const useFetchWrapper = async ({
   body,
   headers
 }: fetchWrapperProps): Promise<any> => {
-  const baseUrl = 'http://ec2-18-118-173-102.us-east-2.compute.amazonaws.com'; // hardcoded until server is deployed to grab it dynamically
+  const baseUrl = 'https://konempleo.juan-pablo.net'; // hardcoded until server is deployed to grab it dynamically
   const url = `${baseUrl}/${path}`;
   const options = {
     method,
