@@ -12,7 +12,7 @@
         <font-awesome-icon
           class="icon"
           :icon="[iconTagOne, iconTagTwo]"
-          size="xl"
+          :size="iconSize"
           :style="{ color: iconColor }"
         />
       </div>
@@ -34,7 +34,7 @@
 <script lang="ts" setup>
 interface IProps {
   titleOne: string;
-  titleTwo: string;
+  titleTwo: string | number;
   titleTwoFontSize: boolean;
   titleTwoChildren: string;
   descriptionOne: string;
@@ -45,6 +45,7 @@ interface IProps {
   iconColor: string;
   iconTagOne: string;
   iconTagTwo: string;
+  iconSize: string;
   hasIncreased: boolean;
   hasDecreased: boolean;
   type: "success" |  "pending" | "danger" | "default"
@@ -63,6 +64,7 @@ const props = withDefaults(defineProps<IProps>(), {
   iconColor: "",
   iconTagOne: "",
   iconTagTwo: "",
+  iconSize: "2xl",
   hasIncreased: false,
   hasDecreased: false,
   type: "default"

@@ -17,6 +17,9 @@
         @focus="inputFocused = true"
         @input="debouncedFn()"
       />
+      <div class="x-icon" @click="handleClear">
+        <font-awesome-icon :icon="['fas', 'xmark']" />
+      </div>
     </div>
   </div>
 </template>
@@ -27,6 +30,7 @@ interface SearchBarProps {
   label?: string | undefined;
   placeHolder?: string;
   minLengthSearchCriteria: number;
+  shouldClearInput?: boolean;
 }
 interface HandleInputValueEmits {
   (event: "input", value: string): void;
@@ -40,7 +44,13 @@ const props = withDefaults(defineProps<SearchBarProps>(), {
   label: undefined,
   minLengthSearchCriteria: 2,
   placeHolder: "Search",
+  shouldClearInput: false,
 });
+
+const handleClear = () => {
+  inputValue.value = "";
+  inputValueEmit("input", "");
+};
 
 const debouncedFn = useDebounceFn(
   () => {
@@ -58,6 +68,15 @@ const searchBarWrapper = computed(() => ({
   "search-bar--wrapper": true,
   "search-bar--wrapper-focused": inputFocused.value,
 }));
+
+watch(
+  () => props.shouldClearInput,
+  (value) => {
+    if (value) {
+      inputValue.value = "";
+    }
+  }
+);
 </script>
 <style lang="scss" scoped>
 .search-bar {
@@ -84,6 +103,11 @@ const searchBarWrapper = computed(() => ({
 
     .icon {
       padding-left: 1rem;
+    }
+
+    .x-icon {
+      padding-right: 1rem;
+      cursor: pointer;
     }
 
     input {
