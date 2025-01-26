@@ -3,52 +3,55 @@
     <div v-if="results && results.length" class="table-wrapper">
       <div class="kpi-section">
         <CoreKpiWrapper
-          title-one="Budget"
-          title-two="$750.90"
+          :title-two="kpiData.totalCandidates.toString()"
           :has-icon="true"
-          icon-tag-one="fas"
-          icon-tag-two="money-bills"
+          :title-two-font-size="true"
+          icon-tag-one="fab"
+          icon-tag-two="searchengin"
           icon-color="#ff579a"
-          :has-increased="true"
-          description-one="30%"
-          description-two="Since last month"
-          type="success"
+          description-one="Candidatos Analizados"
         />
         <CoreKpiWrapper
-          title-two="35"
-          title-two-children="(35%)"
+          :title-two="kpiData.scoreAvg.toFixed(2)"
           :title-two-font-size="true"
-          description-one="Candidatos Aptos"
-        />
-        <CoreKpiWrapper
-          title-two="10"
-          title-two-children="(28%)"
-          :title-two-font-size="true"
-          description-one="Candidatos Contactados"
-        />
-        <CoreKpiWrapper
-          title-one="Total hours"
-          title-two="1400"
           :has-icon="true"
           icon-tag-one="fas"
-          icon-tag-two="hippo"
-          icon-color="#5C60F5"
-          :has-decreased="true"
-          description-one="-10%"
-          description-two="Since last month"
-          type="danger"
+          icon-tag-two="bullseye"
+          icon-color="#ff579a"
+          description-one="Score Promedio"
+          :description-two="`${kpiData.scoreMin} min - ${kpiData.scoreMax} max`"
         />
         <CoreKpiWrapper
-          title-two="5%"
-          title-two-children=""
+          :title-two="`${kpiData.egc.toFixed(1)}%`"
+          :title-two-children="`(${kpiData.contacted} contactados)`"
           :title-two-font-size="true"
-          description-one="Efectividad Total"
+          :has-icon="true"
+          icon-tag-one="fab"
+          icon-tag-two="whatsapp"
+          icon-color="#00CC88"
+          description-one="EGC"
+          description-one-children="Efectividad General de Contacto"
+        />
+        <CoreKpiWrapper
+          :title-two="`${kpiData.etotal.toFixed(1)}%`"
+          :title-two-children="`(${kpiData.interested} interesados)`"
+          :title-two-font-size="true"
+          :has-icon="true"
+          icon-tag-one="fa-solid"
+          icon-tag-two="phone-volume"
+          icon-color="#00CC88"
+          description-one="Efectividad Total de Contacto"
         />
       </div>
-      <div class="search-container">
+      <div class="search-date-container">
         <CoreSearchBar
           :min-length-search-criteria="1"
+          :should-clear-input="clearInput"
           @input="onHandleCandidateSearch"
+        />
+        <CoreDatePicker
+          :on-clear-date="onClearDate"
+          @change="handleChangeDate"
         />
       </div>
       <div
@@ -68,7 +71,9 @@
           </thead>
           <tbody>
             <tr v-for="(result, index) in paginatedResults" :key="index">
-              <td class="ranking">{{ index + 1 }}</td>
+              <td class="ranking">
+                {{ (currentPage - 1) * rowsPerPage + index + 1 }}
+              </td>
               <td>
                 <div class="icon" @click="onCandidateClick(result)">
                   {{ result.candidate_name }}
@@ -104,15 +109,17 @@
           </button>
         </div>
       </div>
+      <div v-else class="no-data">
+        <span v-if="dateResults.length && !filteredResults.length"
+          >Ningun candidato hace match con tu busqueda</span
+        >
+        <span v-else
+          >No se encontraron Candidatos para las fechas indicadas</span
+        >
+      </div>
     </div>
     <div v-if="results && results.length < 1" class="no-data">
       <span>No existen datos para mostrar</span>
-    </div>
-    <div
-      v-if="results.length > 1 && paginatedResults.length < 1"
-      class="no-data"
-    >
-      <span>Ningun candidato hace match con tu busqueda</span>
     </div>
   </div>
 </template>
@@ -135,15 +142,33 @@ const helperStore = useHelperStore();
 const token = userStore.getToken();
 const results = ref<ICandidatesTableRow[]>([]);
 const filteredResults = ref<ICandidatesTableRow[]>([]);
+const dateResults = ref<ICandidatesTableRow[]>([]);
 const currentPage = ref(1);
 const rowsPerPage = ref(10);
+const isDateSearch = ref<boolean>(false);
+const clearInput = ref<boolean>(false);
+const lastKpiData = ref({});
 
 const onHandleCandidateSearch = (searchValue: string): void => {
-  filteredResults.value = results.value.filter((item) => {
+  const sourceOfTruth = isDateSearch.value ? dateResults.value : results.value;
+  filteredResults.value = sourceOfTruth.filter((item) => {
     const name = item.candidate_name.toLowerCase();
     return name.includes(searchValue.toLowerCase());
   });
+  clearInput.value = false;
   currentPage.value = 1;
+};
+
+const handleChangeDate = async (dates: string[]) => {
+  clearInput.value = true;
+  await fetchOfferDetails(Number(props.offerId), dates);
+};
+
+const onClearDate = () => {
+  isDateSearch.value = false;
+  clearInput.value = true;
+  filteredResults.value = results.value;
+  dateResults.value = [];
 };
 
 // Computed property to calculate the total number of pages
@@ -198,7 +223,7 @@ const onCandidateClick = async (candidate: ICandidatesTableRow) => {
   }
 };
 
-const fetchOfferDetails = async (offerId: number) => {
+const fetchOfferDetails = async (offerId: number, dates?: string[]) => {
   const params: fetchWrapperProps = {
     method: EFetchMethods.GET,
     path: `cvoffers/${offerId}`,
@@ -207,6 +232,10 @@ const fetchOfferDetails = async (offerId: number) => {
       Authorization: `Bearer ${token}`,
     },
   };
+  if (dates && dates.length) {
+    isDateSearch.value = true;
+    params.path = `${params.path}?start_date=${dates[0]}&close_date=${dates[1]}`;
+  }
   const { data, error } = await useFetchWrapper(params);
   if (error.value) {
     helperStore.renderToastMessage($toast, true, {
@@ -217,10 +246,48 @@ const fetchOfferDetails = async (offerId: number) => {
     const mappedResponse = data.value.sort(
       (a, b) => b.response_score - a.response_score
     );
-    results.value = mappedResponse;
     filteredResults.value = mappedResponse;
+    dateResults.value = mappedResponse;
+    if (!dates || !dates.length) {
+      results.value = mappedResponse;
+    }
+    currentPage.value = 1;
+    clearInput.value = false;
   }
 };
+const kpiData = computed(() => {
+  const data = isDateSearch.value ? dateResults.value : results.value;
+  if (data.length) {
+    return data.reduce(
+      (acc, item, index, arr) => {
+        acc.scoreSum += item.response_score;
+        acc.scoreMin = Math.min(acc.scoreMin, item.response_score);
+        acc.scoreMax = Math.max(acc.scoreMax, item.response_score);
+        acc.contacted += item.whatsapp_status !== null ? 1 : 0;
+        acc.interested += item.whatsapp_status === "interested" ? 1 : 0;
+        if (index === arr.length - 1) {
+          acc.scoreAvg = acc.scoreSum / arr.length;
+          acc.totalCandidates = arr.length;
+          acc.egc = (acc.contacted / acc.totalCandidates) * 100;
+          acc.etotal = (acc.interested / acc.totalCandidates) * 100;
+        }
+        return acc;
+      },
+      {
+        scoreSum: 0,
+        scoreMin: Infinity,
+        scoreMax: -Infinity,
+        scoreAvg: 0,
+        totalCandidates: 0,
+        contacted: 0,
+        interested: 0,
+        egc: 0,
+        etotal: 0,
+      }
+    );
+  }
+  return lastKpiData.value;
+});
 
 onMounted(async () => {
   await fetchOfferDetails(Number(props.offerId));
@@ -229,14 +296,22 @@ onMounted(async () => {
 watch(
   () => props.offerId,
   async (newOfferId) => {
-    if (newOfferId === "") {
-      // reset values to default
-      results.value = [];
-      filteredResults.value = [];
-    } else {
+    // reset values to default
+    results.value = [];
+    filteredResults.value = [];
+    dateResults.value = [];
+    if (newOfferId) {
       await fetchOfferDetails(Number(newOfferId));
     }
   }
+);
+
+watch(
+  kpiData,
+  (newKpiData) => {
+    lastKpiData.value = newKpiData;
+  },
+  { immediate: true }
 );
 </script>
 <style lang="scss" scoped>
@@ -248,10 +323,16 @@ watch(
     gap: 2rem;
     margin-bottom: 5rem;
   }
-  .search-container {
-    width: 30%;
+  .search-date-container {
+    display: flex;
     padding-bottom: 2.5rem;
-    padding-left: 0.5rem;
+    gap: 2rem;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 0.5rem 2.5rem;
+    > div {
+      width: 30%;
+    }
   }
   .table-wrapper {
     overflow-x: auto;
