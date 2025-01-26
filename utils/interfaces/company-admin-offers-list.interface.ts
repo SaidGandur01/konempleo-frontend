@@ -2,8 +2,9 @@ export interface ICompanyAdminOffersListTableRow {
   id: number;
   name: string;
   vacants: number;
-  contacted: number;
-  tus_datos: number | string;
+  smartdataId_count: number;
+  interested_count: number;
+  background_check_count: number;
   assigned_cvs: number | string;
   whatsapp_message: number | string;
   active: boolean;

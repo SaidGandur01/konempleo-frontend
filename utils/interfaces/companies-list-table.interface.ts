@@ -5,6 +5,7 @@ export interface ICompaniesListTableRow {
   picture: string;
   cv_count: number;
   totaloffers: number;
+  availableoffers: number;
   activeoffers: number;
   used_offers: number;
   recruiter_email: string;

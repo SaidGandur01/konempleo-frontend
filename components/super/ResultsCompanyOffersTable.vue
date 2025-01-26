@@ -3,46 +3,55 @@
     <div v-if="results && results.length" class="table-wrapper">
       <div class="kpi-section">
         <CoreKpiWrapper
-          title-two="20"
-          :title-two-font-size="true"
-          description-two="Ofertas creadas"
-        />
-        <CoreKpiWrapper
-          title-two="135"
+          :title-two="kpiData.totalOffers"
           :has-icon="true"
           :title-two-font-size="true"
           icon-tag-one="fas"
-          icon-tag-two="chart-column"
+          icon-tag-two="briefcase"
+          icon-color="#5C60F5"
+          description-one="Ofertas Creadas"
+        />
+        <CoreKpiWrapper
+          :title-two="kpiData.totalCandidates"
+          :has-icon="true"
+          :title-two-font-size="true"
+          icon-tag-one="fab"
+          icon-tag-two="searchengin"
           icon-color="#5C60F5"
           description-one="Candidatos Analizados"
         />
         <CoreKpiWrapper
-          title-two="15%"
-          title-two-children="(11%)"
+          :title-two="`${kpiData.egc.toFixed(1)}%`"
+          :title-two-children="`(${kpiData.contacted} contactados)`"
           :title-two-font-size="true"
+          :has-icon="true"
+          icon-tag-one="fab"
+          icon-tag-two="whatsapp"
+          icon-color="#00CC88"
           description-one="EGC"
           description-one-children="Efectividad General de Contacto"
         />
         <CoreKpiWrapper
-          title-two="83%"
+          :title-two="`${kpiData.etotal.toFixed(1)}%`"
+          :title-two-children="`(${kpiData.interested} interesados)`"
+          :title-two-font-size="true"
           :has-icon="true"
-          :title-two-font-size="true"
-          icon-tag-one="fas"
-          icon-tag-two="chart-line"
-          icon-color="#5C60F5"
-          description-one="Exactitud Meta K"
-        />
-        <CoreKpiWrapper
-          title-two="5%"
-          title-two-children=""
-          :title-two-font-size="true"
-          description-one="Efectividad Total"
+          icon-tag-one="fa-solid"
+          icon-tag-two="phone-volume"
+          icon-color="#00CC88"
+          description-one="ETC"
+          description-one-children="Efectividad Total de Contacto"
         />
       </div>
-      <div class="search-container">
+      <div class="search-date-container">
         <CoreSearchBar
           :min-length-search-criteria="1"
+          :should-clear-input="clearInput"
           @input="onHandleOfferSearch"
+        />
+        <CoreDatePicker
+          :on-clear-date="onClearDate"
+          @change="handleChangeDate"
         />
       </div>
       <div
@@ -56,8 +65,6 @@
               <th>Nombre Oferta</th>
               <th>Candidatos</th>
               <th>Contactados por Whatsapp</th>
-              <th>ECG</th>
-              <th>Exactitud</th>
               <th>Tus datos</th>
               <th>CVS Asignados</th>
               <th>Status</th>
@@ -66,15 +73,15 @@
           </thead>
           <tbody>
             <tr v-for="(result, index) in paginatedResults" :key="index">
-              <td class="ranking">{{ result.id }}</td>
+              <td class="ranking">
+                {{ (currentPage - 1) * rowsPerPage + index + 1 }}
+              </td>
               <td style="cursor: pointer" @click="onHandleOffer(result.id)">
                 {{ result.name }}
               </td>
               <td>{{ result.vitae_offer_count }}</td>
-              <td>{{ result.contacted }}</td>
-              <td>{{ result.ecg }}</td>
-              <td>{{ result.accuracy }}</td>
-              <td>{{ result.tus_datos }}</td>
+              <td>{{ result.smartdataId_count }}</td>
+              <td>{{ result.background_check_count }}</td>
               <td>
                 <div class="input-container">
                   <input
@@ -83,22 +90,25 @@
                     type="number"
                     :min="result.assigned_cvs"
                   />
-                  <font-awesome-icon
-                    v-if="
-                      result.cvCount && result.cvCount > result.assigned_cvs
-                    "
-                    class="icon"
-                    :icon="['fas', 'circle-plus']"
-                    :style="{ color: '#00CC88' }"
-                    size="lg"
-                    @click="onAddCVCount(result)"
-                  />
-                  <font-awesome-icon
-                    v-else
-                    :icon="['fas', 'circle-plus']"
-                    :style="{ color: 'gray' }"
-                    size="lg"
-                  />
+                  <div class="tooltip">
+                    <font-awesome-icon
+                      v-if="
+                        result.cvCount && result.cvCount > result.assigned_cvs
+                      "
+                      class="icon"
+                      :icon="['fas', 'circle-plus']"
+                      :style="{ color: '#00CC88' }"
+                      size="lg"
+                      @click="onAddCVCount(result)"
+                    />
+                    <font-awesome-icon
+                      v-else
+                      :icon="['fas', 'circle-plus']"
+                      :style="{ color: 'gray' }"
+                      size="lg"
+                    />
+                    <span class="tooltiptext inverted">Añadir CVs</span>
+                  </div>
                 </div>
               </td>
               <td>
@@ -142,15 +152,15 @@
           </button>
         </div>
       </div>
+      <div v-else class="no-data">
+        <span v-if="dateResults.length && !filteredResults.length"
+          >Ninguna Oferta hace match con tu busqueda</span
+        >
+        <span v-else>No se encontraron Ofertas para las fechas indicadas</span>
+      </div>
     </div>
-    <div v-if="results && results.length < 1" class="no-data">
+    <div v-else class="no-data">
       <span>No hay ofertas asociadas a esta empresa</span>
-    </div>
-    <div
-      v-if="results.length > 1 && paginatedResults.length < 1"
-      class="no-data"
-    >
-      <span>Ninguna Oferta hace match con tu busqueda</span>
     </div>
   </div>
 </template>
@@ -166,8 +176,12 @@ const userStore = useUserStore();
 const token = userStore.getToken();
 const results = ref<ISuperOffersListTableRow[]>([]);
 const filteredResults = ref<ISuperOffersListTableRow[]>([]);
+const dateResults = ref<ISuperOffersListTableRow[]>([]);
 const currentPage = ref(1);
 const rowsPerPage = ref(10);
+const isDateSearch = ref<boolean>(false);
+const clearInput = ref<boolean>(false);
+const lastKpiData = ref({});
 
 interface ITableProps {
   companyId: string;
@@ -176,7 +190,7 @@ const props = withDefaults(defineProps<ITableProps>(), {
   companyId: "",
 });
 
-const fetchCompanyOffersDetails = async () => {
+const fetchCompanyOffersDetails = async (dates?: string[]) => {
   const params: fetchWrapperProps = {
     method: EFetchMethods.GET,
     path: `offers/company/details/${props.companyId}`,
@@ -185,6 +199,10 @@ const fetchCompanyOffersDetails = async () => {
       Authorization: `Bearer ${token}`,
     },
   };
+  if (dates && dates.length) {
+    isDateSearch.value = true;
+    params.path = `${params.path}?start_date=${dates[0]}&close_date=${dates[1]}`;
+  }
   const { data, error } = await useFetchWrapper(params);
   if (error.value) {
     helperStore.renderToastMessage($toast, true, {
@@ -195,9 +213,54 @@ const fetchCompanyOffersDetails = async () => {
     const mappedResponse = data.value.map((item) => {
       return { ...item, cvCount: item.assigned_cvs };
     });
-    results.value = mappedResponse;
+    if (!dates || !dates.length) {
+      results.value = mappedResponse;
+    }
+    dateResults.value = mappedResponse;
     filteredResults.value = mappedResponse;
+    currentPage.value = 1;
+    clearInput.value = false;
   }
+};
+
+const kpiData = computed(() => {
+  const data = isDateSearch.value ? dateResults.value : results.value;
+  if (data.length) {
+    return data.reduce(
+      (acc, item, index, arr) => {
+        acc.totalCandidates += item.vitae_offer_count;
+        acc.contacted += item.smartdataId_count;
+        acc.interested += item.interested_count;
+        if (index === arr.length - 1) {
+          acc.totalOffers = arr.length;
+          acc.egc = (acc.contacted / acc.totalCandidates) * 100;
+          acc.etotal = (acc.interested / acc.totalCandidates) * 100;
+        }
+        return acc;
+      },
+      {
+        totalCandidates: 0,
+        totalOffers: 0,
+        contacted: 0,
+        interested: 0,
+        egc: 0,
+        etotal: 0,
+      }
+    );
+  }
+  return lastKpiData.value;
+});
+
+const handleChangeDate = async (dates: string[]) => {
+  clearInput.value = true;
+  await fetchCompanyOffersDetails(dates);
+};
+
+const onClearDate = () => {
+  isDateSearch.value = false;
+  clearInput.value = true;
+  filteredResults.value = results.value;
+  dateResults.value = [];
 };
 
 const onAddCVCount = async (offer: any) => {
@@ -278,10 +341,12 @@ onMounted(() => {
 });
 
 const onHandleOfferSearch = (searchValue: string): void => {
-  filteredResults.value = results.value.filter((item) => {
+  const sourceOfTruth = isDateSearch.value ? dateResults.value : results.value;
+  filteredResults.value = sourceOfTruth.filter((item) => {
     const name = item.name.toLowerCase();
     return name.includes(searchValue.toLowerCase());
   });
+  clearInput.value = false;
   currentPage.value = 1;
 };
 
@@ -321,6 +386,14 @@ watch(
     }
   }
 );
+
+watch(
+  kpiData,
+  (newKpiData) => {
+    lastKpiData.value = newKpiData;
+  },
+  { immediate: true }
+);
 </script>
 <style lang="scss" scoped>
 .results-table {
@@ -331,10 +404,16 @@ watch(
     gap: 2rem;
     margin-bottom: 5rem;
   }
-  .search-container {
-    width: 30%;
+  .search-date-container {
+    display: flex;
     padding-bottom: 2.5rem;
-    padding-left: 0.5rem;
+    gap: 2rem;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 0.5rem 2.5rem;
+    > div {
+      width: 30%;
+    }
   }
   .table-wrapper {
     overflow-x: auto;
@@ -419,6 +498,7 @@ watch(
             box-shadow: 0 0 0 2px transparent;
           }
         }
+
         .icon {
           cursor: pointer;
           border-radius: 1rem;
@@ -448,6 +528,11 @@ watch(
         margin-left: -40px;
         opacity: 0;
         transition: opacity 0.3s;
+
+        &.inverted {
+          left: 50%;
+          margin-left: 0;
+        }
       }
 
       .tooltip:hover .tooltiptext {

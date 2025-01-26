@@ -5,6 +5,7 @@ export interface ISuperCompaniesListTableRow {
   cv_count: number;
   totaloffers: number;
   activeoffers: number;
+  availableoffers: number;
   used_offers: number;
   recruiter_name: string;
   picture: string;

@@ -76,8 +76,6 @@ const handleOnInput = (keyField: string, value: string): void => {
     ...form.value,
     [keyField]: value,
   };
-  companyFromUrl.value = "";
-  offerFromUrl.value = "";
   if (keyField === "company") {
     // reset offerId back to default if user changes company
     if (companyId.value) currentOfferId.value = "";

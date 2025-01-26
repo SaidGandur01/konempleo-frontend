@@ -3,7 +3,7 @@ export interface ICandidatesTableRow {
   candidate_name: string;
   candidate_phone: string;
   candidate_mail: string;
-  response_score: number | string;
+  response_score: number;
   status: string;
   url: string;
   whatsapp_status: string;
