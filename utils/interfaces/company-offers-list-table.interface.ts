@@ -3,10 +3,9 @@ export interface ICompanyOffersListTableRow {
   icon: string;
   name: string;
   vacants: number;
-  contacted: number;
-  ecg: number | string;
-  accuracy: number | string;
-  tus_datos: number | string;
+  smartdataId_count: number;
+  interested_count: number;
+  background_check_count: number | string;
   assigned_cvs: number | string;
   whatsapp_message: string;
   active: boolean;
