@@ -1,47 +1,61 @@
 <template>
   <div v-if="show" class="modal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h2>{{ title }}</h2>
-          <div class="tooltip">
-            <font-awesome-icon
-              :icon="['fas', 'xmark']"
-              :style="{ color: 'gray' }"
-              size="lg"
-              @click="onClose"
-            />
-            <span class="tooltiptext">Cerrar</span>
-          </div>
-        </div>
-        <div class="modal-body">
-          <textarea v-model="comment" :placeholder="placeholder" />
-        </div>
-        <div class="modal-footer">
-          <CoreButton
-            size="sm"
-            :label="primaryButtonText"
-            type="submit"
-            :disabled="disableButton"
-            @click="onSubmit"
-          />
-          <CoreButton
-            size="sm"
-            :label="secondaryButtonText"
-            type="neutral"
+    <div v-if="isGifModal" class="modal-content gif">
+      <span>{{ title }}</span>
+      <img
+        :src="gifSrc"
+        :alt="placeholder"
+        class="loading-gif"
+        style="filter: hue-rotate(180deg) saturate(200%) invert(100%)"
+      />
+      <span>{{ subtitle }}</span>
+    </div>
+    <div v-else class="modal-content input">
+      <div class="modal-header">
+        <h2>{{ title }}</h2>
+        <div class="tooltip">
+          <font-awesome-icon
+            :icon="['fas', 'xmark']"
+            :style="{ color: 'gray' }"
+            size="lg"
             @click="onClose"
           />
+          <span class="tooltiptext">Cerrar</span>
         </div>
       </div>
+      <div class="modal-body">
+        <textarea v-model="comment" :placeholder="placeholder" />
+      </div>
+      <div class="modal-footer">
+        <CoreButton
+          size="sm"
+          :label="primaryButtonText"
+          type="submit"
+          :disabled="disableButton"
+          @click="onSubmit"
+        />
+        <CoreButton
+          size="sm"
+          :label="secondaryButtonText"
+          type="neutral"
+          @click="onClose"
+        />
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
+import gifSrc from "~/public/gifs/cloud-animation.gif";
+
 interface ModalProps {
   show: boolean;
   title: string;
+  subtitle?: string;
   placeholder?: string;
   primaryButtonText?: string;
   secondaryButtonText?: string;
+  isGifModal?: boolean;
 }
 interface ModalEmits {
   (event: "close"): void;
@@ -51,9 +65,11 @@ interface ModalEmits {
 withDefaults(defineProps<ModalProps>(), {
   show: false,
   title: "default title",
+  subtitle: "default subtitle",
   placeholder: "Escribre aqui",
   primaryButtonText: "Enviar",
   secondaryButtonText: "Cancelar",
+  isGifModal: false,
 });
 const emit = defineEmits<ModalEmits>();
 const disableButton = computed(() => comment.value.trim() === "");
@@ -89,9 +105,33 @@ const onClose = () => {
     border-radius: 1rem;
     display: grid;
     grid-template-rows: 1fr 2fr 1fr;
-    width: 50rem;
     max-width: calc(100% - 10rem);
     max-height: 400px;
+
+    &.gif {
+      width: 30rem;
+      height: 30rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      padding: 0 1rem;
+      text-align: center;
+
+      > img {
+        object-fit: cover;
+        border-radius: 1rem 1rem 0 0;
+      }
+      > span {
+        font-size: 1.5rem;
+        font-weight: 500;
+      }
+    }
+
+    &.input {
+      width: 50rem;
+    }
 
     .modal-header {
       display: flex;
