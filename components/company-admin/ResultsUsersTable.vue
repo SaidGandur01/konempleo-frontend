@@ -23,7 +23,9 @@
         </thead>
         <tbody>
           <tr v-for="(result, index) in paginatedResults" :key="index">
-            <td>{{ result.id }}</td>
+            <td>
+              {{ (currentPage - 1) * rowsPerPage + index + 1 }}
+            </td>
             <td>{{ result.fullname }}</td>
             <td>{{ result.email }}</td>
             <td>{{ result.offer_count }}</td>
