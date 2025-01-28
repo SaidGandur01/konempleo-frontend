@@ -3,43 +3,54 @@
     <div v-if="results && results.length" class="table-wrapper">
       <div class="kpi-section">
         <CoreKpiWrapper
-          title-two="20"
+          :title-two="kpiData.totalCompanies"
+          :has-icon="true"
           :title-two-font-size="true"
-          description-two="Ofertas creadas"
+          icon-tag-one="far"
+          icon-tag-two="building"
+          icon-color="#5C60F5"
+          description-one="Cantidad de Empresas"
         />
         <CoreKpiWrapper
-          title-two="135"
+          :title-two="kpiData.totalOffers"
           :has-icon="true"
           :title-two-font-size="true"
           icon-tag-one="fas"
-          icon-tag-two="chart-column"
+          icon-tag-two="briefcase"
           icon-color="#5C60F5"
-          description-one="Candidatos Analizados"
+          description-one="Ofertas Creadas"
         />
         <CoreKpiWrapper
-          title-two="15%"
-          title-two-children="(11%)"
+          :title-two="`${kpiData.egc.toFixed(1)}%`"
+          :title-two-children="`(${kpiData.contacted} contactados)`"
           :title-two-font-size="true"
+          :has-icon="true"
+          icon-tag-one="fab"
+          icon-tag-two="whatsapp"
+          icon-color="#00CC88"
           description-one="EGC"
           description-one-children="Efectividad General de Contacto"
         />
         <CoreKpiWrapper
-          title-two="83%"
-          :has-icon="true"
+          :title-two="`${kpiData.etotal.toFixed(1)}%`"
+          :title-two-children="`(${kpiData.interested} interesados)`"
           :title-two-font-size="true"
-          icon-tag-one="fas"
-          icon-tag-two="chart-line"
-          icon-color="#5C60F5"
-          description-one="Exactitud Meta K"
+          :has-icon="true"
+          icon-tag-one="fa-solid"
+          icon-tag-two="phone-volume"
+          icon-color="#00CC88"
+          description-one="Efectividad Total de Contacto"
         />
         <CoreKpiWrapper
-          title-two="5%"
-          title-two-children=""
+          :title-two="kpiData.totalCandidates"
+          :has-icon="true"
           :title-two-font-size="true"
-          description-one="Efectividad Total"
+          icon-tag-one="fab"
+          icon-tag-two="searchengin"
+          icon-color="#5C60F5"
+          description-one="Candidatos Analizados"
         />
       </div>
-
       <div class="search-container">
         <CoreSearchBar
           :min-length-search-criteria="1"
@@ -142,8 +153,39 @@ const results = ref<ICompaniesListTableRow[]>([]);
 const filteredResults = ref<ICompaniesListTableRow[]>([]);
 const currentPage = ref(1);
 const rowsPerPage = ref(10);
+const lastKpiData = ref({});
 
-const params: fetchWrapperProps = {
+const kpiData = computed(() => {
+  if (results.value) {
+    return results.value.reduce(
+      (acc, item, index, arr) => {
+        acc.totalOffers += item.totaloffers - item.availableoffers;
+        acc.contacted += item.total_contacted;
+        acc.interested += item.total_interested;
+        acc.totalCandidates += item.cv_count;
+        if (index === arr.length - 1) {
+          acc.totalCompanies = arr.length;
+          acc.egc = (acc.contacted / acc.totalCandidates) * 100;
+          acc.etotal = (acc.interested / acc.totalCandidates) * 100;
+        }
+        return acc;
+      },
+      {
+        totalCompanies: 0,
+        totalOffers: 0,
+        totalCandidates: 0,
+        contacted: 0,
+        interested: 0,
+        egc: 0,
+        etotal: 0,
+      }
+    );
+  }
+  return lastKpiData.value;
+});
+
+onMounted(async () => {
+  const params: fetchWrapperProps = {
   method: EFetchMethods.GET,
   path: "company/owned/",
   headers: {
@@ -151,8 +193,6 @@ const params: fetchWrapperProps = {
     Authorization: `Bearer ${token}`,
   },
 };
-
-onMounted(async () => {
   const { data, error } = await useFetchWrapper(params);
   if (error.value) {
     helperStore.renderToastMessage($toast, true, {
@@ -204,6 +244,14 @@ const previousPage = () => {
     currentPage.value--;
   }
 };
+
+watch(
+  kpiData,
+  (newKpiData) => {
+    lastKpiData.value = newKpiData;
+  },
+  { immediate: true }
+);
 </script>
 <style lang="scss" scoped>
 .results-table {

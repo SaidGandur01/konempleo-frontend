@@ -77,7 +77,7 @@
                 {{ result.name }}
               </td>
               <td>{{ result.vitae_offer_count }}</td>
-              <td>{{ result.smartdataId_count }}</td>
+              <td>{{ result.contacted }}</td>
               <td>{{ result.background_check_count }}</td>
             </tr>
           </tbody>
@@ -158,8 +158,8 @@ const kpiData = computed(() => {
     return data.reduce(
       (acc, item, index, arr) => {
         acc.totalCandidates += item.vitae_offer_count;
-        acc.contacted += item.smartdataId_count;
-        acc.interested += item.interested_count;
+        acc.contacted += item.contacted;
+        acc.interested += item.interested;
         if (index === arr.length - 1) {
           acc.totalOffers = arr.length;
           acc.egc = (acc.contacted / acc.totalCandidates) * 100;

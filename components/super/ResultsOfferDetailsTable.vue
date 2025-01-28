@@ -643,7 +643,7 @@ watch(
         padding: 1.5rem 2rem;
       }
 
-      .bg-check {
+      .bold {
         font-weight: 600;
 
         &.negative {

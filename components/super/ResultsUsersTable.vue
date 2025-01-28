@@ -24,7 +24,9 @@
         </thead>
         <tbody>
           <tr v-for="(result, index) in paginatedResults" :key="index">
-            <td>{{ result.id }}</td>
+            <td>
+              {{ (currentPage - 1) * rowsPerPage + index + 1 }}
+            </td>
             <td>{{ result.fullname }}</td>
             <td>{{ result.email }}</td>
             <td>{{ result.companies && result.companies.join(", ") }}</td>
@@ -184,11 +186,16 @@ const onHandleUpdateUser = async ({
   updateActive?: boolean;
   updateDeleted?: boolean;
 }) => {
-  const [filteredUser] = usersCleanResult.value.filter((item) => item.id === userId);
-  const mappedCompanies = filteredUser.companies.reduce((acc: any, company: any) => {
-    acc.push(company.id);
-    return acc;
-  }, []);
+  const [filteredUser] = usersCleanResult.value.filter(
+    (item) => item.id === userId
+  );
+  const mappedCompanies = filteredUser.companies.reduce(
+    (acc: any, company: any) => {
+      acc.push(company.id);
+      return acc;
+    },
+    []
+  );
   const user = JSON.parse(JSON.stringify(filteredUser));
   user.companies = mappedCompanies;
   const params: fetchWrapperProps = {
@@ -215,7 +222,9 @@ const onHandleUpdateUser = async ({
     helperStore.renderToastMessage($toast, false, {
       success: `Usuario ${updateActive ? "Actualizado" : "Borrado"} correctamente`,
     });
-    const updatedIndex = results.value.findIndex((item) => item.id === data.value.id);
+    const updatedIndex = results.value.findIndex(
+      (item) => item.id === data.value.id
+    );
     const cleanResultsIndex = usersCleanResult.value.findIndex(
       (item) => item.id === data.value.id
     );

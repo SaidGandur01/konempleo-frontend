@@ -139,6 +139,7 @@
           :list-options="workTypeListData"
           label="Tipo de trabajo"
           placeholder="Seleccione una opción"
+          :should-emit-id="true"
           @select="(data) => handleOnInput('work_type', data)"
         />
         <span v-if="!form.work_type" class="error-message">{{
@@ -189,6 +190,7 @@
           :list-options="workExperienceData"
           label="Experiencia laboral"
           placeholder="Seleccione una opción"
+          :should-emit-id="true"
           @select="
             (data) => handleOnInput('profesional_experience_years', data)
           "
@@ -565,16 +567,16 @@ const onCreateOffer = async (): Promise<void> => {
           contract_type: Number(data.contract_type),
           salary: formatSalary(data.range_salary.join()),
           city: data.location,
-          shift: data.shift,
-          gender: data.gender,
-          military_notebook: data.military_service_book,
+          shift: Number(data.shift),
+          gender: Number(data.gender),
+          military_notebook: Number(data.military_service_book),
           age: data.age,
           job_type: data.work_type,
           license: data.driving_license,
           disabled: data.disability === "SI" ? true : false,
-          experience_years: data.profesional_experience_years,
+          experience_years: Number(data.profesional_experience_years),
           filter_questions: data.questions_filter,
-          ed_required: data.education,
+          ed_required: Number(data.education),
           cargoId: data.cargo,
           assigned_cvs: 50,
           companyId: myData.companies[0].id,

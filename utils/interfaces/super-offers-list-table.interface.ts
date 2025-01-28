@@ -4,9 +4,9 @@ export interface ISuperOffersListTableRow {
   number: number;
   name: string;
   vacants: number;
-  smartdataId_count: number;
+  contacted: number;
   background_check_count: number;
-  interested_count: number;
+  interested: number;
   assigned_cvs: number;
   vitae_offer_count: number;
   whatsapp_message: string;

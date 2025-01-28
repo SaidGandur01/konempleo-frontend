@@ -3,46 +3,55 @@
     <div v-if="results && results.length" class="table-wrapper">
       <div class="kpi-section">
         <CoreKpiWrapper
-          title-two="20"
-          :title-two-font-size="true"
-          description-two="Ofertas creadas"
-        />
-        <CoreKpiWrapper
-          title-two="135"
+          :title-two="kpiData.totalOffers"
           :has-icon="true"
           :title-two-font-size="true"
           icon-tag-one="fas"
-          icon-tag-two="chart-column"
+          icon-tag-two="briefcase"
+          icon-color="#5C60F5"
+          description-one="Ofertas Creadas"
+        />
+        <CoreKpiWrapper
+          :title-two="kpiData.totalCandidates"
+          :has-icon="true"
+          :title-two-font-size="true"
+          icon-tag-one="fab"
+          icon-tag-two="searchengin"
           icon-color="#5C60F5"
           description-one="Candidatos Analizados"
         />
         <CoreKpiWrapper
-          title-two="15%"
-          title-two-children="(11%)"
+          :title-two="`${kpiData.egc.toFixed(1)}%`"
+          :title-two-children="`(${kpiData.contacted} contactados)`"
           :title-two-font-size="true"
+          :has-icon="true"
+          icon-tag-one="fab"
+          icon-tag-two="whatsapp"
+          icon-color="#00CC88"
           description-one="EGC"
           description-one-children="Efectividad General de Contacto"
         />
         <CoreKpiWrapper
-          title-two="83%"
+          :title-two="`${kpiData.etotal.toFixed(1)}%`"
+          :title-two-children="`(${kpiData.interested} interesados)`"
+          :title-two-font-size="true"
           :has-icon="true"
-          :title-two-font-size="true"
-          icon-tag-one="fas"
-          icon-tag-two="chart-line"
-          icon-color="#5C60F5"
-          description-one="Exactitud Meta K"
-        />
-        <CoreKpiWrapper
-          title-two="5%"
-          title-two-children=""
-          :title-two-font-size="true"
-          description-one="Efectividad Total"
+          icon-tag-one="fa-solid"
+          icon-tag-two="phone-volume"
+          icon-color="#00CC88"
+          description-one="ETC"
+          description-one-children="Efectividad Total de Contacto"
         />
       </div>
-      <div class="search-container">
+      <div class="search-date-container">
         <CoreSearchBar
           :min-length-search-criteria="1"
+          :should-clear-input="clearInput"
           @input="onHandleOfferSearch"
+        />
+        <CoreDatePicker
+          :on-clear-date="onClearDate"
+          @change="handleChangeDate"
         />
       </div>
       <div
@@ -56,8 +65,6 @@
               <th>Nombre Oferta</th>
               <th>Candidatos</th>
               <th>Contactados</th>
-              <th>ECG</th>
-              <th>Exactitud</th>
               <th>Tus datos</th>
               <th>CV Asignadas</th>
               <th>Status</th>
@@ -66,15 +73,15 @@
           </thead>
           <tbody>
             <tr v-for="(result, index) in paginatedResults" :key="index">
-              <td class="ranking">{{ result.id }}</td>
+              <td class="ranking">
+                {{ (currentPage - 1) * rowsPerPage + index + 1 }}
+              </td>
               <td style="cursor: pointer" @click="onHandleOffer(result.id)">
                 {{ result.name }}
               </td>
               <td>{{ result.vitae_offer_count }}</td>
               <td>{{ result.contacted }}</td>
-              <td>{{ result.ecg }}</td>
-              <td>{{ result.accuracy }}</td>
-              <td>{{ result.tus_datos }}</td>
+              <td>{{ result.background_check_count }}</td>
               <td>{{ result.assigned_cvs }}</td>
               <td>
                 <div :class="['status', 'tooltip', { active: result.active }]">
@@ -117,15 +124,15 @@
           </button>
         </div>
       </div>
+      <div v-else class="no-data">
+        <span v-if="dateResults.length && !filteredResults.length"
+          >Ninguna Oferta hace match con tu busqueda</span
+        >
+        <span v-else>No se encontraron Ofertas para las fechas indicadas</span>
+      </div>
     </div>
-    <div v-if="results && results.length < 1" class="no-data">
+    <div v-else class="no-data">
       <span>No hay ofertas asociadas a esta empresa</span>
-    </div>
-    <div
-      v-if="results.length > 1 && paginatedResults.length < 1"
-      class="no-data"
-    >
-      <span>Ninguna Oferta hace match con tu busqueda</span>
     </div>
   </div>
 </template>
@@ -137,6 +144,7 @@ import { useHelperStore } from "~/store/helper.store";
 
 const results = ref<ICompanyAdminOffersListTableRow[]>([]);
 const filteredResults = ref<ICompanyAdminOffersListTableRow[]>([]);
+const dateResults = ref<ICompanyAdminOffersListTableRow[]>([]);
 const myData = ref({});
 const currentPage = ref(1);
 const rowsPerPage = ref(10);
@@ -144,13 +152,58 @@ const { $toast } = useNuxtApp();
 const helperStore = useHelperStore();
 const userStore = useUserStore();
 const token = userStore.getToken();
+const isDateSearch = ref<boolean>(false);
+const clearInput = ref<boolean>(false);
+const lastKpiData = ref({});
 
 const onHandleOfferSearch = (searchValue: string): void => {
-  filteredResults.value = results.value.filter((item) => {
+  const sourceOfTruth = isDateSearch.value ? dateResults.value : results.value;
+  filteredResults.value = sourceOfTruth.filter((item) => {
     const name = item.name.toLowerCase();
     return name.includes(searchValue.toLowerCase());
   });
   currentPage.value = 1;
+  clearInput.value = false;
+};
+
+const kpiData = computed(() => {
+  const data = isDateSearch.value ? dateResults.value : results.value;
+  if (data.length) {
+    return data.reduce(
+      (acc, item, index, arr) => {
+        acc.totalCandidates += item.vitae_offer_count;
+        acc.contacted += item.contacted;
+        acc.interested += item.interested;
+        if (index === arr.length - 1) {
+          acc.totalOffers = arr.length;
+          acc.egc = (acc.contacted / acc.totalCandidates) * 100;
+          acc.etotal = (acc.interested / acc.totalCandidates) * 100;
+        }
+        return acc;
+      },
+      {
+        totalCandidates: 0,
+        totalOffers: 0,
+        contacted: 0,
+        interested: 0,
+        egc: 0,
+        etotal: 0,
+      }
+    );
+  }
+  return lastKpiData.value;
+});
+
+const handleChangeDate = async (dates: string[]) => {
+  clearInput.value = true;
+  await fetchOffers(myData.value.companies[0].id, dates);
+};
+
+const onClearDate = () => {
+  isDateSearch.value = false;
+  clearInput.value = true;
+  filteredResults.value = results.value;
+  dateResults.value = [];
 };
 
 const onSuspendOffer = async (offerId: number) => {
@@ -217,7 +270,7 @@ const onHandleOffer = (offerId: number): void => {
   navigateTo(`/company-admin/offer-details/${offerId}`);
 };
 
-const fetchOffers = async (companyId: number) => {
+const fetchOffers = async (companyId: number, dates?: string[]) => {
   const params: fetchWrapperProps = {
     method: EFetchMethods.GET,
     path: `offers/company/details/${companyId}`,
@@ -226,6 +279,10 @@ const fetchOffers = async (companyId: number) => {
       Authorization: `Bearer ${token}`,
     },
   };
+  if (dates && dates.length) {
+    isDateSearch.value = true;
+    params.path = `${params.path}?start_date=${dates[0]}&close_date=${dates[1]}`;
+  }
   const { data, error } = await useFetchWrapper(params);
   if (error.value) {
     helperStore.renderToastMessage($toast, true, {
@@ -233,8 +290,14 @@ const fetchOffers = async (companyId: number) => {
     });
     results.value = [];
   } else {
-    results.value = data.value;
+    if (!dates || !dates.length) {
+      results.value = data.value;
+    } else {
+      dateResults.value = data.value;
+    }
     filteredResults.value = data.value;
+    currentPage.value = 1;
+    clearInput.value = false;
   }
 };
 
@@ -258,6 +321,14 @@ onMounted(async () => {
     await fetchOffers(Number(data.value.companies[0].id));
   }
 });
+
+watch(
+  kpiData,
+  (newKpiData) => {
+    lastKpiData.value = newKpiData;
+  },
+  { immediate: true }
+);
 </script>
 <style lang="scss" scoped>
 .results-table {
@@ -268,10 +339,16 @@ onMounted(async () => {
     gap: 2rem;
     margin-bottom: 5rem;
   }
-  .search-container {
-    width: 30%;
+  .search-date-container {
+    display: flex;
     padding-bottom: 2.5rem;
-    padding-left: 0.5rem;
+    gap: 2rem;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 0.5rem 2.5rem;
+    > div {
+      width: 30%;
+    }
   }
   .table-wrapper {
     overflow-x: auto;

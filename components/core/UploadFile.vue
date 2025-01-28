@@ -31,6 +31,9 @@ const FilePond = vueFilePond(
   FilePondPluginFileValidateType,
   FilePondPluginImagePreview
 );
+const props = defineProps({
+  clearInput: Boolean,
+});
 const pond = ref<any>(null);
 const labelIdleContent = computed(
   () => `
@@ -47,6 +50,10 @@ const labelIdleContent = computed(
 `
 );
 
+const clearFiles = () => {
+  pond.value.removeFiles();
+};
+
 function updateButtonState() {
   if (pond.value) {
     const files = pond.value.getFiles().map((file:any)=>file.file)
@@ -56,6 +63,12 @@ function updateButtonState() {
 
 onMounted(() => {
   updateButtonState();
+});
+
+watch(() => props.clearInput, (value) => {
+  if (value) {
+    clearFiles();
+  }
 });
 </script>
 <style lang="scss" scoped>

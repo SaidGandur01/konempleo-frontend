@@ -6,6 +6,8 @@ export interface ISuperCompaniesListTableRow {
   totaloffers: number;
   activeoffers: number;
   availableoffers: number;
+  total_contacted: number;
+  total_interested: number;
   used_offers: number;
   recruiter_name: string;
   picture: string;
