@@ -13,7 +13,7 @@
         offerError
       }}</span>
     </div>
-    <CoreUploadFile @emitfile="onHandleFiles" />
+    <CoreUploadFile @emitfile="onHandleFiles" :clear-input="clearInput" />
     <div class="button">
       <CoreButton
         size="sm"
@@ -22,6 +22,13 @@
         @click="sendFiles"
       />
     </div>
+    <CoreModal
+      :show="showGif"
+      :is-gif-modal="true"
+      title="Añadiendo Hojas de vida, esto puede tomar hasta 60 segundos..."
+      :subtitle="subtitle"
+      placeholder="Cargando..."
+    />
   </NuxtLayout>
 </template>
 <script lang="ts" setup>
@@ -47,6 +54,26 @@ const disabledButton = ref<boolean>(true);
 const dropdownOptions = ref([]);
 const files = ref<Blob[]>([]);
 const myData = ref({});
+const showGif = ref<boolean>(false);
+const clearInput = ref<boolean>(false);
+const subtitle = ref<string>("");
+let intervalId: any;
+
+const subtitles = [
+  "Añadiendo Hojas de vida...",
+  "Procesando Datos...",
+  "Subiendo archivos...",
+];
+
+const getSubtitleInfo = () => {
+  const initialSubtitle = "Analizando datos...";
+  subtitle.value = initialSubtitle;
+  subtitles.push(initialSubtitle);
+  intervalId = setInterval(() => {
+    subtitle.value = subtitles[Math.floor(Math.random() * subtitles.length)];
+  }, 3000);
+  return intervalId;
+};
 
 const handleOnInput = (keyField: string, value: string): void => {
   form.value = {
@@ -83,7 +110,7 @@ const onHandleFiles = (inputFiles: any): void => {
   validateForm();
 };
 
-const fetchOffers = async (companyId:number) => {
+const fetchOffers = async (companyId: number) => {
   const params: fetchWrapperProps = {
     method: EFetchMethods.GET,
     path: `offers/company/details/${companyId}`,
@@ -108,7 +135,9 @@ const fetchOffers = async (companyId:number) => {
 };
 
 const sendFiles = async () => {
-  if(Array.isArray(files.value)){
+  if (Array.isArray(files.value)) {
+    showGif.value = true;
+    clearInput.value = false;
     const formData = new FormData();
     for (const file of files.value) {
       formData.append("files", file);
@@ -127,13 +156,13 @@ const sendFiles = async () => {
       helperStore.renderToastMessage($toast, true, {
         error: "something went wrong uploading cv",
       });
+      showGif.value = false;
     } else {
       helperStore.renderToastMessage($toast, false, {
         success: "Hoja de vida guardada exitosamente",
       });
-      setTimeout(() => {
-        navigateTo(`/company-admin/offer-details/${form.value.offer}`);
-      }, 1500);
+      clearInput.value = true;
+      showGif.value = false;
       console.log(data);
     }
   }
@@ -159,6 +188,18 @@ onMounted(async () => {
     await fetchOffers(Number(data.value.companies[0].id));
   }
 });
+
+watch(
+  showGif,
+  (newShowGif) => {
+    if (newShowGif) {
+      getSubtitleInfo();
+    } else {
+      clearInterval(intervalId);
+    }
+  },
+  { immediate: true }
+);
 </script>
 <style lang="scss" scoped>
 h2 {
