@@ -4,8 +4,8 @@ export interface IOffersListTableRow {
   number: number;
   name: string;
   vacants: number;
-  smartdataId_count: number;
-  interested_count: number;
+  contacted: number;
+  interested: number;
   background_check_count: number;
   assigned_cvs: number | string;
   active: boolean;

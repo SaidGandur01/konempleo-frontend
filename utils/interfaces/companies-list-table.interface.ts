@@ -8,6 +8,8 @@ export interface ICompaniesListTableRow {
   availableoffers: number;
   activeoffers: number;
   used_offers: number;
+  total_contacted: number;
+  total_interested: number;
   recruiter_email: string;
   active: boolean;
 };
