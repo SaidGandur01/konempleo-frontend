@@ -71,11 +71,19 @@
       @click="onSubmitCvs"
     />
   </div>
+  <CoreModal
+    :show="showGif"
+    :is-gif-modal="true"
+    title="Añadiendo Hojas de vida, esto puede tomar hasta 60 segundos..."
+    :subtitle="subtitle"
+    placeholder="Cargando..."
+  />
 </template>
 
 <script lang="ts" setup>
 import { useUserStore } from "~/store/user.store";
 import { useHelperStore } from "~/store/helper.store";
+import { fetchTaskIdStatus, getSubtitleInfo } from "~/utils/helpers/common";
 
 export interface ICompanyCvs {
   candidate_city: string;
@@ -98,6 +106,10 @@ const helperStore = useHelperStore();
 const userStore = useUserStore();
 const token = userStore.getToken();
 const myData = ref({});
+const showGif = ref<boolean>(false);
+const subtitle = ref<string>("");
+const intervalId = ref();
+
 const disableButton = computed(() => {
   return !results.value.some((item) => item.checked);
 });
@@ -105,6 +117,7 @@ const disableButton = computed(() => {
 const onSubmitCvs = async () => {
   const selectedCvs = results.value.filter((item) => item.checked);
   const selectedCvsIds = selectedCvs.map((item) => item.id);
+  showGif.value = true;
   const params: fetchWrapperProps = {
     method: EFetchMethods.POST,
     path: `offers/process-existing-cvs/?offerId=${props.offerId}`,
@@ -120,13 +133,28 @@ const onSubmitCvs = async () => {
     helperStore.renderToastMessage($toast, true, {
       error: "something went wrong attaching CVs to the offer",
     });
+    showGif.value = false;
   } else {
-    helperStore.renderToastMessage($toast, false, {
-      success: "Cvs asignados correctament a la oferta",
-    });
-    setTimeout(() => {
-      navigateTo("/company/offer-details/" + props.offerId);
-    }, 1500);
+    const taskId = data.value.task;
+    const { success, error: taskError } = await fetchTaskIdStatus(
+      taskId,
+      token
+    );
+    if (!taskError) {
+      helperStore.renderToastMessage($toast, false, {
+        success: "Cvs asignados correctament a la oferta",
+      });
+      console.log(success);
+      setTimeout(() => {
+        navigateTo("/company/offer-details/" + props.offerId);
+      }, 1500);
+    } else {
+      helperStore.renderToastMessage($toast, true, {
+        error: `something went wrong attaching CVs to the offer: ${taskError}`,
+      });
+      console.log(taskError);
+    }
+    showGif.value = false;
   }
 };
 
@@ -245,6 +273,22 @@ onMounted(async () => {
     await fetchCompanyCvs(Number(data.value.companies[0].id));
   }
 });
+
+watch(
+  showGif,
+  (newShowGif) => {
+    if (newShowGif) {
+      const { subtitle: subtitleTemp, intervalId: intervalIdTemp } = getSubtitleInfo();
+      // cleaning previous internalId
+      clearInterval(intervalId.value);
+      subtitle.value = subtitleTemp;
+      intervalId.value = intervalIdTemp;
+    } else {
+      clearInterval(intervalId.value);
+    }
+  },
+  { immediate: true }
+);
 </script>
 <style lang="scss" scoped>
 .content-wrapper {

@@ -307,6 +307,7 @@ interface ICreateOfferForm {
   profesional_experience_years: string;
   questions_filter: string;
 }
+
 const minSalary = 1423500;
 const maxSalary = 4000000;
 const minAge = 18;

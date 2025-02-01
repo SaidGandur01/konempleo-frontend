@@ -291,7 +291,7 @@ const fetchOffers = async (dates?: string[]) => {
   } else {
     if (!dates || !dates.length) {
       results.value = data.value;
-    } 
+    }
     dateResults.value = data.value;
     filteredResults.value = data.value;
     currentPage.value = 1;

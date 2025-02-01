@@ -155,7 +155,6 @@ const onHandleUpdateUser = async ({
   updateDeleted?: boolean;
 }) => {
   const [user] = results.value.filter((item) => item.id === userId);
-  console.log("user", user);
   const params: fetchWrapperProps = {
     method: EFetchMethods.PUT,
     path: `user/admin/${userId}`,
