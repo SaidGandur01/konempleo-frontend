@@ -47,7 +47,7 @@ const onHandleDate = (modelData: Date[]): void => {
   if (modelData.some((date: any) => !date)) {
     state.value = false;
     return;
-  } 
+  }
   const isSameDate = modelData[0].getTime() === modelData[1].getTime();
   if (isSameDate) {
     state.value = false;
@@ -84,17 +84,5 @@ const onHandleDate = (modelData: Date[]): void => {
     width: 16px;
     height: 16px;
   }
-
-  // .custom-date-picker .dp__outer_menu_wrap {
-  //   font-size: 18px; /* Font size inside the calendar popover */
-  // }
-
-  // /* Day cells in the calendar */
-  // .custom-date-picker .dp__calendar .dp__cell {
-  //   font-size: 18px; /* Adjust font size of calendar day numbers */
-  //   width: 40px; /* Size of each cell */
-  //   height: 40px; /* Size of each cell */
-  // }
-
 }
 </style>

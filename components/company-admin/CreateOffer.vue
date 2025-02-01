@@ -466,10 +466,9 @@ const validateErrorsForm = (
       educationError.value = !value.length ? "Selecciona una opción" : "";
       break;
     case "profesional_experience_years":
-      profesionalExperienceError.value =
-        isNaN(Number(value)) || Number(value) === 0
-          ? "Inserta un valor válido"
-          : "";
+      profesionalExperienceError.value = !value.length
+        ? "Selecciona una opción"
+        : "";
       break;
     case "cargo":
       cargoError.value = !value.length ? "Selecciona una opción" : "";
@@ -507,8 +506,7 @@ const validateForm = (): void => {
     form.value.disability && disabilityError.value === "";
   const isEducationValid = form.value.education && educationError.value === "";
   const isProfessionalExperienceValid =
-    !isNaN(Number(form.value.profesional_experience_years)) &&
-    Number(form.value.profesional_experience_years) > 0 &&
+    form.value.profesional_experience_years &&
     profesionalExperienceError.value === "";
   const isCargoValid = form.value.cargo && cargoError.value === "";
 
