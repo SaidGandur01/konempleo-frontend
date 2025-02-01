@@ -6,7 +6,67 @@ export const formatSalary = (salary: string) => {
     const trimmedStr = range.trim();
     return `$${trimmedStr.replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
   });
-  return formattedSalary.join(' - ');
+  return formattedSalary.join(" - ");
+};
+
+const subtitles = [
+  "Añadiendo Hojas de vida...",
+  "Procesando Datos...",
+  "Subiendo archivos...",
+];
+
+export const getSubtitleInfo = () => {
+  let subtitle;
+  const initialSubtitle = "Analizando datos...";
+  subtitle = initialSubtitle;
+  subtitles.push(initialSubtitle);
+  const intervalId = setInterval(() => {
+    subtitle = subtitles[Math.floor(Math.random() * subtitles.length)];
+  }, 3000);
+  return { subtitle, intervalId };
+};
+
+const taskFetcher = async (taskId: string, token: string | null) => {
+  const params: fetchWrapperProps = {
+    method: EFetchMethods.GET,
+    path: `task/${taskId}`,
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const { data, error } = await useFetchWrapper(params);
+  if (data.value) {
+    const status = data.value.status;
+    switch (status) {
+      case 3:
+        return { success: data.value, error: null };
+      case 4:
+        return { success: null, error: data.value.message };
+      default:
+      case 1:
+      case 2:
+        return new Promise((resolve) => {
+          setTimeout(async () => {
+            const retryResponse = await taskFetcher(taskId, token);
+            resolve(retryResponse);
+          }, 3000);
+        });
+    }
+  } else {
+    return { success: null, error: error.message };
+  }
+};
+
+export const fetchTaskIdStatus = async (
+  taskId: string | string[],
+  token: string | null
+): Promise<any> => {
+  if (Array.isArray(taskId)) {
+    return Promise.all(taskId.map((task) => taskFetcher(task, token)));
+  } else {
+    return taskFetcher(taskId as string, token);
+  }
 };
 
 export const roleMapFromToken = (role: number): EUser | null => {
@@ -31,13 +91,13 @@ export const isValidEmail = (value: any): boolean => {
   return true;
 };
 
-export const getCreateCompanyPayload = (data: any, KOEId?: number ) => {
+export const getCreateCompanyPayload = (data: any, KOEId?: number) => {
   const formattedPayload = {
     employees: parseInt(data.employees.split("-")[1]) || 0,
     sector: data.sector,
     city: data.city,
     name: data.company_name,
-    konempleo_responsible: data.konempleo_contact || KOEId,
+    konempleo_responsible: Number(data.konempleo_contact) || Number(KOEId),
     responsible_user: {
       fullname: data.user_company_name,
       email: data.user_company_email,

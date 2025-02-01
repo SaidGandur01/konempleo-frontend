@@ -34,6 +34,7 @@
 <script lang="ts" setup>
 import { useUserStore } from "~/store/user.store";
 import { useHelperStore } from "~/store/helper.store";
+import { fetchTaskIdStatus, getSubtitleInfo } from "~/utils/helpers/common";
 
 definePageMeta({
   middleware: ["protected", "user-guard"],
@@ -57,23 +58,7 @@ const myData = ref({});
 const showGif = ref<boolean>(false);
 const clearInput = ref<boolean>(false);
 const subtitle = ref<string>("");
-let intervalId: any;
-
-const subtitles = [
-  "Añadiendo Hojas de vida...",
-  "Procesando Datos...",
-  "Subiendo archivos...",
-];
-
-const getSubtitleInfo = () => {
-  const initialSubtitle = "Analizando datos...";
-  subtitle.value = initialSubtitle;
-  subtitles.push(initialSubtitle);
-  intervalId = setInterval(() => {
-    subtitle.value = subtitles[Math.floor(Math.random() * subtitles.length)];
-  }, 3000);
-  return intervalId;
-};
+const intervalId = ref();
 
 const handleOnInput = (keyField: string, value: string): void => {
   form.value = {
@@ -158,12 +143,21 @@ const sendFiles = async () => {
       });
       showGif.value = false;
     } else {
-      helperStore.renderToastMessage($toast, false, {
-        success: "Hoja de vida guardada exitosamente",
+      const response = await fetchTaskIdStatus(data.value.tasks, token);
+      const succededTasks = response.map((item) => {
+        return item.success.status === 3;
       });
-      clearInput.value = true;
+      if (succededTasks.length === data.value.tasks.length) {
+        helperStore.renderToastMessage($toast, false, {
+          success: "Hojas de vida guardadas exitosamente",
+        });
+        clearInput.value = true;
+      } else {
+        helperStore.renderToastMessage($toast, true, {
+          error: "something went wrong uploading cv",
+        });
+      }
       showGif.value = false;
-      console.log(data);
     }
   }
 };
@@ -193,9 +187,14 @@ watch(
   showGif,
   (newShowGif) => {
     if (newShowGif) {
-      getSubtitleInfo();
+      const { subtitle: subtitleTemp, intervalId: intervalIdTemp } =
+        getSubtitleInfo();
+      // cleaning previous internalId
+      clearInterval(intervalId.value);
+      subtitle.value = subtitleTemp;
+      intervalId.value = intervalIdTemp;
     } else {
-      clearInterval(intervalId);
+      clearInterval(intervalId.value);
     }
   },
   { immediate: true }
