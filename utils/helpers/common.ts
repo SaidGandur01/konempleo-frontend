@@ -132,7 +132,7 @@ export const getCreateUserPayload = (
       phone: user.phone,
       role: user.role,
     },
-    company_ids: user.companies,
+    company_ids: user.companies ? user.companies : undefined,
   };
 };
 

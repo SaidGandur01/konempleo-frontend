@@ -43,6 +43,7 @@
           placeholder="Seleccione una opción"
           :multiple-select="true"
           :should-emit-id="true"
+          :required="false"
           @select="(data) => handleOnInput('companies', data)"
         />
         <span v-if="form.companies.length < 1" class="error-message">{{
@@ -164,14 +165,12 @@ const validateErrorsForm = (
 
 const validateForm = (): void => {
   const isNameValid = form.value.name.length >= 3 && nameError.value === "";
-  const isCompaniesValid = form.value.companies && companiesError.value === "";
   const isRolValid = form.value.role && rolError.value === "";
   const isPhoneValid = form.value.phone.length >= 3 && phoneError.value === "";
 
   disableButton.value = !(
     isNameValid &&
     isValidEmail(form.value.email) &&
-    isCompaniesValid &&
     isPhoneValid &&
     isRolValid
   );

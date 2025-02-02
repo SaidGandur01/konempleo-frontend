@@ -512,10 +512,12 @@ const kpiData = computed(() => {
         acc.contacted += item.whatsapp_status !== null ? 1 : 0;
         acc.interested += item.whatsapp_status === "interested" ? 1 : 0;
         if (index === arr.length - 1) {
+          const egc = (acc.contacted / acc.totalCandidates) * 100;
+          const etotal = (acc.interested / acc.totalCandidates) * 100;
           acc.scoreAvg = acc.scoreSum / arr.length;
           acc.totalCandidates = arr.length;
-          acc.egc = (acc.contacted / acc.totalCandidates) * 100;
-          acc.etotal = (acc.interested / acc.totalCandidates) * 100;
+          acc.egc = isNaN(egc) ? 0 : egc;
+          acc.etotal = isNaN(etotal) ? 0 : etotal;
         }
         return acc;
       },

@@ -3,7 +3,7 @@
     <div v-if="results && results.length" class="table-wrapper">
       <div class="kpi-section">
         <CoreKpiWrapper
-          :title-two="kpiData.totalCompanies"
+          :title-two="kpiData.totalCompanies || '0'"
           :has-icon="true"
           :title-two-font-size="true"
           icon-tag-one="far"
@@ -12,7 +12,7 @@
           description-one="Cantidad de Empresas"
         />
         <CoreKpiWrapper
-          :title-two="kpiData.totalOffers"
+          :title-two="kpiData.totalOffers || '0'"
           :has-icon="true"
           :title-two-font-size="true"
           icon-tag-one="fas"
@@ -42,7 +42,7 @@
           description-one="Efectividad Total de Contacto"
         />
         <CoreKpiWrapper
-          :title-two="kpiData.totalCandidates"
+          :title-two="kpiData.totalCandidates || '0'"
           :has-icon="true"
           :title-two-font-size="true"
           icon-tag-one="fab"
@@ -159,14 +159,16 @@ const kpiData = computed(() => {
   if (results.value) {
     return results.value.reduce(
       (acc, item, index, arr) => {
-        acc.totalOffers += item.totaloffers - item.availableoffers;
+        acc.totalOffers += item.used_offers;
         acc.contacted += item.total_contacted;
         acc.interested += item.total_interested;
         acc.totalCandidates += item.cv_count;
         if (index === arr.length - 1) {
+          const egc = (acc.contacted / acc.totalCandidates) * 100;
+          const etotal = (acc.interested / acc.totalCandidates) * 100;
           acc.totalCompanies = arr.length;
-          acc.egc = (acc.contacted / acc.totalCandidates) * 100;
-          acc.etotal = (acc.interested / acc.totalCandidates) * 100;
+          acc.egc = isNaN(egc) ? 0 : egc;
+          acc.etotal = isNaN(etotal) ? 0 : etotal;
         }
         return acc;
       },
@@ -186,13 +188,13 @@ const kpiData = computed(() => {
 
 onMounted(async () => {
   const params: fetchWrapperProps = {
-  method: EFetchMethods.GET,
-  path: "company/owned/",
-  headers: {
-    accept: "application/json",
-    Authorization: `Bearer ${token}`,
-  },
-};
+    method: EFetchMethods.GET,
+    path: "company/owned/",
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
   const { data, error } = await useFetchWrapper(params);
   if (error.value) {
     helperStore.renderToastMessage($toast, true, {
@@ -342,7 +344,7 @@ watch(
           left: 50%;
           transform: translate(-50%, -50%);
         }
-        
+
         .logo {
           position: absolute;
           width: 100%;
