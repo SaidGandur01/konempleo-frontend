@@ -3,6 +3,7 @@
     <label v-if="label" :for="id">
       {{ label }}
       <span v-if="required" class="required">*</span>
+      <span v-else class="optional"> (Opcional)</span>
     </label>
     <div class="body">
       <div class="label-wrapper" @click="toggleCategoryDropdown">
@@ -202,6 +203,12 @@ watch(
     font-weight: 600;
     display: block;
     margin-bottom: 0.75rem;
+  }
+
+  .optional {
+    color: #999;
+    font-weight: 300;
+    font-size: 10px
   }
 
   .label-wrapper {

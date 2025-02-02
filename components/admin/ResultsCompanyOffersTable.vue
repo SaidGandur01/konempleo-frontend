@@ -3,7 +3,7 @@
     <div v-if="results && results.length" class="table-wrapper">
       <div class="kpi-section">
         <CoreKpiWrapper
-          :title-two="kpiData.totalOffers"
+          :title-two="kpiData.totalOffers || '0'"
           :has-icon="true"
           :title-two-font-size="true"
           icon-tag-one="fas"
@@ -12,7 +12,7 @@
           description-one="Ofertas Creadas"
         />
         <CoreKpiWrapper
-          :title-two="kpiData.totalCandidates"
+          :title-two="kpiData.totalCandidates || '0'"
           :has-icon="true"
           :title-two-font-size="true"
           icon-tag-one="fab"
@@ -161,9 +161,11 @@ const kpiData = computed(() => {
         acc.contacted += item.contacted;
         acc.interested += item.interested;
         if (index === arr.length - 1) {
+          const egc = (acc.contacted / acc.totalCandidates) * 100;
+          const etotal = (acc.interested / acc.totalCandidates) * 100;
           acc.totalOffers = arr.length;
-          acc.egc = (acc.contacted / acc.totalCandidates) * 100;
-          acc.etotal = (acc.interested / acc.totalCandidates) * 100;
+          acc.egc = isNaN(egc) ? 0 : egc;
+          acc.etotal = isNaN(etotal) ? 0 : etotal;
         }
         return acc;
       },
