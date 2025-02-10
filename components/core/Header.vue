@@ -23,8 +23,12 @@
         <font-awesome-icon class="icon" :icon="['fas', 'user-tie']" size="lg" />
       </div>
       <div class="name">
-        <!-- get the right user firstName lastName -->
-        <span><strong>{{firstName}}</strong> {{lastName}}</span>
+        <span class="role"
+          ><strong>{{ userHeaderText }}</strong></span
+        >
+        <span
+          ><strong>{{ firstName }}</strong> {{ lastName }}</span
+        >
       </div>
     </div>
   </div>
@@ -35,22 +39,20 @@ import { useUserStore } from "~/store/user.store";
 import { getUserHeaderText } from "~/utils/helpers/common";
 
 definePageMeta({
-  middleware: ["protected", 'user-guard'],
+  middleware: ["protected", "user-guard"],
 });
 interface IEmits {
   (event: "toggle", value: boolean): void;
 }
 
 const userStore = useUserStore();
-const role= userStore.getUserRole();
+const role = userStore.getUserRole();
 const userName = userStore.getUserName().split(" ");
-const firstName = userName[0]
-const lastName = userName.at(-1)
+const firstName = userName[0];
+const lastName = userName.at(-1);
 const userHeaderText = getUserHeaderText(role);
 
-
 const isMenuExpanded = ref<boolean>(true);
-
 
 const emit = defineEmits<IEmits>();
 
@@ -80,6 +82,9 @@ const toggleMenu = (): void => {
         cursor: pointer;
       }
     }
+    .rol {
+      text-transform: uppercase;
+    }
   }
   .middle-section {
     .logo {
@@ -96,8 +101,8 @@ const toggleMenu = (): void => {
     gap: 1rem;
     width: 20%;
     .avatar {
-      height: 30px;
-      width: 30px;
+      height: 40px;
+      width: 40px;
       background-color: darken($color: #f5f9fc, $amount: 5%);
       border-radius: 50%;
       position: relative;
@@ -110,7 +115,16 @@ const toggleMenu = (): void => {
       }
     }
     .name {
+      display: flex;
+      flex-direction: column;
       text-transform: capitalize;
+      gap: 0.6rem;
+
+      .role {
+        font-size: 12px;
+        font-weight: 300;
+        color: #e79551;
+      }
     }
   }
 }

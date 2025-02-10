@@ -3,44 +3,63 @@
     <div v-if="results && results.length" class="table-wrapper">
       <div class="kpi-section">
         <CoreKpiWrapper
-          :title-two="kpiData.totalCandidates.toString()"
+          :data="kpiData.totalCandidates || '0'"
+          title-two="Candidatos"
           :has-icon="true"
           :title-two-font-size="true"
-          icon-tag-one="fab"
-          icon-tag-two="searchengin"
-          icon-color="#ff579a"
-          description-one="Candidatos Analizados"
+          icon-tag-one="fas"
+          icon-tag-two="people-arrows"
+          icon-color="#e79551"
+          :has-secondary-icon="true"
+          secondary-icon-tag-one="fas"
+          secondary-icon-tag-two="user-tie"
+          secondary-icon-color="gray"
+          description-one="Analizados"
+          description-two="por Meta K"
         />
         <CoreKpiWrapper
-          :title-two="kpiData.scoreAvg.toFixed(2)"
+          :data="kpiData.scoreAvg.toFixed(2)"
+          title-two="Score"
           :title-two-font-size="true"
           :has-icon="true"
           icon-tag-one="fas"
-          icon-tag-two="bullseye"
-          icon-color="#ff579a"
-          description-one="Score Promedio"
-          :description-two="`${kpiData.scoreMin} min - ${kpiData.scoreMax} max`"
+          icon-tag-two="gauge-simple"
+          icon-color="#e63b7a"
+          :has-secondary-icon="true"
+          secondary-icon-tag-one="fas"
+          secondary-icon-tag-two="stopwatch"
+          secondary-icon-color="gray"
+          description-one="Calificación Promedio"
+          :description-two="`${kpiData.scoreMin} (Min) - ${kpiData.scoreMax} (Max)`"
         />
         <CoreKpiWrapper
-          :title-two="`${kpiData.egc.toFixed(1)}%`"
-          :title-two-children="`(${kpiData.contacted} contactados)`"
+          :data="`${kpiData.egc.toFixed(1)}%`"
+          title-two="EGC"
           :title-two-font-size="true"
           :has-icon="true"
-          icon-tag-one="fab"
-          icon-tag-two="whatsapp"
-          icon-color="#00CC88"
-          description-one="EGC"
-          description-one-children="Efectividad General de Contacto"
+          icon-tag-one="fas"
+          icon-tag-two="brain"
+          icon-color="#63E6BE"
+          :has-secondary-icon="true"
+          secondary-icon-tag-one="fab"
+          secondary-icon-tag-two="whatsapp"
+          secondary-icon-color="gray"
+          description-one="Efectividad General"
+          description-two="de Contacto"
         />
         <CoreKpiWrapper
-          :title-two="`${kpiData.etotal.toFixed(1)}%`"
-          :title-two-children="`(${kpiData.interested} interesados)`"
+          :data="`${kpiData.etotal.toFixed(1)}%`"
+          title-two="ETC"
           :title-two-font-size="true"
           :has-icon="true"
-          icon-tag-one="fa-solid"
-          icon-tag-two="phone-volume"
-          icon-color="#00CC88"
-          description-one="Efectividad Total de Contacto"
+          :use-custom-icon="true"
+          icon-color="#e79551"
+          :has-secondary-icon="true"
+          secondary-icon-tag-one="far"
+          secondary-icon-tag-two="star"
+          secondary-icon-color="gray"
+          description-one="Efectividad Total"
+          description-two="de Contacto"
         />
       </div>
       <div class="search-date-container">
@@ -513,9 +532,10 @@ const kpiData = computed(() => {
         acc.contacted += item.whatsapp_status !== null ? 1 : 0;
         acc.interested += item.whatsapp_status === "interested" ? 1 : 0;
         if (index === arr.length - 1) {
+          acc.totalCandidates = arr.length;
           const egc = (acc.contacted / acc.totalCandidates) * 100;
           const etotal = (acc.interested / acc.totalCandidates) * 100;
-          acc.scoreAvg = acc.scoreSum / arr.length;
+          acc.scoreAvg = acc.scoreSum / acc.totalCandidates;
           acc.totalCandidates = arr.length;
           acc.egc = isNaN(egc) ? 0 : egc;
           acc.etotal = isNaN(etotal) ? 0 : etotal;
@@ -566,9 +586,8 @@ watch(
 <style lang="scss" scoped>
 .results-table {
   .kpi-section {
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
     gap: 2rem;
     margin-bottom: 5rem;
   }

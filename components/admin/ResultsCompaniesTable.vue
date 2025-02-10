@@ -3,52 +3,78 @@
     <div v-if="results && results.length" class="table-wrapper">
       <div class="kpi-section">
         <CoreKpiWrapper
-          :title-two="kpiData.totalCompanies || '0'"
-          :has-icon="true"
-          :title-two-font-size="true"
-          icon-tag-one="far"
-          icon-tag-two="building"
-          icon-color="#5C60F5"
-          description-one="Cantidad de Empresas"
-        />
-        <CoreKpiWrapper
-          :title-two="kpiData.totalOffers || '0'"
+          title-two="Empresas"
+          :data="kpiData.totalCompanies || '0'"
           :has-icon="true"
           :title-two-font-size="true"
           icon-tag-one="fas"
-          icon-tag-two="briefcase"
+          icon-tag-two="check"
+          icon-color="#63E6BE"
+          :has-secondary-icon="true"
+          secondary-icon-tag-one="far"
+          secondary-icon-tag-two="building"
+          secondary-icon-color="gray"
+          description-one="Desde el"
+          description-two="Mes pasado"
+        />
+        <CoreKpiWrapper
+          title-two="Ofertas"
+          :data="kpiData.totalOffers || '0'"
+          :has-icon="true"
+          :title-two-font-size="true"
+          icon-tag-one="fas"
+          icon-tag-two="address-book"
           icon-color="#5C60F5"
-          description-one="Ofertas Creadas"
+          :has-secondary-icon="true"
+          secondary-icon-tag-one="fab"
+          secondary-icon-tag-two="medium"
+          secondary-icon-color="gray"
+          description-one="Cantidad de"
+          description-two="Ofertas creadas"
         />
         <CoreKpiWrapper
-          :title-two="`${kpiData.egc.toFixed(1)}%`"
-          :title-two-children="`(${kpiData.contacted} contactados)`"
+          :data="`${kpiData.egc.toFixed(1)}%`"
+          title-two="EGC"
           :title-two-font-size="true"
           :has-icon="true"
-          icon-tag-one="fab"
-          icon-tag-two="whatsapp"
-          icon-color="#00CC88"
-          description-one="EGC"
-          description-one-children="Efectividad General de Contacto"
+          icon-tag-one="fas"
+          icon-tag-two="brain"
+          icon-color="#63E6BE"
+          :has-secondary-icon="true"
+          secondary-icon-tag-one="fab"
+          secondary-icon-tag-two="whatsapp"
+          secondary-icon-color="gray"
+          description-one="Efectividad General"
+          description-two="de Contacto"
         />
         <CoreKpiWrapper
-          :title-two="`${kpiData.etotal.toFixed(1)}%`"
-          :title-two-children="`(${kpiData.interested} interesados)`"
+          :data="`${kpiData.etotal.toFixed(1)}%`"
+          title-two="ETC"
           :title-two-font-size="true"
           :has-icon="true"
-          icon-tag-one="fa-solid"
-          icon-tag-two="phone-volume"
-          icon-color="#00CC88"
-          description-one="Efectividad Total de Contacto"
+          :use-custom-icon="true"
+          icon-color="#e79551"
+          :has-secondary-icon="true"
+          secondary-icon-tag-one="far"
+          secondary-icon-tag-two="star"
+          secondary-icon-color="gray"
+          description-one="Efectividad Total"
+          description-two="de Contacto"
         />
         <CoreKpiWrapper
-          :title-two="kpiData.totalCandidates || '0'"
+          :data="kpiData.totalCandidates || '0'"
+          title-two="Candidatos"
           :has-icon="true"
           :title-two-font-size="true"
-          icon-tag-one="fab"
-          icon-tag-two="searchengin"
-          icon-color="#5C60F5"
-          description-one="Candidatos Analizados"
+          icon-tag-one="fas"
+          icon-tag-two="people-arrows"
+          icon-color="#e79551"
+          :has-secondary-icon="true"
+          secondary-icon-tag-one="fas"
+          secondary-icon-tag-two="user-tie"
+          secondary-icon-color="gray"
+          description-one="Analizados"
+          description-two="por Meta K"
         />
       </div>
       <div class="search-container">
@@ -72,7 +98,7 @@
               <th>Ofertas Utilizadas</th>
               <th>Mail</th>
               <th>Status</th>
-              <th>Actions</th>
+              <th>Ver procesos</th>
             </tr>
           </thead>
           <tbody>
@@ -164,9 +190,9 @@ const kpiData = computed(() => {
         acc.interested += item.total_interested;
         acc.totalCandidates += item.cv_count;
         if (index === arr.length - 1) {
+          acc.totalCompanies = arr.length;
           const egc = (acc.contacted / acc.totalCandidates) * 100;
           const etotal = (acc.interested / acc.totalCandidates) * 100;
-          acc.totalCompanies = arr.length;
           acc.egc = isNaN(egc) ? 0 : egc;
           acc.etotal = isNaN(etotal) ? 0 : etotal;
         }
@@ -258,9 +284,8 @@ watch(
 <style lang="scss" scoped>
 .results-table {
   .kpi-section {
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
     gap: 2rem;
     margin-bottom: 5rem;
   }

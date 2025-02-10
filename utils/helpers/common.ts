@@ -219,14 +219,14 @@ export const isValidToken = (token: any) => {
 export const getUserHeaderText = (userRole: EUser | null) => {
   switch (userRole) {
     case EUser.SUPER_ADMIN:
-      return "SUPER ADMIN";
+      return "super admin";
     case EUser.ADMIN:
-      return "ADMIN";
+      return "admin";
     case EUser.ADMIN_COMPANY:
-      return "EMPRESA";
+      return "empresa";
     default:
     case EUser.COMPANY:
-      return "RECLUTADOR";
+      return "reclutador";
   }
 };
 

@@ -33,8 +33,32 @@
           placeholder="Your Password"
           required
           type="password"
+          :show-password="showOldPassword"
           @input="(data) => handleOnInput('current_password', data)"
         />
+        <button
+          id="toggle-password"
+          type="button"
+          class="toggle-password"
+          @click="toggleShowOldPassword"
+        >
+          <div v-if="!showOldPassword" class="tooltip">
+            <font-awesome-icon
+              :icon="['fas', 'eye']"
+              size="lg"
+              style="color: #176382"
+            />
+            <span class="tooltiptext">View</span>
+          </div>
+          <div v-else class="tooltip">
+            <font-awesome-icon
+              :icon="['fas', 'eye-slash']"
+              size="lg"
+              style="color: #176382"
+            />
+            <span class="tooltiptext">Hide</span>
+          </div>
+        </button>
         <span v-if="form.current_password.length < 3" class="error-message">{{
           currentPasswordError
         }}</span>
@@ -48,8 +72,32 @@
           placeholder="New password"
           required
           type="password"
+          :show-password="showPassword"
           @input="(data) => handleOnInput('new_password', data)"
         />
+        <button
+          id="toggle-password"
+          type="button"
+          class="toggle-password"
+          @click="toggleShowPassword"
+        >
+          <div v-if="!showPassword" class="tooltip">
+            <font-awesome-icon
+              :icon="['fas', 'eye']"
+              size="lg"
+              style="color: #176382"
+            />
+            <span class="tooltiptext">View</span>
+          </div>
+          <div v-else class="tooltip">
+            <font-awesome-icon
+              :icon="['fas', 'eye-slash']"
+              size="lg"
+              style="color: #176382"
+            />
+            <span class="tooltiptext">Hide</span>
+          </div>
+        </button>
         <span v-if="form.new_password.length < 3" class="error-message">{{
           newPasswordError
         }}</span>
@@ -87,6 +135,16 @@ const currentPasswordError = ref<string>("");
 const newPasswordError = ref<string>("");
 const disableButton = ref<boolean>(true);
 const helperStore = useHelperStore();
+const showPassword = ref<boolean>(false);
+const showOldPassword = ref<boolean>(false);
+
+const toggleShowPassword = () => {
+  showPassword.value = !showPassword.value;
+};
+
+const toggleShowOldPassword = () => {
+  showOldPassword.value = !showOldPassword.value;
+};
 
 const handleOnInput = (keyField: string, value: string): void => {
   form.value = {
@@ -177,6 +235,33 @@ const handleOnUpdate = async (): Promise<void> => {
     }
   }
 
+  .tooltip {
+    position: relative;
+    display: inline-block;
+  }
+
+  .tooltip .tooltiptext {
+    visibility: hidden;
+    width: 80px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 100%;
+    right: 50%;
+    margin-left: -40px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+  }
+
   .form-section {
     display: flex;
     flex-direction: column;
@@ -208,6 +293,12 @@ const handleOnUpdate = async (): Promise<void> => {
         font-size: 1.2rem;
         font-weight: 500;
         letter-spacing: 1px;
+      }
+      .toggle-password {
+        position: absolute;
+        right: 2rem;
+        top: 3.8rem;
+        cursor: pointer;
       }
     }
   }
