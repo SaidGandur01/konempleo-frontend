@@ -4,7 +4,11 @@
     @click="$router.push(props.redirect)"
   >
     <a class="item-field">
-      <font-awesome-icon class="icon" :icon="[...props.icons]" />
+      <font-awesome-icon
+        class="icon"
+        :icon="[...props.icons]"
+        :style="{ color: '#176382' }"
+      />
       <span>{{ label }}</span>
     </a>
   </li>
@@ -50,6 +54,7 @@ li {
     align-items: center;
     gap: 1.5rem;
     cursor: pointer;
+    color: #34aac5;
     transition: transform 0.3s ease;
 
     &:hover {

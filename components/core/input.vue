@@ -7,6 +7,7 @@
     <input
       :id="id"
       ref="input"
+      v-model="inputValue"
       :class="inputClasses"
       :autocomplete="autocomplete"
       :disabled="disabled"
@@ -19,14 +20,13 @@
       :readonly="readonly"
       :required="required"
       :step="step"
-      :type="type"
-      :value="value"
+      :type="inputType"
       :placeholder="placeholder"
       @blur="onBlur"
       @change="onChange"
       @input="onInput"
       @keypress="onKeyPress"
-    >
+    />
   </div>
 </template>
 
@@ -55,6 +55,7 @@ interface InputProps {
   type?: InputType;
   value?: string | number | undefined;
   warning?: boolean;
+  showPassword?: boolean;
 }
 
 const props = withDefaults(defineProps<InputProps>(), {
@@ -78,6 +79,7 @@ const props = withDefaults(defineProps<InputProps>(), {
   type: "text",
   value: undefined,
   warning: false,
+  showPassword: false,
 });
 
 const parentClasses = computed(() => ({
@@ -123,10 +125,15 @@ const onKeyPress = (event: KeyboardEvent) => {
 };
 
 const input = ref<HTMLInputElement>();
+const inputValue = ref<string | number | undefined>(props.value);
+const inputType = ref<InputType>(props.type);
 
 onMounted(() => {
   if (props.focus && input) {
     input.value?.focus();
+  }
+  if (props.showPassword && input) {
+    inputType.value = "text";
   }
 });
 
@@ -138,7 +145,18 @@ watch(
     } else {
       input.value?.blur();
     }
-  },
+  }
+);
+
+watch(
+  () => props.showPassword,
+  (newValue) => {
+    if (newValue) {
+      inputType.value = "text";
+    } else {
+      inputType.value = "password";
+    }
+  }
 );
 </script>
 
@@ -155,7 +173,7 @@ watch(
 
   input {
     background: var(--background-input-field);
-    border: 1px #D1D5DC solid;
+    border: 1px #d1d5dc solid;
     border-radius: 1rem;
     color: var(--color-text-200);
     font-size: 1.6rem;
@@ -166,7 +184,7 @@ watch(
     }
 
     &::placeholder {
-      color: #6B7280;
+      color: #6b7280;
       opacity: 1;
     }
 
@@ -175,7 +193,7 @@ watch(
     }
 
     &:focus {
-      border-color: #D1D5DC;
+      border-color: #d1d5dc;
       outline: 1px var(--color-brand-neutral-400) solid;
       background: var(--background-input-field);
     }

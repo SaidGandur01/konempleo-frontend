@@ -33,8 +33,32 @@
           placeholder="Your password"
           required
           type="password"
+          :show-password="showPassword"
           @input="(data) => handleOnInput('password', data)"
         />
+        <button
+          id="toggle-password"
+          type="button"
+          class="toggle-password"
+          @click="toggleShowPassword"
+        >
+          <div v-if="!showPassword" class="tooltip">
+            <font-awesome-icon
+              :icon="['fas', 'eye']"
+              size="lg"
+              style="color: #176382"
+            />
+            <span class="tooltiptext">View</span>
+          </div>
+          <div v-else class="tooltip">
+            <font-awesome-icon
+              :icon="['fas', 'eye-slash']"
+              size="lg"
+              style="color: #176382"
+            />
+            <span class="tooltiptext">Hide</span>
+          </div>
+        </button>
         <span v-if="form.password.length < 3" class="error-message">{{
           passwordError
         }}</span>
@@ -85,10 +109,15 @@ const form = ref<ILoginForm>({
 const emailError = ref<string>("");
 const passwordError = ref<string>("");
 const disableButton = ref<boolean>(true);
+const showPassword = ref<boolean>(false);
 const acceptTerms = ref(true);
 // const isLoading = ref<boolean>(false);
 const userStore = useUserStore();
 const helperStore = useHelperStore();
+
+const toggleShowPassword = () => {
+  showPassword.value = !showPassword.value;
+};
 
 const handleOnInput = (keyField: string, value: string): void => {
   form.value = {
@@ -193,6 +222,33 @@ const handleOnLogin = async (): Promise<void> => {
     }
   }
 
+  .tooltip {
+    position: relative;
+    display: inline-block;
+  }
+
+  .tooltip .tooltiptext {
+    visibility: hidden;
+    width: 80px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 100%;
+    right: 50%;
+    margin-left: -40px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+  }
+
   .form-section {
     display: flex;
     flex-direction: column;
@@ -224,6 +280,13 @@ const handleOnLogin = async (): Promise<void> => {
         font-size: 1.2rem;
         font-weight: 500;
         letter-spacing: 1px;
+      }
+
+      .toggle-password {
+        position: absolute;
+        right: 2rem;
+        top: 3.8rem;
+        cursor: pointer;
       }
     }
   }

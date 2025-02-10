@@ -9,6 +9,7 @@
         </span>
       </div>
       <div v-if="hasIcon" class="icon">
+        <CoreIconHexagons v-if="useCustomIcon" :fill="iconColor" />
         <font-awesome-icon
           class="icon"
           :icon="[iconTagOne, iconTagTwo]"
@@ -17,17 +18,46 @@
         />
       </div>
     </div>
+    <div class="data">
+      <span v-if="data">{{ data }}</span>
+    </div>
     <div :class="contentClasses">
-      <span v-if="descriptionOne" class="description-one">
-        <font-awesome-icon v-if="hasIncreased" :icon="['fas', 'arrow-up']" size="sm" />
-        <font-awesome-icon v-if="hasDecreased" :icon="['fas', 'arrow-down']" size="sm" />
-        {{ descriptionOne }}
-        <span v-if="descriptionOneChildren" class="description-one-children">{{ descriptionOneChildren }}</span>
-      </span>
-      <span v-if="descriptionTwo" class="description-two">
-        {{ descriptionTwo }}
-        <span v-if="descriptionTwoChildren" class="description-two-children">{{ descriptionTwoChildren }}</span>
-      </span>
+      <div v-if="hasSecondaryIcon" class="secondary-icon">
+        <font-awesome-icon
+          class="icon"
+          :icon="[secondaryIconTagOne, secondaryIconTagTwo]"
+          :size="secondaryIconSize"
+          :style="{ color: secondaryIconColor }"
+        />
+      </div>
+      <div class="description-wrapper">
+        <span v-if="descriptionOne" class="description-one">
+          <font-awesome-icon
+            v-if="hasIncreased"
+            :icon="['fas', 'arrow-up']"
+            size="sm"
+          />
+          <font-awesome-icon
+            v-if="hasDecreased"
+            :icon="['fas', 'arrow-down']"
+            size="sm"
+          />
+          {{ descriptionOne }}
+          <span
+            v-if="descriptionOneChildren"
+            class="description-one-children"
+            >{{ descriptionOneChildren }}</span
+          >
+        </span>
+        <span v-if="descriptionTwo" class="description-two">
+          {{ descriptionTwo }}
+          <span
+            v-if="descriptionTwoChildren"
+            class="description-two-children"
+            >{{ descriptionTwoChildren }}</span
+          >
+        </span>
+      </div>
     </div>
   </div>
 </template>
@@ -43,12 +73,19 @@ interface IProps {
   descriptionTwoChildren: string;
   hasIcon: boolean;
   iconColor: string;
+  secondaryIconColor: string;
   iconTagOne: string;
   iconTagTwo: string;
   iconSize: string;
   hasIncreased: boolean;
   hasDecreased: boolean;
-  type: "success" |  "pending" | "danger" | "default"
+  type: "success" | "pending" | "danger" | "default";
+  useCustomIcon: boolean;
+  hasSecondaryIcon: boolean;
+  secondaryIconTagOne: string;
+  secondaryIconTagTwo: string;
+  secondaryIconSize: string;
+  data: string;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -62,23 +99,30 @@ const props = withDefaults(defineProps<IProps>(), {
   descriptionTwoChildren: "",
   hasIcon: false,
   iconColor: "",
+  secondaryIconColor: "",
   iconTagOne: "",
   iconTagTwo: "",
-  iconSize: "2xl",
+  iconSize: "lg",
+  secondaryIconSize: "2xl",
   hasIncreased: false,
   hasDecreased: false,
-  type: "default"
+  type: "default",
+  useCustomIcon: false,
+  hasSecondaryIcon: false,
+  secondaryIconTagOne: "",
+  secondaryIconTagTwo: "",
+  data: "",
 });
 const titleTwoClasses = computed(() => ({
-  'title-two': true,
-  'title-two-font-size': props.titleTwoFontSize
+  "title-two": true,
+  "title-two-font-size": props.titleTwoFontSize,
 }));
 const contentClasses = computed(() => ({
-  "content": true,
-  "content--success": props.type === 'success',
-  "content--pending": props.type === 'pending',
-  "content--danger": props.type === 'danger',
-  "content--default": props.type === 'default',
+  content: true,
+  "content--success": props.type === "success",
+  "content--pending": props.type === "pending",
+  "content--danger": props.type === "danger",
+  "content--default": props.type === "default",
 }));
 </script>
 <style lang="scss" scoped>
@@ -90,8 +134,8 @@ const contentClasses = computed(() => ({
   gap: 1.5rem;
   min-width: 220px;
   border: 1.5px #d1d5dc solid;
-  border-radius: 1rem;
-  padding: 1rem 2rem;
+  border-radius: 2rem;
+  padding: 2rem 3rem;
 
   .header {
     display: flex;
@@ -113,11 +157,11 @@ const contentClasses = computed(() => ({
       }
       .title-two {
         font-size: 2.5rem;
-        font-weight: 700;
+        font-weight: 400;
 
         &-font-size {
           padding-top: 0.5rem;
-          font-size: 4.5rem;
+          font-size: 2.5rem;
 
           span {
             color: red;
@@ -130,7 +174,16 @@ const contentClasses = computed(() => ({
     .icon {
       display: flex;
       align-items: center;
+      background-color: #f1f1f1;
+      border-radius: 99px;
+      padding: 0.5rem;
     }
+  }
+
+  .data {
+    font-size: 5rem;
+    font-weight: 600;
+    color: var(--color-brand-neutral-500);
   }
 
   .content {
@@ -142,17 +195,19 @@ const contentClasses = computed(() => ({
     span {
       letter-spacing: 0.5px;
     }
-
-    .description-one {
-      .description-one-children {
-        font-style: italic;
-        font-size: 1.3rem;
-        font-weight: 400;
-        margin-top: 5px;
-        color: #1A1A1A;
+    .description-wrapper {
+      display: flex;
+      flex-direction: column;
+      .description-one {
+        .description-one-children {
+          font-style: italic;
+          font-size: 1.3rem;
+          font-weight: 400;
+          margin-top: 5px;
+          color: #1a1a1a;
+        }
       }
     }
-
     &--success {
       .description-one {
         background-color: #ccf5e6;
@@ -173,7 +228,7 @@ const contentClasses = computed(() => ({
     }
     &--danger {
       .description-one {
-        background-color: #FED8E0;
+        background-color: #fed8e0;
         color: var(--color-danger);
         padding: 0.5rem 1rem;
         border-radius: 1rem;
@@ -182,12 +237,10 @@ const contentClasses = computed(() => ({
     }
     &--default {
       .description-one {
+        color: var(--color-brand-neutral-500);
         font-weight: 600;
-        padding: 0.5rem 0;
-        border-radius: 1rem;
       }
       .description-two {
-        color: var(--color-brand-neutral-500);
         font-weight: 600;
       }
     }
