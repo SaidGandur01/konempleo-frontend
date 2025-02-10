@@ -9,7 +9,7 @@
         </span>
       </div>
       <div v-if="hasIcon" class="icon">
-        <CoreIconHexagons v-if="useCustomIcon" :fill="iconColor" />
+        <CoreIconHexagons v-if="useCustomIcon" :fill="iconColor" width="20px" height="20px"/>
         <font-awesome-icon
           class="icon"
           :icon="[iconTagOne, iconTagTwo]"
@@ -132,7 +132,7 @@ const contentClasses = computed(() => ({
   justify-content: space-around;
   width: 100%;
   gap: 1.5rem;
-  min-width: 220px;
+  min-width: 250px;
   border: 1.5px #d1d5dc solid;
   border-radius: 2rem;
   padding: 2rem 3rem;
